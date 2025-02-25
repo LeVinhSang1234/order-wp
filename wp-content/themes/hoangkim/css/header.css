@@ -1,0 +1,137 @@
+.bar-top {
+  height: 31px;
+  background-color: var(--grey_color);
+  font-family: "Saira Condensed", sans-serif;
+}
+
+.bar-top .dang-ki {
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 20px;
+  text-transform: uppercase;
+}
+
+.bar-top .dang-ki a,
+.bar-top .dang-ki a:not([href]):not([class]) {
+  font-size: 12px;
+  color: #585858;
+}
+
+.bar-top .dang-ki a:hover,
+.bar-top .dang-ki a:not([href]):not([class]):hover {
+  color: var(--primary_color);
+}
+
+.main-header {
+  width: 100%;
+  height: 70px;
+}
+
+.main-header .container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-header .logo-wrap {
+  height: 100%;
+  width: 270px;
+}
+
+.main-header img.logo {
+  height: 100%;
+}
+
+.main-header .input-search-wrap {
+  flex: 1;
+  height: 40px;
+  position: relative;
+}
+
+.main-header .input-search-wrap i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 1px;
+}
+
+.main-header .input-search {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  padding: 11px 13px;
+  color: #888;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--border_color);
+  outline: none;
+  padding-right: 40px;
+}
+
+.main-header .input-search:hover,
+.main-header .input-search:focus {
+  border-color: var(--secondary_color);
+}
+.main-header .input-search:hover ~ i,
+.main-header .input-search:focus ~ i {
+  color: var(--secondary_color);
+}
+
+.hotline-header {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.header {
+  background-color: var(--bg_color);
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
+.header nav {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  border-radius: 50px;
+  height: 50px;
+}
+
+.header ul li {
+  min-width: 150px;
+  padding: 4px 16px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.header ul li a,
+.header ul li a:not([href]):not([class]) {
+  color: white;
+  font-size: 14px;
+}
+
+.header ul li a:hover,
+.header ul li a:not([href]):not([class]):hover,
+.header ul li a.active,
+.header ul li a.active:not([href]):not([class]) {
+  color: var(--secondary_color);
+}
