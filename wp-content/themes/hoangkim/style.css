@@ -76,6 +76,35 @@ p {
   justify-content: flex-end;
 }
 
+.service-item-title div:has(i) {
+  margin-top: -4px;
+  color: #005b8e;
+}
+
+.service-item-title i.text-primary {
+  color: #005b8e !important;
+}
+
+.collapse-question .accordion-item {
+  border: none;
+}
+
+.collapse-question .accordion-button {
+  padding-left: 0;
+  padding-bottom: 0;
+  background: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.collapse-question .accordion-body {
+  padding-left: 0;
+}
+
+.collapse-question .accordion-header strong {
+  color: #005b8e;
+}
+
 :root {
   --primary_color: #cc0000;
   --secondary_color: #52e7f5;
