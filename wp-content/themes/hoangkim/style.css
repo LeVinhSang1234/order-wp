@@ -17,6 +17,21 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+.title-border {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-border::before,
+.title-border::after {
+  height: 3px;
+  content: "";
+  flex: 1;
+  background: #005b8e;
+}
+
 .divider-vertical {
   width: 1px;
   height: 100%;
@@ -30,6 +45,10 @@ body {
   height: 100%;
 }
 
+.w-full {
+  width: 100%;
+}
+
 a,
 a:not([href]):not([class]) {
   cursor: pointer;
@@ -38,6 +57,23 @@ a:not([href]):not([class]) {
 
 .fw-600 {
   font-weight: 600;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.mw-75 {
+  max-width: 75%;
+}
+
+.block-justify-content-end .card-body.d-flex {
+  justify-content: flex-end;
 }
 
 :root {

@@ -135,3 +135,9 @@
 .header ul li a.active:not([href]):not([class]) {
   color: var(--secondary_color);
 }
+
+.logo-left {
+  display: flex;
+  padding-right: 30px;
+  padding: 8px 10px;
+}

@@ -1,0 +1,55 @@
+$body-bg: $white;$body-color: $gray-900;$enable-caret: 1;$enable-rounded: 1;$enable-transitions: 1;$enable-reduced-motion: 1;$enable-smooth-scroll: 1;$enable-grid-classes: 1;$enable-button-pointers: 1;$enable-rfs: 1;$enable-validation-icons: 1;$enable-deprecation-messages: 1;$enable-important-utilities: 1;$spacer: 1rem;$variable-prefix: bs-;$grid-breakpoint-xs: 0px;$grid-breakpoint-sm: 576px;$grid-breakpoint-md: 768px;$grid-breakpoint-lg: 992px;$grid-breakpoint-xl: 1200px;$grid-breakpoint-xxl: 1400px;$grid-columns: 12;$grid-gutter-width: 1.5rem;$grid-row-columns: 6;$gutters: $spacers;$figure-caption-font-size: $small-font-size;$figure-caption-color: $gray-600;$figure-margin: 0;$accordion-padding-y: 1rem;$accordion-padding-x: 1.25rem;$accordion-color: $body-color;$accordion-bg: $body-bg;$accordion-border-width: $border-width;$accordion-border-color: rgba($black, .125);$accordion-border-radius: $border-radius;$accordion-inner-border-radius: subtract($accordion-border-radius, $accordion-border-width);$accordion-body-padding-y: $accordion-padding-y;$accordion-body-padding-x: $accordion-padding-x;$accordion-button-padding-y: $accordion-padding-y;$accordion-button-padding-x: $accordion-padding-x;$accordion-button-color: $accordion-color;$accordion-button-bg: $accordion-bg;$accordion-transition: $btn-transition, border-radius .15s ease;$accordion-button-active-bg: tint-color($component-active-bg, 90%);$accordion-button-active-color: shade-color($primary, 10%);$accordion-button-focus-border-color: $input-focus-border-color;$accordion-button-focus-box-shadow: $btn-focus-box-shadow;$accordion-icon-width: 1.25rem;$accordion-icon-color: $accordion-color;$accordion-icon-active-color: #dd3333;$accordion-icon-transition: transform .2s ease-in-out;$accordion-icon-transform: rotate(-180deg);$card-spacer-y: $spacer;$card-spacer-x: $spacer;$card-title-spacer-y: $spacer * .5;$card-border-width: $border-width;$card-border-radius: $border-radius;$card-border-color: rgba($black, .125);$card-inner-border-radius: subtract($card-border-radius, $card-border-width);$card-cap-padding-y: $card-spacer-y * .5;$card-cap-padding-x: $card-spacer-x;$card-cap-bg: #00aeef;$card-cap-color: null;$card-height: null;$card-color: null;$card-bg: $white;$card-img-overlay-padding: $spacer;$card-group-margin: $grid-gutter-width * .5;$grid-breakpoints: (
+		  xs: 0,
+		  sm: 576px,
+		  md: 768px,
+		  lg: 992px,
+		  xl: 1200px,
+		  xxl: 1400px
+		);$container-max-widths: (
+		  sm: 540px,
+		  md: 720px,
+		  lg: 960px,
+		  xl: 1140px,
+		  xxl: 1320px
+		);$theme-colors: (
+		  "primary":    $primary,
+		  "secondary":  $secondary,
+		  "success":    $success,
+		  "info":       $info,
+		  "warning":    $warning,
+		  "danger":     $danger,
+		  "light":      $light,
+		  "dark":       $dark
+		);
+
+		$primary-text:            shade-color( $primary, 20% );
+		$secondary-text:          shade-color( $secondary, 20% );
+		$success-text:            shade-color( $success, 20% );
+		$info-text:               shade-color( $info, 20% );
+		$warning-text:            shade-color( $warning, 20% );
+		$danger-text:             shade-color( $danger, 20% );
+		$light-text:              shade-color( $light, 20% );
+		$dark-text:               shade-color( $dark, 20% );
+
+		$primary-bg-subtle:       tint-color( $primary, 80% );
+		$secondary-bg-subtle:     tint-color( $secondary, 80% );
+		$success-bg-subtle:       tint-color( $success, 80% );
+		$info-bg-subtle:          tint-color( $info, 80% );
+		$warning-bg-subtle:       tint-color( $warning, 80% );
+		$danger-bg-subtle:        tint-color( $danger, 80% );
+		$light-bg-subtle:         tint-color( $light, 80% );
+		$dark-bg-subtle:          tint-color( $dark, 80% );
+
+		$primary-border-subtle:   tint-color( $primary, 60% );
+		$secondary-border-subtle: tint-color( $secondary, 60% );
+		$success-border-subtle:   tint-color( $success, 60% );
+		$info-border-subtle:      tint-color( $info, 60% );
+		$warning-border-subtle:   tint-color( $warning, 60% );
+		$danger-border-subtle:    tint-color( $danger, 60% );
+		$light-border-subtle:     shade-color( $light, 20% );
+		$dark-border-subtle:      tint-color( $dark, 60% );
+
+		$accordion-button-icon:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-color}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+$accordion-button-active-icon:  url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-active-color}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+
+		

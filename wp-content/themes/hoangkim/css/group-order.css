@@ -1,0 +1,30 @@
+.group-order .service-item {
+  display: flex;
+  box-shadow: #f1f4f2 0 3px 16px 4px;
+  background: #fff;
+  height: 100%;
+  padding: 15px;
+  border-radius: 3px;
+  align-items: center;
+}
+
+.group-order .service-item .img-wrap {
+  height: 100px;
+  width: 100px;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.group-order .service-item .img-wrap img {
+  object-fit: contain;
+  height: 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.group-order .service-item .info .title {
+    font-size: 1rem;
+    line-height: 1.2rem;
+    font-weight: 700;
+}
+

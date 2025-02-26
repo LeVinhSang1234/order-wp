@@ -9,17 +9,19 @@ function mytheme_setup()
 
     function mytheme_enqueue_scripts()
     {
-        $css_file = get_template_directory() . '/style.css';
-        $css_version = filemtime($css_file);
-        wp_enqueue_style('theme-style', get_template_directory_uri() . '/style.css', array(), $css_version);
-
-        $css_file_header = get_template_directory() . '/css/header.css';
-        $css_version_header = filemtime($css_file_header);
-        wp_enqueue_style('header-style', get_template_directory_uri() . '/css/header.css', array(), $css_version_header);
-
-        $css_file_banner = get_template_directory() . '/css/banner.css';
-        $css_version_banner = filemtime($css_file_banner);
-        wp_enqueue_style('banner-style', get_template_directory_uri() . '/css/banner.css', array(), $css_version_banner);
+        $steps = array(
+            array('title' => 'theme-style', 'name' => "/style.css"),
+            array('title' => 'header-style', 'name' => "/css/header.css"),
+            array('title' => 'banner-style', 'name' => "/css/banner.css"),
+            array('title' => 'step-style', 'name' => "/css/step.css"),
+            array('title' => 'group-order-style', 'name' => "/css/group-order.css"),
+            array('title' => 'bang-gia-style', 'name' => "/css/bang-gia.css"),
+        );
+        foreach ($steps as $step) {
+            $css_file = get_template_directory() . $step['name'];
+            $css_version = filemtime($css_file);
+            wp_enqueue_style($step['title'], get_template_directory_uri() . $step['name'], array(), $css_version);
+        }
     }
     add_action('wp_enqueue_scripts', 'mytheme_enqueue_scripts', 100);
 }
@@ -44,8 +46,18 @@ add_action('after_setup_theme', 'mytheme_setup');
 
 
 if (is_admin()) {
+
+    function load_custom_admin_css()
+    {
+        wp_enqueue_style('theme-style', get_template_directory_uri() . '/style.css');
+    }
+    add_action('admin_enqueue_scripts', 'load_custom_admin_css');
+
     require_once get_template_directory() . '/custom-ui/add-custom-logo.php';
     require_once get_template_directory() . '/custom-ui/add-phone.php';
 }
 
 require_once get_template_directory() . '/short-code/banner.php';
+require_once get_template_directory() . '/short-code/step.php';
+require_once get_template_directory() . '/short-code/group-order.php';
+require_once get_template_directory() . '/short-code/bang-gia.php';

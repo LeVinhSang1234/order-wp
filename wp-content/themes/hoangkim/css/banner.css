@@ -1,11 +1,31 @@
 .banner {
-  background-image: url("/wp-content/uploads/2025/02/banner.jpg");
+  background-image: url("/wp-content/uploads/2025/02/bg-extension.jpg");
   height: 565px;
   background-size: cover;
+  position: relative;
+}
+
+.banner::before {
+  background-image: linear-gradient(
+    to right,
+    rgba(108, 134, 114, 0.6),
+    rgb(69 69 69 / 60%),
+    rgb(112 112 112 / 60%),
+    rgb(97 97 97 / 60%),
+    rgb(202 231 215 / 60%)
+  );
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .banner .container {
   height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .banner-download-wrap {
@@ -14,19 +34,19 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  color: white;
 }
 
 .banner .sub_title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
-  color: #222;
-  margin: 0 0 23px;
+  margin: 0 0 10px;
   text-align: center;
 }
 
 .banner .desc_ {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .banner .list_link {
@@ -68,9 +88,62 @@
 
 .banner-download {
   text-align: center;
+  width: 50%;
 }
 
-.banner-download > img {
-  width: 300px;
-  margin-top: -50px;
+.box-select-find {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  height: 40px;
+  border-radius: 3px;
+}
+
+.box-select-find select {
+  border: none;
+  outline: none;
+}
+
+.box-select-find {
+  width: max-content;
+}
+
+.banner-download__find-product .sub_title {
+  text-align: start;
+}
+
+.banner-download__find-product select {
+  font-size: 14px;
+}
+
+.box-select-find {
+  padding: 0 0 0 10px;
+}
+
+.box-select-find input {
+  border: none;
+  outline: none;
+  border-left: 1px solid var(--grey_color);
+  margin-left: 10px;
+  padding: 0 16px;
+  font-size: 14px;
+  height: 100%;
+  width: 232px;
+}
+
+.btn-find {
+  background-color: var(--primary_color);
+  height: 100%;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-find:hover {
+  opacity: 0.7;
 }

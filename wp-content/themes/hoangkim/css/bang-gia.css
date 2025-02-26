@@ -1,0 +1,78 @@
+.price-list-wrapper {
+  position: relative;
+  padding: 3rem 0;
+  min-height: 20rem;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background: url("/wp-content/uploads/2025/02/bang-gia-short-code.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.price-list-wrapper .title {
+  padding: 0 0 10px;
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 25px;
+}
+
+.price-list-wrapper .content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-left: 50px;
+}
+
+.price-list-wrapper .content .item .index {
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary_color);
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  background: rgb(255, 255, 255);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(23, 92, 142, 0.51);
+  border-image: initial;
+}
+
+.price-list-wrapper .content .item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.price-list-wrapper .content .name {
+  color: white;
+}
+
+.price-list-wrapper .primary-button a {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 16px;
+  background: var(--primary_color);
+  border-radius: 5px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  padding: 6px 16px;
+  transition: 0.5s all;
+  cursor: pointer;
+  position: relative;
+}
+
+.price-list-wrapper a {
+  display: flex;
+  gap: 8px;
+  width: max-content;
+}
