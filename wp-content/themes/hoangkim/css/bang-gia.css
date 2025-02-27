@@ -29,6 +29,8 @@
 .price-list-wrapper .content .item .index {
   height: 40px;
   width: 40px;
+  min-height: 40px;
+  min-width: 40px;
   margin-right: 10px;
   display: flex;
   align-items: center;
@@ -75,4 +77,36 @@
   display: flex;
   gap: 8px;
   width: max-content;
+}
+
+@media screen and (max-width: 991px) {
+  .price-list-wrapper .content .name {
+    font-size: 13px;
+  }
+  .price-list-wrapper .content .image img {
+    width: 230px;
+  }
+
+  .price-list-wrapper .content {
+    padding-left: 0;
+  }
+}
+
+@media screen and (max-width: 519px) {
+  .price-list-wrapper .content .image img {
+    width: 200px;
+  }
+
+  .price-list-wrapper .title {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 440px) {
+  .price-list-wrapper .content {
+    flex-direction: column;
+  }
+  .price-list-wrapper .primary-button a {
+    width: 100%;
+  }
 }

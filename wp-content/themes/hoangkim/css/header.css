@@ -141,3 +141,22 @@
   padding-right: 30px;
   padding: 8px 10px;
 }
+
+@media screen and (max-width: 1199px) {
+  .main-header .logo-wrap {
+    width: auto;
+  }
+
+  .main-header .container {
+    gap: 24px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .logo-left {
+    padding: 12px 10px;
+  }
+  .logo-right {
+    display: none;
+  }
+}

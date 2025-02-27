@@ -52,3 +52,13 @@
   color: #212529;
   text-transform: uppercase;
 }
+
+@media screen and (max-width: 1399px) {
+  .step .process-item .item .name {
+    font-size: 10px;
+  }
+  .step .process-item .item .icon {
+    width: 30px;
+    height: 30px;
+  }
+}

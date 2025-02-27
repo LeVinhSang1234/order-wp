@@ -12,6 +12,7 @@ function mytheme_setup()
         $steps = array(
             array('title' => 'theme-style', 'name' => "/style.css"),
             array('title' => 'header-style', 'name' => "/css/header.css"),
+            array('title' => 'footer-style', 'name' => "/css/footer.css"),
             array('title' => 'banner-style', 'name' => "/css/banner.css"),
             array('title' => 'step-style', 'name' => "/css/step.css"),
             array('title' => 'group-order-style', 'name' => "/css/group-order.css"),
@@ -57,7 +58,11 @@ if (is_admin()) {
     require_once get_template_directory() . '/custom-ui/add-phone.php';
 }
 
-require_once get_template_directory() . '/short-code/banner.php';
-require_once get_template_directory() . '/short-code/step.php';
-require_once get_template_directory() . '/short-code/group-order.php';
-require_once get_template_directory() . '/short-code/bang-gia.php';
+if (!is_admin()) {
+    require_once get_template_directory() . '/short-code/banner.php';
+    require_once get_template_directory() . '/short-code/step.php';
+    require_once get_template_directory() . '/short-code/group-order.php';
+    require_once get_template_directory() . '/short-code/bang-gia.php';
+    require_once get_template_directory() . '/short-code/login.php';
+    require_once get_template_directory() . '/short-code/dang-ki.php';
+}

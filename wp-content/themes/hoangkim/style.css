@@ -13,7 +13,8 @@ Text Domain: Hoangkim
 html,
 body {
   width: 100%;
-  margin: 0;
+  height: 100%;
+  margin: 0 !important;
   font-family: "Montserrat", sans-serif;
 }
 
@@ -114,4 +115,25 @@ p {
   --text_color: #333333;
   --grey_color: #e1e1e1;
   --bg_color: #242424;
+}
+
+@media screen and (max-width: 575px) {
+  .group-order .service-item .info .title {
+    font-size: 14px;
+  }
+  .group-order .service-item .info .desc p {
+    font-size: 14px;
+  }
+  .group-order .service-item .info .desc ul {
+    padding-left: 15px;
+    font-size: 14px;
+  }
+
+  .group-order .service-item {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .group-order .service-item .img-wrap {
+    margin-right: 0;
+  }
 }

@@ -1,0 +1,163 @@
+.dang-ki {
+  min-height: 100dvh;
+  width: 100dvw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sec-user-wrap {
+  position: relative;
+  margin: 0 auto;
+  width: 600px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.logo {
+  text-align: center;
+}
+
+.sec-user {
+  width: 100%;
+  display: table;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.sec-user .right-main {
+  display: table-cell;
+  vertical-align: top;
+  width: 50%;
+}
+
+.form-tab {
+  border-bottom: solid 1px #ececec;
+  display: flex;
+}
+
+.form-tab > a {
+  display: block;
+  float: left;
+  width: 50%;
+  font-size: 16px;
+  position: relative;
+  line-height: 30px;
+  padding: 15px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.form-tab > a.active {
+  font-weight: bold;
+}
+
+.form-tab > a.active:after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 1px;
+  left: 15%;
+  bottom: -1px;
+  background-color: #d9534f;
+  display: block;
+}
+
+.form-wrap {
+  display: block;
+  width: 90% !important;
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 40px 0;
+}
+
+.form_dangnhap .form-group,
+.dangkytaikhoan .form-horizontal .form-group {
+  position: relative;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form_dangnhap .form-group > .fa,
+.dangkytaikhoan .form-horizontal .form-group > .fa,
+.dangkytaikhoan .form-horizontal .form-group .fa-stack {
+  position: absolute;
+  width: 40px;
+  height: 48px;
+  left: 0;
+  top: 0;
+  line-height: 48px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.wrapper-kk .form-group .form-control {
+  padding: 6px 12px;
+  border: 1px solid rgba(33, 33, 33, 0.12);
+  border-radius: 0;
+  color: #212121;
+  box-shadow: none;
+  height: 40px;
+}
+
+.form-group .form-control {
+  border-radius: 4px !important;
+}
+
+.form_dangnhap .form-control,
+.dangkytaikhoan .form-horizontal .form-control {
+  font-family: inherit;
+  font-size: 14px;
+  background: #f3ebe9;
+  padding: 10px 15px 10px 40px !important;
+  line-height: 20px;
+  outline: 0;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3sease-in-out;
+}
+
+.radio,
+.checkbox {
+  display: block;
+  min-height: 20px;
+  padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.form_dangnhap a {
+  color: #212121 !important;
+  outline: none !important;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  font-size: 13px;
+}
+
+.box_extension .addon img {
+  width: 50px;
+  height: 50px;
+  margin: 0 8px;
+}
+
+.sec-user-wrap .btn {
+  background-color: #d9534f !important;
+  border-radius: 4px !important;
+  -webkit-border-radius: 4px !important;
+  -moz-border-radius: 4px !important;
+  padding: 10px 35px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 16px;
+  width: auto;
+}
