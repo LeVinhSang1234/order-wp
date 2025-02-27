@@ -136,6 +136,10 @@
   color: var(--secondary_color);
 }
 
+.current-menu-item a {
+  color: var(--secondary_color) !important;
+}
+
 .logo-left {
   display: flex;
   padding-right: 30px;

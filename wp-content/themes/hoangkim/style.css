@@ -237,6 +237,23 @@ table td {
   border-color: transparent !important;
 }
 
+.btn-a a {
+  margin: 0 auto;
+    width: 160px;
+    height: 40px;
+    background-color: red;
+    color: white !important;
+    text-align: center;
+    border-radius: 30px;
+    display: block;
+    box-sizing: border-box;
+    position: relative;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 :root {
   --primary_color: #cc0000;
   --secondary_color: #52e7f5;
