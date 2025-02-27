@@ -9,15 +9,6 @@
         </div>
     </div>
 </div>
-<header class="header">
-    <div class="container">
-        <nav>
-            <ul>
-                <?php wp_nav_menu(['theme_location' => 'main_menu']); ?>
-            </ul>
-        </nav>
-    </div>
-</header>
 <div class="main-header">
     <div class="container">
         <div class="logo-wrap logo-left">
@@ -42,3 +33,23 @@
         </div>
     </div>
 </div>
+<header class="header">
+    <div class="container">
+        <nav>
+            <ul>
+                <?php wp_nav_menu(['theme_location' => 'main_menu']); ?>
+            </ul>
+        </nav>
+    </div>
+</header>
+<?php if (!is_home() && !is_front_page()) { ?>
+    <div class="breadcrumb-wrapper">
+        <div class="container">
+            <?php
+            if (function_exists('bcn_display')) {
+                bcn_display();
+            }
+            ?>
+        </div>
+    </div>
+<?php } ?>

@@ -23,6 +23,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  color: #005b8e;
 }
 
 .title-border::before,
@@ -106,15 +107,35 @@ p {
   color: #005b8e;
 }
 
-:root {
-  --primary_color: #cc0000;
-  --secondary_color: #52e7f5;
-  --active_color: #0eddf0;
-  --title_color: #333333;
-  --border_color: #e5e5e5;
-  --text_color: #333333;
-  --grey_color: #e1e1e1;
-  --bg_color: #242424;
+.breadcrumb-wrapper {
+  height: 40px;
+  background: #faf8f8;
+  border-top: 1px solid var(--border_color);
+  border-bottom: 1px solid var(--border_color);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.breadcrumb-wrapper .container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.breadcrumb-wrapper a {
+  color: var(--text_color);
+}
+
+.breadcrumb-wrapper .container > span:last-of-type {
+  color: #55c5cf;
+}
+
+.border-post-primary {
+  box-shadow: rgba(0, 0, 0, 0.28) 0px 2px 5px;
+  border: 2px solid #005b8e !important;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 575px) {
@@ -136,4 +157,93 @@ p {
   .group-order .service-item .img-wrap {
     margin-right: 0;
   }
+}
+
+table {
+  border-collapse: collapse;
+  margin: 25px auto;
+  font-size: 14px;
+  min-width: 400px;
+  caption-side: bottom;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+figure:has(table) {
+  margin: auto !important;
+}
+
+.wp-block-table .has-fixed-layout,
+table {
+  margin-top: 0;
+  border: 1px solid var(--border_color) !important;
+}
+
+table thead {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+}
+
+table thead tr {
+  background-color: #005b8e;
+  color: #fff;
+  text-align: left;
+  font-weight: 700;
+  border-color: #005b8e;
+}
+
+table thead th {
+  border-color: #005b8e !important;
+}
+
+table th,
+table td {
+  padding: 12px 15px !important;
+}
+
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0 !important;
+}
+
+table td {
+  border: 1px solid var(--border_color) !important;
+}
+
+.bg-gd-primary {
+  background: linear-gradient(90deg, rgba(255, 87, 87, 0) 0%, #005b8e 25%);
+}
+
+.pl-5 {
+  padding-left: 3rem !important;
+}
+
+.pr-3 {
+  padding-right: 1rem !important;
+}
+
+.bd-10 {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.border-none .card {
+  border-color: transparent !important;
+}
+
+:root {
+  --primary_color: #cc0000;
+  --secondary_color: #52e7f5;
+  --active_color: #0eddf0;
+  --title_color: #333333;
+  --border_color: #e5e5e5;
+  --text_color: #333333;
+  --grey_color: #e1e1e1;
+  --bg_color: #242424;
 }

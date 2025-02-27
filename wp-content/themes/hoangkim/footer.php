@@ -15,7 +15,7 @@
                                 </div>
                                 <div class="content">
                                     <div class="title">
-                                        Văn phòng: <a href="https://goo.gl/maps/NeZWF8xtexQndr7N7" target="_blank" rel="nofollow">111 Trịnh Thị Ngọc Lữ. P.Lam Sơn. Tp.Thanh Hóa</a>
+                                        Văn phòng: <a href="https://maps.app.goo.gl/zatmDwDit3VwdpxL8" target="_blank" rel="nofollow">111 Trịnh Thị Ngọc Lữ. P.Lam Sơn. Tp.Thanh Hóa</a>
                                     </div>
                                 </div>
                             </li>
@@ -52,7 +52,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-6">
+                <!-- <div class="col-12 col-md-6 col-lg-6">
                     <div class="row">
                         <div class=" col-12  col-md-6 col-lg-6">
                             <div class="title-footer">Dịch vụ</div>
@@ -81,61 +81,66 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                        <div class=" col-12  col-md-6 col-lg-6">
-                            <div class="title-footer">Chính sách</div>
-                            <div class="menu-chinh-sach-container">
-                                <ul id="menu-footer-3" class="menu-class">
-                                    <li id="menu-item-33686" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33686">
-                                        <a rel="nofollow" href="todo">Chính sách bảo mật thông tin</a>
-                                    </li>
-                                    <li id="menu-item-41421" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-41421">
-                                        <a rel="nofollow" href="todo">Điều khoản sử dụng website</a>
-                                    </li>
-                                    <li id="menu-item-41440" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-41440">
-                                        <a rel="nofollow" href="todo">Chính sách cookie</a>
-                                    </li>
-                                    <li id="menu-item-33687" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33687">
-                                        <a rel="nofollow" href="todo">Chính sách đổi trả hàng</a>
-                                    </li>
-                                    <li id="menu-item-33688" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33688">
-                                        <a rel="nofollow" href="todo">Chính sách giải quyết khiếu nại với hàng ký gửi</a>
-                                    </li>
-                                    <li id="menu-item-33689" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33689">
-                                        <a rel="nofollow" href="todo">Chính sách khiếu nại</a>
-                                    </li>
-                                    <li id="menu-item-33690" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33690">
-                                        <a rel="nofollow" href="todo">Chính sách mua hàng</a>
-                                    </li>
-                                    <li id="menu-item-33691" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33691">
-                                        <a rel="nofollow" href="todo">Chính sách vận chuyển</a>
-                                    </li>
-                                    <li id="menu-item-33692" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33692">
-                                        <a rel="nofollow" href="todo">Danh mục hàng cấm nhập khẩu</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="social-wrap">
-                        <a rel="nofollow" href="todo" class="social">
-                            <i class="fa-classic fa-brands fa-facebook" aria-hidden="true"></i>
-                        </a>
-                        <a rel="nofollow" href="todo" class="social">
-                            <i class="fa-classic fa-brands fa-twitter" aria-hidden="true"></i>
-                        </a>
-                        <a rel="nofollow" href="todo" class="social">
-                            <i class="fa-classic fa-brands fa-youtube" aria-hidden="true"></i>
-                        </a>
-                        <a rel="nofollow" href="todo" class="social">
-                            <i class="fa-classic fa-brands fa-instagram" aria-hidden="true"></i>
-                        </a>
+                        </div> -->
+                <div class=" col-12  col-md-6 col-lg-6">
+                    <div class="title-footer">Chính sách</div>
+                    <div class="menu-chinh-sach-container">
+                        <ul id="menu-footer-3" class="menu-class">
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-bao-mat-thong-tin/">Chính sách bảo mật thông tin</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/dieu-khoan-su-dung-website/">Điều khoản sử dụng website</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-cookie/">Chính sách cookie</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-doi-tra-hang/">Chính sách đổi trả hàng</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-giai-quyet-khieu-nai-hang-ki-gui/">Chính sách giải quyết khiếu nại với hàng ký gửi</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-khieu-nai/">Chính sách khiếu nại</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-mua-hang/">Chính sách mua hàng</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/chinh-sach-van-chuyen/">Chính sách vận chuyển</a>
+                            </li>
+                            <li>
+                                <a rel="nofollow" href="<?php echo site_url() ?>/danh-muc-hang-cam-nhap-khau/">Danh mục hàng cấm nhập khẩu</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="footer-menu">
+            <div class="social-wrap">
+                <a rel="nofollow" href="todo" class="social">
+                    <i class="fa-classic fa-brands fa-facebook" aria-hidden="true"></i>
+                </a>
+                <a rel="nofollow" href="todo" class="social">
+                    <i class="fa-classic fa-brands fa-twitter" aria-hidden="true"></i>
+                </a>
+                <a rel="nofollow" href="todo" class="social">
+                    <i class="fa-classic fa-brands fa-youtube" aria-hidden="true"></i>
+                </a>
+                <a rel="nofollow" href="todo" class="social">
+                    <i class="fa-classic fa-brands fa-instagram" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
+    </div>
+    </div>
+    <div class="end-footer">
+        <div class="container">
+            <div class="row wrapper">
+                <div class="copyright">© Copyright 2025 Văn phòng xuất nhập khẩu Hoàng Kim Logistics</div>
+            </div>
+        </div>
+    </div>
     </div>
 </footer>
 <?php wp_footer(); ?>
