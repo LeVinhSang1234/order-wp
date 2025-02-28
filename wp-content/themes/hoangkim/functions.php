@@ -45,7 +45,6 @@ if (!is_admin()) {
 }
 add_action('after_setup_theme', 'mytheme_setup');
 
-
 if (is_admin()) {
 
     function load_custom_admin_css()
@@ -65,4 +64,5 @@ if (!is_admin()) {
     require_once get_template_directory() . '/short-code/bang-gia.php';
     require_once get_template_directory() . '/short-code/login.php';
     require_once get_template_directory() . '/short-code/dang-ki.php';
+    require_once get_template_directory() . '/short-code/bai-viet-noi-bat.php';
 }

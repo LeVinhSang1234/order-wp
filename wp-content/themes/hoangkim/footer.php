@@ -78,13 +78,13 @@
                                         <a href="<?php echo site_url() ?>/dich-vu/dat-hang-taobao/">Order Taobao</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo site_url() ?>/dat-hang-1688/">Đặt hàng 1688</a>
+                                        <a href="<?php echo site_url() ?>/dich-vu/dat-hang-1688/">Đặt hàng 1688</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo site_url() ?>/van-chuyen-hang-trung-quoc-ve-viet-nam/">Vận chuyển hàng Trung Quốc</a>
+                                        <a href="<?php echo site_url() ?>/dich-vu/van-chuyen-hang-trung-quoc-ve-viet-nam/">Vận chuyển hàng Trung Quốc</a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo site_url() ?>/dat-hang-quang-chau/">Đặt hàng Quảng Châu</a>
+                                        <a href="<?php echo site_url() ?>/dich-vu/dat-hang-quang-chau/">Đặt hàng Quảng Châu</a>
                                     </li>
                                 </ul>
                             </div>
