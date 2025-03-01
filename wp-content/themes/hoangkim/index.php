@@ -60,31 +60,31 @@ if (is_single()) {
             echo apply_filters('the_content', $post_content);
             ?>
         </div>
-        <?php if (is_single()) { ?>
-            <div class="container mb-4">
-                <h4 class="text-center title-border mt-5 mb-4 text-uppercase">Bài viết liên quan</h4>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 align-items-strech">
-                    <?php if (!empty($Posts)) : ?>
-                        <?php foreach ($Posts as $post) : ?>
-                            <div class="col">
-                                <div class="card post-card">
-                                    <img src="<?php echo $post['thumbnail'] ?>" class="card-img-top post-img" alt="<?= esc_attr($post['title']); ?>">
-                                    <div class="card-body">
-                                        <h5 class="post-title mb-1">
-                                            <a href="<?= esc_url($post['permalink']); ?>" class="text-decoration-none"><?= esc_html($post['title']); ?></a>
-                                        </h5>
-                                        <p class="post-meta mb-0">📅 <?= esc_html($post['date']); ?> | 📂 <?php echo $post['parent_title'] ?></p>
-                                        <p class="post-excerpt"><?= esc_html($post['excerpt']); ?></p>
-                                    </div>
+        <div class="container mb-4">
+            <h4 class="text-center title-border mt-5 mb-4 text-uppercase">
+                <?php echo (!is_single() ? "Tin tức mới nhất" : "Bài viết liên quan")?>
+            </h4>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 align-items-strech">
+                <?php if (!empty($Posts)) : ?>
+                    <?php foreach ($Posts as $post) : ?>
+                        <div class="col">
+                            <div class="card post-card">
+                                <img src="<?php echo $post['thumbnail'] ?>" class="card-img-top post-img" alt="<?= esc_attr($post['title']); ?>">
+                                <div class="card-body">
+                                    <h5 class="post-title mb-1">
+                                        <a href="<?= esc_url($post['permalink']); ?>" class="text-decoration-none"><?= esc_html($post['title']); ?></a>
+                                    </h5>
+                                    <p class="post-meta mb-0">📅 <?= esc_html($post['date']); ?> | 📂 <?php echo $post['parent_title'] ?></p>
+                                    <p class="post-excerpt"><?= esc_html($post['excerpt']); ?></p>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    <?php else : ?>
-                        <p class="text-center">Không có bài viết nào.</p>
-                    <?php endif; ?>
-                </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <p class="text-center">Không có bài viết nào.</p>
+                <?php endif; ?>
             </div>
-        <?php } ?>
+        </div>
     </main>
     <?php if (!is_page("dang-ki")) get_footer(); ?>
 </body>

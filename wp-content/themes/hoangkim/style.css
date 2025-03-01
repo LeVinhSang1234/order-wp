@@ -386,7 +386,7 @@ table td {
   min-width: max-content;
 }
 
-.container  .areoi-element {
+.container .areoi-element {
   max-width: 100%;
 }
 
@@ -394,6 +394,10 @@ table td {
   display: flex;
   margin: auto;
   justify-content: center;
+}
+
+.card-body > figure {
+  margin: 0;
 }
 
 :root {

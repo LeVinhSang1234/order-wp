@@ -105,3 +105,6 @@ define('FS_METHOD', 'direct');
 
 
 #pass: x%03cO4gcf)l^KaRHD
+
+// user: admin_ng8pbtdt
+// mk: #I1k*DOu(*SEe^oIrjdu#$zP
