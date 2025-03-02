@@ -1,6 +1,16 @@
 <?php
 function mytheme_dang_ki_shortcode()
 {
+    global $message;
+    $email = '';
+    $phone = '';
+    if (isset($_POST['login']) && $_POST['login'] === 'Đăng ký') {
+        $phone = sanitize_text_field($_POST['phone']);
+        $email = sanitize_email($_POST['username']);
+    }
+
+    $content = $message ? "<div class='text-error'>" . $message . "</div>" : "";
+
     return '<div class="sec-user">
     <div class="right-main">
         <div class="form-tab">
@@ -10,8 +20,8 @@ function mytheme_dang_ki_shortcode()
             <form action="" method="post" class="form_dangnhap">
                 <div class="form-group">
                     <i class="fa fa-envelope"></i>
-                    <input type="text" name="username" value="" class="form-control" placeholder="Email">
-                </div>
+                    <input type="text" name="username" value="' . $email . '" class="form-control" placeholder="Email">
+                </div>' . $content . '
                 <div class="form-group">
                     <i class="fa fa-lock"></i>
                     <input type="password" name="password" value="" class="form-control" placeholder="Mật khẩu">
@@ -22,20 +32,10 @@ function mytheme_dang_ki_shortcode()
                 </div>
                 <div class="form-group">
                     <i class="fa fa-lock fa-stack-2x"></i>
-                    <input name="phone" value="" class="form-control" placeholder="Số điện thoại">
+                    <input name="phone" value="' . $phone . '" class="form-control" placeholder="Số điện thoại">
                 </div>
                 <div class="checkbox">
                     <a class="pull-right" href="todo">Quên mật khẩu?</a>
-                </div>
-                <div class="form-group ">
-                    <input type="hidden" id="deviceToken" value="" name="device_token">
-                    <div class="g-recaptcha" data-sitekey="6LflZeYqAAAAAFSplNPubcpBSVoTZuV_jxbkLoJM">
-                        <div style="width: 304px; height: 78px;"></div>
-                        <iframe style="display: none;"></iframe>
-                    </div>
-                    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-                        async defer>
-                    </script>
                 </div>
                 <div class="form-group text-center">
                     <input type="hidden" name="pre_url" value="">

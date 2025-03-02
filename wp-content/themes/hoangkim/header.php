@@ -1,11 +1,20 @@
 <div class="bar-top">
     <div class="container">
         <div class="dang-ki">
-            <a href="<?php echo site_url() . '/dang-ki' ?>"><i class="fa-classic fa-solid fa-right-to-bracket" aria-hidden="true"></i> Đăng kí</a>
-            <div style="padding: 8px 0" class="h-full">
-                <div class="divider-vertical bg-white"></div>
-            </div>
-            <a href="<?php echo site_url() . '/dang-nhap' ?>"><i class="fa-classic fa-solid fa-user-plus" aria-hidden="true"></i> Đăng nhập</a>
+            <?php if (!is_user_logged_in()) { ?>
+                <a href="<?php echo site_url() . '/dang-ki' ?>"><i class="fa-classic fa-solid fa-right-to-bracket" aria-hidden="true"></i> Đăng kí</a>
+                <div style="padding: 8px 0" class="h-full">
+                    <div class="divider-vertical bg-white"></div>
+                </div>
+                <a href="<?php echo site_url() . '/dang-nhap' ?>"><i class="fa-classic fa-solid fa-user-plus" aria-hidden="true"></i> Đăng nhập</a>
+            <?php } ?>
+            <?php if (is_user_logged_in()) { ?>
+                <a href="<?php echo site_url() . '/mua-hang' ?>"><i class="fa-solid fa-bars-progress"></i> Quản lý</a>
+                <div style="padding: 8px 0" class="h-full">
+                    <div class="divider-vertical bg-white"></div>
+                </div>
+                <a href="<?php echo wp_logout_url(home_url()); ?>"><i class="fa-classic fa-solid fa-right-to-bracket" aria-hidden="true"></i> Đăng xuất</a>
+            <?php } ?>
         </div>
     </div>
 </div>
