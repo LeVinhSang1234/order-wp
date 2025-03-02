@@ -159,7 +159,7 @@ p {
   }
 }
 
-table {
+table:not(.ui-datepicker-calendar) {
   border-collapse: collapse;
   margin: 25px auto;
   font-size: 14px;
@@ -173,18 +173,18 @@ figure:has(table) {
 }
 
 .wp-block-table .has-fixed-layout,
-table {
+table:not(.ui-datepicker-calendar) {
   margin-top: 0;
   border: 1px solid var(--border_color) !important;
 }
 
-table thead {
+table:not(.ui-datepicker-calendar) thead {
   border-color: inherit;
   border-style: solid;
   border-width: 0;
 }
 
-table thead tr {
+table:not(.ui-datepicker-calendar) thead tr {
   background-color: #005b8e;
   color: #fff;
   text-align: left;
@@ -192,27 +192,26 @@ table thead tr {
   border-color: #005b8e;
 }
 
-table thead th {
+table:not(.ui-datepicker-calendar) thead th {
   border-color: #005b8e !important;
 }
 
-table th,
-table td {
+table:not(.ui-datepicker-calendar) th,
+table:not(.ui-datepicker-calendar) td {
   padding: 12px 15px !important;
 }
-
-tbody,
-td,
-tfoot,
-th,
-thead,
-tr {
+table:not(.ui-datepicker-calendar) tbody,
+table:not(.ui-datepicker-calendar) td,
+table:not(.ui-datepicker-calendar) tfoot,
+table:not(.ui-datepicker-calendar) th,
+table:not(.ui-datepicker-calendar) thead,
+table:not(.ui-datepicker-calendar) tr {
   border-color: inherit;
   border-style: solid;
   border-width: 0 !important;
 }
 
-table td {
+table:not(.ui-datepicker-calendar) td {
   border: 1px solid var(--border_color) !important;
 }
 

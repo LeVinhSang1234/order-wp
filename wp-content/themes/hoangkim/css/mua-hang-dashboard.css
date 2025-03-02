@@ -1,0 +1,57 @@
+.dashboard {
+  width: 100%;
+  padding: 16px;
+  background-color: #f0f4f5;
+  min-height: 100%;
+}
+
+.box-dashboard {
+  width: 100%;
+  height: 84px;
+  color: white;
+  border-radius: 3px;
+  position: relative;
+}
+
+.box-dashboard-green {
+  background-color: green;
+}
+
+.box-dashboard-aqua {
+  background-color: #861cf0;
+}
+
+.box-dashboard-cart {
+  background-color: #2932d7;
+}
+
+.box-dashboard-report {
+  background-color: #ff0000;
+}
+
+.box-dashboard h4 {
+  font-size: 18px;
+  padding: 10px 16px 0;
+  margin: 0;
+}
+
+.box-dashboard .title {
+  font-size: 13px;
+  padding: 0 16px;
+}
+
+.view-detail {
+  background-color: rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.notification-dashboard {
+  background-color: white;
+  border-top: 3px solid #ff0000;
+  padding: 15px;
+}

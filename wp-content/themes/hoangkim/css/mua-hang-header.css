@@ -1,0 +1,8 @@
+.mua-hang-header {
+  height: 44px;
+  background-color: var(--grey_color);
+  padding: 4px 16px;
+}
+.mua-hang-header .logo {
+  height: 100%;
+}

@@ -8,11 +8,65 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-header.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-content.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-dashboard.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>
+
 <body>
     <main>
-        <div class="w-100">
-            mua hàng
+        <?php include_once get_template_directory() . '/mua-hang/header.php' ?>
+        <div class="mua-hang-content">
+            <div class="menu-left">
+                <ul>
+                    <li>
+                        <a class="active">
+                            <i class="fa-solid fa-chart-simple"></i>
+                            Bảng tin
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            Tìm kiếm sản phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <i class="fa-regular fa-clipboard"></i>
+                            Đơn hàng
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <i class="fa-solid fa-wallet"></i>
+                            Ví điện tử
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <i class="fa-solid fa-bug"></i>
+                            Khiếu nại
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <i class="fa-solid fa-van-shuttle"></i>
+                            Đơn ký gửi
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="mua-hang-content-right">
+                <div class="mua-hang-content-right__content">
+                    <?php include_once get_template_directory() . '/mua-hang/dashboard.php' ?>
+                </div>
+                <div class="mua-hang-footer">
+                    Copyright © 2025 HoangKimLogistics.VN. All Rights Reserved
+                </div>
+            </div>
         </div>
     </main>
 </body>
