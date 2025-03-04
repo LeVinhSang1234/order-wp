@@ -55,3 +55,12 @@
   border-top: 3px solid #ff0000;
   padding: 15px;
 }
+
+.btn-find {
+  background-color: #ff0000;
+  border: none;
+  outline: none;
+  height: 38px;
+  color: white;
+  border-radius: 3px;
+}

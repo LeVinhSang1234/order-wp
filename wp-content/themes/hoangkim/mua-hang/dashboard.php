@@ -32,28 +32,31 @@
     <div class="mt-3 text-uppercase flex-1">
         <h4>Thông báo</h4>
         <div class="notification-dashboard">
-            <?php
-            $id = "time_from";
-            $placeholder = "Từ";
-            include get_template_directory() . '/mua-hang/input-date-picker.php';
-            ?>
-            <?php
-            $id = "time_to";
-            $placeholder = "Đến";
-            include get_template_directory() . '/mua-hang/input-date-picker.php';
-            ?>
-            <select name="type">
-                <option>Loại thông báo</option>
-                <option>Ví điện tử</option>
-                <option>Đơn hàng</option>
-                <option>Khiếu nại</option>
-                <option>Vận đơn</option>
-            </select>
-            <select name="status">
-                <option>Trạng thái</option>
-                <option>Chưa xem</option>
-                <option>Đã xem</option>
-            </select>
+            <div class="d-flex align-items-center gap-2">
+                <?php
+                $id = "time_from";
+                $placeholder = "Từ";
+                include get_template_directory() . '/mua-hang/input-date-picker.php';
+                ?>
+                <?php
+                $id = "time_to";
+                $placeholder = "Đến";
+                include get_template_directory() . '/mua-hang/input-date-picker.php';
+                ?>
+                <select name="type">
+                    <option>Loại thông báo</option>
+                    <option>Ví điện tử</option>
+                    <option>Đơn hàng</option>
+                    <option>Khiếu nại</option>
+                    <option>Vận đơn</option>
+                </select>
+                <select name="status">
+                    <option>Trạng thái</option>
+                    <option>Chưa xem</option>
+                    <option>Đã xem</option>
+                </select>
+                <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
             <div class="mt-3">
                 Số thông báo: <strong>0</strong>
                 <table class="w-100 mt-2">

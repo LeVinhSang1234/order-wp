@@ -1,5 +1,5 @@
 <?php
-if (is_page('mua-hang')) {
+if (is_page('mua-hang') || is_page('don-hang') || is_page('wallet') || is_page('khieu-nai')) {
     include_once get_template_directory() . '/muahang-template.php';
     exit;
 }

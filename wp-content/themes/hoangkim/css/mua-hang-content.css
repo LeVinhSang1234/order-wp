@@ -46,7 +46,7 @@
   overflow: auto;
 }
 
-input.datepicker,
+input,
 .mua-hang-content select {
   padding: 0 8px;
   color: #212121;

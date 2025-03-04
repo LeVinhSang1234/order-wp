@@ -3,6 +3,7 @@
 
 <head>
     <?php wp_head(); ?>
+    <title>Mua hàng</title>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -22,7 +23,7 @@
             <div class="menu-left">
                 <ul>
                     <li>
-                        <a class="active">
+                        <a class="<?php echo (is_page('mua-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/mua-hang' ?>">
                             <i class="fa-solid fa-chart-simple"></i>
                             Bảng tin
                         </a>
@@ -34,19 +35,19 @@
                         </a>
                     </li>
                     <li>
-                        <a>
+                        <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
                             <i class="fa-regular fa-clipboard"></i>
                             Đơn hàng
                         </a>
                     </li>
                     <li>
-                        <a>
+                        <a class="<?php echo (is_page('wallet') ? 'active' : '') ?>" href="<?php echo site_url() . '/wallet' ?>">
                             <i class="fa-solid fa-wallet"></i>
                             Ví điện tử
                         </a>
                     </li>
                     <li>
-                        <a>
+                        <a class="<?php echo (is_page('khieu-nai') ? 'active' : '') ?>" href="<?php echo site_url() . '/khieu-nai' ?>">
                             <i class="fa-solid fa-bug"></i>
                             Khiếu nại
                         </a>
@@ -61,7 +62,7 @@
             </div>
             <div class="mua-hang-content-right">
                 <div class="mua-hang-content-right__content">
-                    <?php include_once get_template_directory() . '/mua-hang/dashboard.php' ?>
+                    <?php include_once get_template_directory() . '/mua-hang/redirect.php' ?>
                 </div>
                 <div class="mua-hang-footer">
                     Copyright © 2025 HoangKimLogistics.VN. All Rights Reserved
