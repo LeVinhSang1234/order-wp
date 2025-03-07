@@ -1,0 +1,52 @@
+.bao-gia .img-wrap {
+  overflow: hidden;
+}
+
+.bao-gia .img-wrap img {
+  height: 100%;
+  max-width: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.form-bao-gia-wrap {
+  background-color: #005b8e;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  height: 100%;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.form-bao-gia-wrap .title {
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 35px;
+  text-transform: uppercase;
+}
+
+.form-bao-gia-wrap p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.form-bao-gia-wrap input,
+.form-bao-gia-wrap textarea {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.form-bao-gia-wrap textarea {
+  max-height: 150px;
+  resize: none;
+}
+
+.btn-submit-bao-gia {
+  max-width: 150px;
+  background-color: #fc8249;
+  color: white;
+  font-weight: 600;
+}

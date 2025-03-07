@@ -1,0 +1,204 @@
+.quy-trinh-nhap-hang .tab-wrapper {
+  display: flex;
+  position: relative;
+  gap: 24px;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .wrapper-nav {
+  padding-left: 2rem;
+  border-left: 1px solid var(--border_color);
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .nav {
+  flex-direction: column;
+  justify-content: start;
+  margin: 0 2rem 0 0;
+  counter-reset: num;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .menu-item {
+  padding: 1.5rem 2rem;
+  color: var(--text_color);
+  font-size: 14px;
+  font-weight: 400;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .menu-item.active {
+  background-color: var(--primary_color);
+  color: #fff;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head {
+  counter-reset: num;
+  width: 307px;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item::before {
+  counter-increment: num;
+  content: counter(num);
+  font-size: 4rem;
+  font-weight: 900;
+  position: absolute;
+  line-height: 1;
+  top: 50%;
+  transform: translate(calc(-100% - 4rem), -50%);
+  text-align: left;
+  min-width: 4rem;
+  transition: 0.4s;
+  color: var(--primary_color);
+  opacity: 0;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item::after {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 100rem;
+  background-color: var(--primary_color);
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.4s;
+  opacity: 0;
+  flex-shrink: 0;
+  left: -2rem;
+  transition: all 0.3s;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item.active::before,
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item.active::after {
+  opacity: 1;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item .tab-title::after {
+  content: "";
+  width: 0;
+  height: 0.1rem;
+  border-radius: 100rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -2rem;
+  transition: 0.4s;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .head .menu-item.active .tab-title::after {
+  width: 2rem;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .image-view img {
+  max-width: 600px;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.quy-trinh-nhap-hang .tab-wrapper .image-view .title-view {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--primary_color);
+  margin-top: -5px;
+}
+
+@keyframes DownUp {
+  0% {
+    transform: translatey(0);
+  }
+
+  50% {
+    transform: translatey(-10px);
+  }
+  100% {
+    transform: translatey(0);
+  }
+}
+
+.quy-trinh-nhap-hang .background-image {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.quy-trinh-nhap-hang .background-image img {
+  width: 300px;
+  object-fit: contain;
+  display: block;
+  animation: DownUp 3s linear infinite;
+  margin-top: 40px;
+}
+
+@media screen and (max-width: 1399px) {
+  .quy-trinh-nhap-hang .tab-wrapper .head .menu-item::before {
+    font-size: 3rem;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .menu-item {
+    padding: 1.2rem 2rem;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .image-view img {
+    max-width: 516px;
+  }
+  .quy-trinh-nhap-hang .background-image img {
+    width: 220px;
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .quy-trinh-nhap-hang .background-image {
+    display: none;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .image-view img {
+    max-width: 575px;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .menu-item {
+    padding: 1.37rem 2rem;
+  }
+}
+
+@media screen and (max-width: 999px) {
+  .quy-trinh-nhap-hang .tab-wrapper {
+    flex-direction: column;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .head {
+    display: flex;
+    width: 100%;
+    overflow: auto;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .wrapper-nav {
+    padding: 0;
+    border: none;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .head .menu-item::before,
+  .quy-trinh-nhap-hang .tab-wrapper .head .menu-item::after,
+  .quy-trinh-nhap-hang .tab-wrapper .head .menu-item.active .tab-title::after {
+    display: none;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .menu-item .tab-title {
+    white-space: nowrap;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .menu-item {
+    padding: 1rem 2rem;
+  }
+
+  .quy-trinh-nhap-hang .image-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .quy-trinh-nhap-hang .tab-wrapper .image-view img {
+    max-width: 100%;
+  }
+  .quy-trinh-nhap-hang .image-view .title-view {
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .quy-trinh-nhap-hang .tab-wrapper .menu-item {
+    font-size: 12px;
+    padding: 12px 16px;
+  }
+}

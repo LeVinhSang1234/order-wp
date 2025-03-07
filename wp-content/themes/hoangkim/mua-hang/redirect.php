@@ -7,4 +7,6 @@ if (is_page('don-hang')) {
     include_once get_template_directory() . '/mua-hang/vi-dien-tu.php';
 } else if (is_page('khieu-nai')) {
     include_once get_template_directory() . '/mua-hang/khieu-nai.php';
+} else if (is_page('gio-hang')) {
+    include_once get_template_directory() . '/mua-hang/gio-hang.php';
 }

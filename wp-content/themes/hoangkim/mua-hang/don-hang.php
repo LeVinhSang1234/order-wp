@@ -43,10 +43,12 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Thông tin đơn hàng</th>
-                            <th>Thông tin tài chính</th>
-                            <th>Trạng thái đơn hàng</th>
-                            <th>Thao tác</th>
+                            <th>Mã đơn hàng</th>
+                            <th>Sản phẩm</th>
+                            <th>Tổng Tiền (VNĐ)</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
+                            <th>Thao Tác</th>
                         </tr>
                     </thead>
                 </table>

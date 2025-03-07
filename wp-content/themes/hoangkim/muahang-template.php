@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-header.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-content.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-dashboard.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-cart.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>
@@ -28,17 +29,30 @@
                             Bảng tin
                         </a>
                     </li>
-                    <li>
-                        <a>
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            Tìm kiếm sản phẩm
+                    <li class="menu-group <?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui')) ? 'menu-open' : '') ?>">
+                        <a class="<?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui')) ? 'active' : '') ?>">
+                            <span> <i class="fa-regular fa-clipboard"></i>
+                                Quản lý đơn hàng
+                            </span>
+                            <i class="fa-solid fa-chevron-right menu-icon-close"></i>
+                            <i class="fa-solid fa-chevron-down menu-icon-open"></i>
                         </a>
-                    </li>
-                    <li>
-                        <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
-                            <i class="fa-regular fa-clipboard"></i>
-                            Đơn hàng
-                        </a>
+                        <ul class="menu-childs">
+                            <li>
+                                <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
+                                    <span> <i class="fa-regular fa-clipboard"></i>
+                                        Đơn hàng Order
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
+                                    <span> <i class="fa-regular fa-clipboard"></i>
+                                        Đơn hàng ký gửi
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li>
                         <a class="<?php echo (is_page('wallet') ? 'active' : '') ?>" href="<?php echo site_url() . '/wallet' ?>">
@@ -58,6 +72,12 @@
                             Đơn ký gửi
                         </a>
                     </li>
+                    <li>
+                        <a class="<?php echo (is_page('gio-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/gio-hang' ?>">
+                            <i class="fa-solid fa-cart-plus"></i>
+                            Giỏ hàng
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="mua-hang-content-right">
@@ -73,3 +93,14 @@
 </body>
 
 </html>
+
+<script>
+    $(document).ready(function() {
+        $('.menu-group').on('click', function() {
+            if (!$(this).hasClass("menu-open")) {
+                $('.menu-group').removeClass('menu-open')
+            }
+            $(this).toggleClass("menu-open")
+        })
+    })
+</script>

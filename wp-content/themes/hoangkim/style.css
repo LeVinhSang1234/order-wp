@@ -412,6 +412,33 @@ table:not(.ui-datepicker-calendar) td {
   margin: 0;
 }
 
+textarea {
+  outline: none;
+  border-radius: 4px;
+  background-color: white;
+  border: 1px solid rgba(33, 33, 33, 0.12);
+  color: #212121;
+  box-shadow: none;
+  padding: 8px;
+}
+
+input {
+  padding: 0 8px;
+  color: #212121;
+  box-shadow: none;
+  height: 38px;
+  font-size: 14px;
+  outline: none;
+  border-radius: 4px;
+  background-color: white;
+  border: 1px solid rgba(33, 33, 33, 0.12);
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-size: 12px;
+}
+
 :root {
   --primary_color: #cc0000;
   --secondary_color: #52e7f5;

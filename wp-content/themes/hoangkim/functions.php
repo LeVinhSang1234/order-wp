@@ -33,9 +33,10 @@ if (is_admin()) {
         wp_enqueue_style('theme-style', get_template_directory_uri() . '/style.css');
     }
     add_action('admin_enqueue_scripts', 'load_custom_admin_css');
-
     require_once get_template_directory() . '/custom-ui/add-custom-logo.php';
     require_once get_template_directory() . '/custom-ui/add-phone.php';
+    require_once get_template_directory() . '/handles/after_setup_theme.php';
+    require_once get_template_directory() . '/api/order.php';
 }
 
 if (!is_admin()) {
@@ -46,8 +47,11 @@ if (!is_admin()) {
     require_once get_template_directory() . '/short-code/login.php';
     require_once get_template_directory() . '/short-code/dang-ki.php';
     require_once get_template_directory() . '/short-code/bai-viet-noi-bat.php';
+    require_once get_template_directory() . '/short-code/dang-ki-bao-gia.php';
+    require_once get_template_directory() . '/short-code/quy-trinh-nhap-hang.php';
 }
-require_once get_template_directory() . '/handles/go-to-mua-hang.php';
 require_once get_template_directory() . '/action/remove-head.php';
 require_once get_template_directory() . '/action/bar-admin.php';
 require_once get_template_directory() . '/api/dang-ki.php';
+require_once get_template_directory() . '/custom-ui/add-user-code.php';
+require_once get_template_directory() . '/api/order.php';

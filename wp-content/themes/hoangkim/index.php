@@ -1,5 +1,5 @@
 <?php
-if (is_page('mua-hang') || is_page('don-hang') || is_page('wallet') || is_page('khieu-nai')) {
+if (is_page('mua-hang') || is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('wallet') || is_page('khieu-nai') || is_page("gio-hang")) {
     include_once get_template_directory() . '/muahang-template.php';
     exit;
 }
@@ -28,7 +28,10 @@ $isShow = !is_page("dang-ki") && !is_page('dang-nhap');
     <?php if (is_page("dang-ki") || is_page('dang-nhap')) { ?>
         <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/dang-ki.css' ?>" type="text/css" media="all" />
     <?php } ?>
-
+    <?php if (is_front_page() || is_home()) { ?>
+        <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/bao-gia.css' ?>" type="text/css" media="all" />
+        <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/quy-trinh-nhap-hang.css' ?>" type="text/css" media="all" />
+    <?php } ?>
 </head>
 <?php if ($isShow) get_header(); ?>
 <?php if (is_user_logged_in() && $isShow) wp_admin_bar_render(); ?>
