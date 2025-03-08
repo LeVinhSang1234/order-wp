@@ -397,9 +397,7 @@ table:not(.ui-datepicker-calendar) td {
 }
 
 .areoi-element figure {
-  display: flex;
   margin: auto;
-  justify-content: center;
 }
 
 .card-body > figure {
