@@ -10,9 +10,9 @@ function mytheme_dang_ki_bao_gia_shortcode($atts)
         'dang-ki-bao-gia'
     );
 
-    return '<div class="container">
+    return '<div class="container"><div class="container">
         <div class="row bao-gia">
-            <div class="col-12 col-md-7 col-lg-7 p-0">
+            <div class="col-12 col-md-7 col-lg-7 p-0 col-image-wrap">
                 <div class="img-wrap">
                     <img src="' . $atts['image-src'] . '" alt="Báo giá miễn phí" />
                 </div>
@@ -35,7 +35,7 @@ function mytheme_dang_ki_bao_gia_shortcode($atts)
                 </div>
             </div>
         </div>
-    </div>';
+    </div></div>';
 }
 
 add_shortcode('dang-ki-bao-gia', 'mytheme_dang_ki_bao_gia_shortcode');

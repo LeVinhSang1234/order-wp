@@ -385,12 +385,6 @@ table:not(.ui-datepicker-calendar) td {
   color: black;
 }
 
-@media screen and (max-width: 1000px) {
-  .bai-viet-noi-bat-wrap {
-    display: none;
-  }
-}
-
 .block-editor-block-list__layout.is-root-container .align-items-start,
 .editor-styles-wrapper
   .block-editor-block-list__layout.is-root-container
@@ -448,4 +442,25 @@ textarea::placeholder {
   --text_color: #333333;
   --grey_color: #e1e1e1;
   --bg_color: #242424;
+}
+
+@media screen and (max-width: 1000px) {
+  .bai-viet-noi-bat-wrap {
+    display: none;
+  }
+  button.accordion-button.collapsed {
+    font-size: 13px;
+  }
+  .accordion-body > p {
+    font-size: 12px !important;
+  }
+}
+
+@media screen and (max-width: 374px) {
+  .banner-download__find-product select {
+    font-size: 12px !important;
+  }
+  .box-select-find input {
+    padding: 0 8px !important;
+  }
 }

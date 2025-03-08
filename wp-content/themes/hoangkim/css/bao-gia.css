@@ -1,3 +1,7 @@
+.bao-gia {
+  margin-top: 40px;
+}
+
 .bao-gia .img-wrap {
   overflow: hidden;
 }
@@ -49,4 +53,22 @@
   background-color: #fc8249;
   color: white;
   font-weight: 600;
+}
+
+@media screen and (max-width: 1399px) {
+  .bao-gia .img-wrap {
+    height: 100%;
+  }
+  .bao-gia .img-wrap img {
+    object-position: right;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bao-gia .col-image-wrap {
+    display: none;
+  }
+  .bao-gia {
+    margin-top: 32px;
+  }
 }
