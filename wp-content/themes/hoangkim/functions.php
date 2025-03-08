@@ -37,6 +37,7 @@ if (is_admin()) {
     require_once get_template_directory() . '/custom-ui/add-phone.php';
     require_once get_template_directory() . '/handles/after_setup_theme.php';
     require_once get_template_directory() . '/api/order.php';
+    require_once get_template_directory() . '/action/add-field-exchange.php';
 }
 
 if (!is_admin()) {

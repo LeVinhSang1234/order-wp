@@ -54,7 +54,7 @@ function save_cart()
                     'price'         => floatval($item['price']),
                     'added_at'      => current_time('mysql')
                 ],
-                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s']
+                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%d', '%f', '%s']
             );
             if ($result === false) {
                 wp_send_json_error([

@@ -70,6 +70,7 @@ input,
 
 .mua-hang-content-right__content {
   height: calc(100% - 40px);
+  min-height: max-content;
 }
 
 .menu-group {
