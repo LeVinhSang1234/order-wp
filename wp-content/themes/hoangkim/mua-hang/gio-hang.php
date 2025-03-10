@@ -159,7 +159,7 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
         })
 
         $('input[data-type="select-cart"]').on("click", function() {
-            fetch(`${origin}/wp-admin/admin-ajax.php?action=remove_cart`, {
+            fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
