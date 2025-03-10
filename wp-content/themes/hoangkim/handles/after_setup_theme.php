@@ -92,27 +92,21 @@ function create_orders_table()
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
         id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT(20) UNSIGNED NOT NULL,
-        order_id VARCHAR(255) NOT NULL UNIQUE,
-        customer_name VARCHAR(255) NOT NULL,
-        shop_url VARCHAR(500) NOT NULL,
-        product_name VARCHAR(255) NOT NULL,
-        product_image VARCHAR(500) NOT NULL,
-        product_url VARCHAR(500) NOT NULL,
-        web VARCHAR(50) NOT NULL,
-        quantity INT(11) NOT NULL,
-        price FLOAT(10,2) NOT NULL,
-        price_vnd FLOAT(10,2) NOT NULL,
-        service_fee FLOAT(10,2) DEFAULT 0,
-        insurance_fee FLOAT(10,2) DEFAULT 0,
-        inspection_fee FLOAT(10,2) DEFAULT 0,
-        packing_fee FLOAT(10,2) DEFAULT 0,
+        cart_ids VARCHAR(255) NOT NULL,
+        exchange_rate FLOAT(10,2) NOT NULL,
+        phi_mua_hang INT(11) DEFAULT 0,
+        status TINYINT DEFAULT 1,
         note TEXT NULL,
+        is_gia_co TINYINT DEFAULT 0,
+        is_kiem_dem_hang TINYINT DEFAULT 0,
+        is_bao_hiem TINYINT DEFAULT 0
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;";
     $wpdb->query($sql);
 }
 
-function create_cart_table() {
+function create_cart_table()
+{
     global $wpdb;
     $table_name = $wpdb->prefix . 'cart';
     $charset_collate = $wpdb->get_charset_collate();
@@ -128,12 +122,15 @@ function create_cart_table() {
         web VARCHAR(50) NULL,
         quantity INT(11) NOT NULL DEFAULT 1,
         price FLOAT(10,2) NOT NULL,
-        added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        is_done TINYINT DEFAULT 0,
+        is_select TINYINT DEFAULT 0
     ) $charset_collate;";
     $wpdb->query($sql);
 }
 
-function after_setup_theme() {
+function after_setup_theme()
+{
     create_muahang_page();
     create_orders_table();
     create_cart_table();

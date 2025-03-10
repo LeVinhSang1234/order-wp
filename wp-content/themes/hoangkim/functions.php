@@ -38,6 +38,7 @@ if (is_admin()) {
     require_once get_template_directory() . '/handles/after_setup_theme.php';
     require_once get_template_directory() . '/api/order.php';
     require_once get_template_directory() . '/action/add-field-exchange.php';
+    require_once get_template_directory() . '/action/phi-mua-hang.php';
 }
 
 if (!is_admin()) {

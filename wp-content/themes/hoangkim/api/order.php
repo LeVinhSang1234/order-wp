@@ -51,10 +51,10 @@ function save_cart()
                     'product_url'   => esc_url_raw($item['url']),
                     'web'           => sanitize_text_field($item['web']),
                     'quantity'      => intval($item['quantity']),
-                    'price'         => floatval($item['price']),
+                    'price'         => floatval(str_replace('?', '0', $item['price'])),
                     'added_at'      => current_time('mysql')
                 ],
-                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ,'%d', '%f', '%s']
+                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s']
             );
             if ($result === false) {
                 wp_send_json_error([
@@ -70,3 +70,97 @@ function save_cart()
         "status"    => "success"
     ]);
 }
+
+function remove_cart()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(["message" => "❌ Bạn chưa đăng nhập!"], 401);
+        wp_die();
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cart';
+    $user_id = get_current_user_id();
+
+    $json = file_get_contents('php://input');
+    $cart_item = json_decode($json, true);
+    if (empty($cart_item) || !isset($cart_item['id'])) {
+        wp_send_json_error(["message" => "❌ Không có id sản phẩm để xóa!"], 400);
+        wp_die();
+    }
+    $product_id = intval($cart_item['id']);
+    $exists = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT id FROM $table_name WHERE user_id = %d AND id = %d",
+            $user_id,
+            $product_id
+        )
+    );
+
+    if ($exists) {
+        $wpdb->delete(
+            $table_name,
+            ['id' => $product_id],
+            ['%d']
+        );
+
+        wp_send_json_success([
+            "message" => "✅ Sản phẩm đã được xóa khỏi giỏ hàng!",
+            "status"  => "success"
+        ]);
+    } else {
+        wp_send_json_error([
+            "message" => "❌ Sản phẩm không tồn tại trong giỏ hàng!"
+        ], 404);
+    }
+}
+
+add_action('wp_ajax_remove_cart', 'remove_cart');
+
+
+function update_cart_item_via_ajax()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
+        wp_die();
+    }
+
+    global $wpdb;
+    $cart_table = $wpdb->prefix . 'cart';
+    $user_id = get_current_user_id();
+
+    $json = file_get_contents('php://input');
+    $body = json_decode($json, true);
+
+    if (isset($body['cart_id'], $body['quantity'], $body['is_select'])) {
+        $cart_id = intval($body['cart_id']);
+        $quantity = intval($body['quantity']);
+        $is_select = intval($body['is_select']);
+    }
+    $cart_item = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $cart_table WHERE id = %d AND user_id = %d",
+        $cart_id,
+        $user_id
+    ));
+
+    if (!$cart_item) {
+        wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
+        wp_die();
+    }
+    $result = $wpdb->update(
+        $cart_table,
+        [
+            'quantity' => $quantity,
+            'is_select' => $is_select
+        ],
+        ['id' => $cart_id, 'user_id' => $user_id],
+        ['%d', '%d'],
+        ['%d', '%d']
+    );
+    if ($result === false) {
+        wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
+        wp_die();
+    }
+    wp_send_json_success(['message' => '✅ Giỏ hàng đã được cập nhật thành công!']);
+}
+add_action('wp_ajax_update_cart_item', 'update_cart_item_via_ajax');
