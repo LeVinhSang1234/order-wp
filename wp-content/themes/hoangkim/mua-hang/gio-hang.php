@@ -1,4 +1,7 @@
 <?php
+
+use function YoastSEO_Vendor\GuzzleHttp\json_encode;
+
 global $wpdb;
 $table_name = $wpdb->prefix . 'cart';
 $user_id = get_current_user_id();
@@ -12,6 +15,8 @@ foreach ($cart_items as $item) {
 }
 $rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
+$current_user = wp_get_current_user();
+
 function format_price_vnd($price)
 {
     return number_format($price, 0, ',', '.') . ' ₫';
@@ -138,6 +143,40 @@ function format_price_vnd($price)
         </div>
     </div>
 </div>
+<div class="popup-info">
+    <div class="popup-content">
+        <h3 class="text-center">Thông tin giao hàng</h3>
+        <div class="content-data">
+            <div class="mt-3 address-info">
+                <div>
+                    <p>Họ tên:</p>
+                    <input data-type="ho_ten" value="<?php echo $current_user->display_name ?>" />
+                </div>
+                <div>
+                    <p>Địa chỉ:</p>
+                    <input data-type="address" value="<?php echo display_user_address(); ?>" />
+                </div>
+                <div>
+                    <p>Email:</p>
+                    <input data-type="email" value="<?php echo $current_user->user_email; ?>" />
+                </div>
+                <div>
+                    <p>Phone:</p>
+                    <input data-type="phone" value="<?php echo display_user_phone(); ?>" />
+                </div>
+                <div class="mt-4 w-100 d-flex justify-content-center gap-2">
+                    <button class="mt-2 btn-cancel btn-cancel-popup-order">
+                        Cancel
+                    </button>
+                    <button class="mt-2 btn-accept-order">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        Đặt hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function() {
 
@@ -215,10 +254,32 @@ function format_price_vnd($price)
         })
         $('button.btn-order').on('click', function() {
             const shopId = $(this).attr('data-shop');
+            let isExistedCheck = false;
+            $(`input[data-type="select-cart"][data-shop="${shopId}"]`).each(function() {
+                if ($(this).is(":checked")) isExistedCheck = true
+            })
+            if (!isExistedCheck) return alert("Vui lòng chọn sản phẩm sẽ mua!")
+            $('.popup-info .btn-accept-order').attr("data-shop", shopId);
+            $('.popup-info').addClass("popup-info__active");
+        })
+
+        $('.btn-cancel-popup-order').on("click", function() {
+            $('.popup-info').removeClass("popup-info__active");
+            $('.popup-info .btn-accept-order').removeAttr("data-shop");
+        })
+
+        $('.popup-info .btn-accept-order').on('click', function() {
+            const shopId = $(this).attr('data-shop');
+            $('.popup-info').removeClass("popup-info__active");
+            $('.popup-info .btn-accept-order').removeAttr("data-shop");
             var data = {
                 action: 'create_order',
                 nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
                 note: 'Giao hàng nhanh',
+                ho_ten: $(`.popup-info input[data-type="ho_ten"]`).val(),
+                address: $(`.popup-info input[data-type="address"]`).val(),
+                email: $(`.popup-info input[data-type="email"]`).val(),
+                phone: $(`.popup-info input[data-type="phone"]`).val(),
                 is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
                 is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
                 is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked")),
@@ -236,7 +297,6 @@ function format_price_vnd($price)
                     alert('Lỗi kết nối đến máy chủ.');
                 }
             });
-
         })
     })
 </script>

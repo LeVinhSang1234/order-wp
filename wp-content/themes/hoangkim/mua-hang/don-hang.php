@@ -55,12 +55,12 @@ $orders = $wpdb->get_results($query);
             </div>
             <div class="mt-3">
                 Số đơn hàng: <strong>0</strong>
-                <table class="w-100 mt-2">
+                <table class="w-100 mt-2 table-list-order">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th class="text-center">#</th>
                             <th>Mã đơn hàng</th>
-                            <th>Sản phẩm</th>
+                            <th class="text-center">Sản phẩm</th>
                             <th>Tổng Tiền (VNĐ)</th>
                             <th>Thời gian</th>
                             <th>Trạng thái</th>
@@ -68,10 +68,22 @@ $orders = $wpdb->get_results($query);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($orders as $order) { ?>
+                        <?php foreach ($orders as $order) {
+                            $cart_ids_array = json_decode($order->cart_ids, true);
+                            $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+                            $query = $wpdb->prepare(
+                                "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+                                ...$cart_ids_array
+                            );
+                            $carts = $wpdb->get_results($query);
+                            $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
+                        ?>
                             <tr>
-                                <td><?php echo $order->id ?></td>
+                                <td class="text-center"><?php echo $order->id ?></td>
                                 <td><?php echo "HK_" . $order->id ?></td>
+                                <td class="text-center">
+                                    <img src="<?php echo $image_url ?>" />
+                                </td>
                             </tr>
                         <?php } ?>
                     </tbody>
