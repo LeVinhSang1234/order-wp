@@ -1,3 +1,19 @@
+<?php
+$table_name = $wpdb->prefix . 'orders';
+$user_id = get_current_user_id();
+$status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+$totals = [];
+foreach ($status_values as $status) {
+    $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$wpdb->prefix}orders WHERE status = %d AND user_id = %d", $status, $user_id));
+    $totals[$status] = is_null($count) ? 0 : $count;
+}
+$query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d ORDER BY created_at DESC",
+    $user_id
+);
+$orders = $wpdb->get_results($query);
+?>
+
 <div class="dashboard">
     <div class="mt-3 text-uppercase flex-1">
         <h4>Danh sách đơn hàng</h4>
@@ -16,18 +32,18 @@
                 ?>
                 <select name="status">
                     <option>Trạng thái</option>
-                    <option>Chờ đặt cọc (0)</option>
-                    <option>Chờ mua hàng (0)</option>
-                    <option>Đang mua hàng (0)</option>
-                    <option>Chờ shop phát hàng (0)</option>
-                    <option>Shop TQ Phát hàng (0)</option>
-                    <option>Kho TQ nhận hàng (0)</option>
-                    <option>Xuất kho TQ (0)</option>
-                    <option>Trong kho VN (0)</option>
-                    <option>Sẵn sàng giao hàng (0)</option>
-                    <option>Chờ xử lý khiếu nại (0)</option>
-                    <option>Đã kết thúc (0)</option>
-                    <option>Đã hủy (0)</option>
+                    <option>Chờ đặt cọc (<?php echo $totals[1] ?>)</option>
+                    <option>Chờ mua hàng (<?php echo $totals[2] ?>)</option>
+                    <option>Đang mua hàng (<?php echo $totals[3] ?>)</option>
+                    <option>Chờ shop phát hàng (<?php echo $totals[4] ?>)</option>
+                    <option>Shop TQ Phát hàng (<?php echo $totals[5] ?>)</option>
+                    <option>Kho TQ nhận hàng (<?php echo $totals[6] ?>)</option>
+                    <option>Xuất kho TQ (<?php echo $totals[7] ?>)</option>
+                    <option>Trong kho VN (<?php echo $totals[8] ?>)</option>
+                    <option>Sẵn sàng giao hàng (<?php echo $totals[9] ?>)</option>
+                    <option>Chờ xử lý khiếu nại (<?php echo $totals[10] ?>)</option>
+                    <option>Đã kết thúc (<?php echo $totals[11] ?>)</option>
+                    <option>Đã hủy (<?php echo $totals[12] ?>)</option>
                 </select>
                 <select name="website">
                     <option>Website</option>
@@ -51,6 +67,14 @@
                             <th>Thao Tác</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        <?php foreach ($orders as $order) { ?>
+                            <tr>
+                                <td><?php echo $order->id ?></td>
+                                <td><?php echo "HK_" . $order->id ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
                 </table>
             </div>
         </div>

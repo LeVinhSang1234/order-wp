@@ -1,3 +1,16 @@
+<?php
+global $wpdb;
+$user_id = get_current_user_id();
+$total_orders = $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM {$wpdb->prefix}orders WHERE user_id = %d",
+    $user_id
+));
+$total_cart = $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM {$wpdb->prefix}cart WHERE user_id = %d and is_done = 0",
+    $user_id
+));
+?>
+
 <div class="dashboard">
     <div class="row">
         <div class="col-lg-3 col-xs-6">
@@ -9,14 +22,14 @@
         </div>
         <div class="col-lg-3 col-xs-6">
             <div class="box-dashboard box-dashboard-aqua">
-                <h4>0 Đơn</h4>
+                <h4><?php echo $total_orders; ?> Đơn</h4>
                 <div class="title">Đơn hàng</div>
                 <div class="view-detail">Xem chi tiết</div>
             </div>
         </div>
         <div class="col-lg-3 col-xs-6">
             <div class="box-dashboard box-dashboard-cart">
-                <h4>0 sản phẩm</h4>
+                <h4><?php echo $total_cart; ?> sản phẩm</h4>
                 <div class="title">Giỏ hàng</div>
                 <div class="view-detail">Xem chi tiết</div>
             </div>

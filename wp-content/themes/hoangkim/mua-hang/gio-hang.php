@@ -3,19 +3,20 @@ global $wpdb;
 $table_name = $wpdb->prefix . 'cart';
 $user_id = get_current_user_id();
 $cart_items = $wpdb->get_results(
-    $wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d ORDER BY added_at DESC", $user_id),
+    $wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d AND is_done = 0 ORDER BY added_at DESC", $user_id),
     ARRAY_A
 );
 $grouped_cart = [];
 foreach ($cart_items as $item) {
     $grouped_cart[$item['shop_id']][] = $item;
 }
+$rate = floatval(get_option('exchange_rate', 1.0));
+$phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 function format_price_vnd($price)
 {
     return number_format($price, 0, ',', '.') . ' ₫';
 }
-$rate = floatval(get_option('exchange_rate', 1.0));
-$phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
+
 ?>
 
 <div class="dashboard">
@@ -28,24 +29,32 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
                 <?php } ?>
                 <?php foreach ($grouped_cart as $shop_id => $products) {
                     $shop_url = $products[0]['shop_url'];
+                    $totalPrice = 0;
+                    $allSelected = true;
+                    foreach ($products as $product) {
+                        if ($product['is_select'] != 1) {
+                            $allSelected = false;
+                            break;
+                        }
+                    }
                 ?>
                     <div class="group-cart">
                         <div class="cart-header">
                             <a class="d-flex align-items-center gap-1" target="_blank" href=" <?php echo $shop_url ?>">
-                                <input data-type="select-carts" type="checkbox" data-item="<?php echo $shop_id ?>" />
+                                <input <?php echo ($allSelected ? "checked" : "") ?> data-type="select-carts" type="checkbox" data-item="<?php echo $shop_id ?>" />
                                 <?php echo $shop_id ?>
                             </a>
                             <div class="d-flex align-items-center cart-option gap-3">
                                 <div class="d-flex align-items-center gap-1">
-                                    <input data-item="" type="checkbox" />
+                                    <input data-shop="<?php echo $shop_id ?>" data-type="gia-co-dong-go" type="checkbox" />
                                     <span>Gia cố, đóng gỗ</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-1">
-                                    <input type="checkbox" />
+                                    <input data-shop="<?php echo $shop_id ?>" data-type="kiem-dem-hang" type="checkbox" />
                                     <span>Kiểm đếm hàng</span>
                                 </div>
                                 <div class="d-flex align-items-center gap-1">
-                                    <input type="checkbox" />
+                                    <input data-shop="<?php echo $shop_id ?>" data-type="bao-hiem" type="checkbox" />
                                     <span>Bảo hiểm hàng hoá</span>
                                 </div>
                             </div>
@@ -61,10 +70,12 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
                                     <th class="text-center" style="width: 80px">Xóa</th>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($products as $product) { ?>
+                                    <?php foreach ($products as $product) {
+                                        if ($product['is_select']) $totalPrice += $product['quantity'] * $product['price'];
+                                    ?>
                                         <tr>
                                             <td class="text-center">
-                                                <input data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>" data-type="select-cart" type="checkbox" />
+                                                <input <?php echo ($product['is_select'] ? "checked" : "") ?> data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>" data-type="select-cart" type="checkbox" />
                                             </td>
                                             <td class="text-center"><img src="<?php echo $product['product_image'] ?>" /></td>
                                             <td>
@@ -82,16 +93,21 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
                                                 </div>
                                             </td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php }
+                                    $totalPrice = $totalPrice * $rate;
+                                    $phiMua = $totalPrice * $phi_mua_hang;
+                                    ?>
                                 </tbody>
                             </table>
                             <div class="flex-1 total-order">
                                 <ul>
                                     <li>
-                                        Tiền hàng<strong data-type="total-money-product">--</strong>
+                                        Tiền hàng<strong data-type="total-money-product"><?php echo format_price_vnd($totalPrice) ?></strong>
                                     </li>
                                     <li>
-                                        Phí mua hàng (<?php echo $phi_mua_hang; ?>%)<strong data-type="phi-mua-product">--</strong>
+                                        Phí mua hàng (<?php echo $phi_mua_hang; ?>%)<strong data-type="phi-mua-product">
+                                            <?php echo format_price_vnd($phiMua) ?>
+                                        </strong>
                                     </li>
                                     <li>
                                         Phí bảo hiểm <strong>--</strong>
@@ -103,13 +119,13 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
                                         Phí đóng kiện gỗ <strong>--</strong>
                                     </li>
                                     <li class="text-uppercase">
-                                        TỔNG TIỀN TẠM TÍNH<strong data-type="total-product">--</strong>
+                                        TỔNG TIỀN TẠM TÍNH<strong data-type="total-product"><?php echo format_price_vnd($totalPrice + $phiMua) ?></strong>
                                     </li>
                                 </ul>
                                 <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
                                 <textarea data-shop="<?php echo $shop_id ?>" data-type="note-product" style="font-size: 13px;" class="w-100" placeholder="Ghi chú đơn hàng này"></textarea>
                                 <div class="w-100 d-flex justify-content-end">
-                                    <button class="mt-2 btn-order">
+                                    <button data-shop="<?php echo $shop_id ?>" class="mt-2 btn-order" data-item="<?php echo $product['id'] ?>">
                                         <i class="fa-solid fa-cart-plus"></i>
                                         Yêu cầu báo giá
                                     </button>
@@ -152,32 +168,75 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
         })
 
         $('input[data-type="select-carts"]').on("click", function() {
-            // const val = $(this).is(":checked")
-            // const shopId = $(this).attr('data-item')
-            // $(`input[data-shop="${shopId}"]`).prop('checked', val);
-            // calPrice(shopId)
+            const val = $(this).is(":checked")
+            const shopId = $(this).attr('data-item')
+            $(`input[data-shop="${shopId}"]`).click();
         })
 
         $('input[data-type="select-cart"]').on("click", function() {
+            const shopId = $(this).attr('data-shop');
+            const val = $(this).is(":checked")
+            const productId = $(this).attr('data-item');
+            const quantity = $(`input[data-shop="${shopId}"][data-item="${productId}"][data-type="product-quantity"]`).val()
             fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        id
+                        cart_id: productId,
+                        quantity,
+                        is_select: Number(val)
                     }),
-                    credentials: "include",
                 })
                 .catch(() => null)
                 .finally(() => window.location.reload());
         })
 
         $('input[data-type="product-quantity"]').on('change', function() {
-            const val = $(this).val();
-            $(this).val(Number(val) || 1)
-            const shopId = $(this).attr("data-shop")
-            calPrice(shopId)
+            const shopId = $(this).attr('data-shop');
+            const productId = $(this).attr('data-item');
+            const val = $(`input[data-shop="${shopId}"][data-item="${productId}"][data-type="select-cart"]`).is(":checked")
+            const quantity = parseInt($(this).val()) || 1
+            $(this).val(quantity)
+            fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        cart_id: productId,
+                        quantity,
+                        is_select: Number(val)
+                    }),
+                })
+                .catch(() => null)
+                .finally(() => window.location.reload());
+        })
+        $('button.btn-order').on('click', function() {
+            const shopId = $(this).attr('data-shop');
+            var data = {
+                action: 'create_order',
+                nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
+                note: 'Giao hàng nhanh',
+                is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
+                is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
+                is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked")),
+                shop_id: shopId
+            };
+            $.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    alert(response.data.message);
+                    window.location.reload()
+                },
+                error: function() {
+                    alert('Lỗi kết nối đến máy chủ.');
+                }
+            });
+
         })
     })
 </script>

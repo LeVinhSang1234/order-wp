@@ -23,7 +23,7 @@ function save_cart()
     foreach ($cart_items as $item) {
         $exists = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM $table_name WHERE user_id = %d AND shop_id = %s AND product_name = %s AND product_image = %s",
+                "SELECT id FROM $table_name WHERE user_id = %d AND shop_id = %s AND product_name = %s AND product_image = %s AND is_done = 0",
                 $user_id,
                 sanitize_text_field($item['id']),
                 sanitize_text_field($item['name']),
@@ -116,7 +116,6 @@ function remove_cart()
 }
 
 add_action('wp_ajax_remove_cart', 'remove_cart');
-
 
 function update_cart_item_via_ajax()
 {

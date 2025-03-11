@@ -94,12 +94,13 @@ function create_orders_table()
         user_id BIGINT(20) UNSIGNED NOT NULL,
         cart_ids VARCHAR(255) NOT NULL,
         exchange_rate FLOAT(10,2) NOT NULL,
-        phi_mua_hang INT(11) DEFAULT 0,
+        phi_mua_hang FLOAT(10,2) DEFAULT 0,
         status TINYINT DEFAULT 1,
         note TEXT NULL,
         is_gia_co TINYINT DEFAULT 0,
         is_kiem_dem_hang TINYINT DEFAULT 0,
-        is_bao_hiem TINYINT DEFAULT 0
+        is_bao_hiem TINYINT DEFAULT 0,
+        type TINYINT DEFAULT 0, -- 0 -> order; 1 -> kí gửi
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;";
     $wpdb->query($sql);
@@ -137,3 +138,82 @@ function after_setup_theme()
 }
 
 add_action('after_setup_theme', 'after_setup_theme');
+
+
+// Đăng ký action để xử lý yêu cầu tạo đơn hàng
+add_action('wp_ajax_create_order', 'create_order_via_ajax');
+add_action('wp_ajax_nopriv_create_order', 'create_order_via_ajax'); // Xử lý cho người dùng chưa đăng nhập
+
+// Hàm xử lý tạo đơn hàng qua AJAX
+function create_order_via_ajax()
+{
+    // Kiểm tra nonce bảo mật
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'create_order_nonce')) {
+        wp_send_json_error(['message' => 'Nonce không hợp lệ']);
+        exit;
+    }
+    $shop_id = isset($_POST['shop_id']) ? intval($_POST['shop_id']) : 0; 
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
+        exit;
+    }
+    global $wpdb;
+    $cart_ids = $wpdb->get_col($wpdb->prepare(
+        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1",
+        $shop_id, $user_id
+    ));
+    if (empty($cart_ids)) {
+        wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
+        exit;
+    }
+    if (empty($cart_ids)) {
+        wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
+        exit;
+    }
+    $cart_ids_str = json_encode($cart_ids);
+    $exchange_rate = floatval(get_option('exchange_rate', 1.0));
+    $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
+
+    $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
+    $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
+    $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
+    $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+    $table = $wpdb->prefix . 'orders';
+    $data = [
+        'user_id' => $user_id,
+        'cart_ids' => $cart_ids_str,
+        'exchange_rate' => $exchange_rate,
+        'phi_mua_hang' => $phi_mua_hang,
+        'note' => $note,
+        'is_gia_co' => $is_gia_co,
+        'is_kiem_dem_hang' => $is_kiem_dem_hang,
+        'is_bao_hiem' => $is_bao_hiem,
+        'created_at' => current_time('mysql'),
+    ];
+    $format = [
+        '%d',
+        '%s',
+        '%f',
+        '%d',
+        '%d',
+        '%s',
+        '%d',
+        '%d',
+        '%d',
+        '%s'
+    ];
+    $result = $wpdb->insert($table, $data, $format);
+    if ($result !== false) {
+       $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->prefix}cart SET is_done = 1 WHERE id IN (" . implode(',', array_fill(0, count($cart_ids), '%d')) . ")",
+                ...$cart_ids
+            )
+        );
+        wp_send_json_success(['message' => 'Đơn hàng đã được tạo thành công.']);
+    } else {
+        wp_send_json_error(['message' => 'Lỗi khi tạo đơn hàng.']);
+    }
+    exit;
+}
