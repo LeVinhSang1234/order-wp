@@ -57,3 +57,9 @@ require_once get_template_directory() . '/action/bar-admin.php';
 require_once get_template_directory() . '/api/dang-ki.php';
 require_once get_template_directory() . '/custom-ui/add-user-code.php';
 require_once get_template_directory() . '/api/order.php';
+
+
+function format_price_vnd($price)
+{
+    return number_format($price, 0, ',', '.') . ' ₫';
+}

@@ -29,6 +29,21 @@ function create_muahang_page()
         );
         wp_insert_post($new_page);
     }
+
+    $page = get_page_by_path('chi-tiet-don-hang');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Chi Tiết Đơn Hàng', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'chi-tiet-don-hang', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+
     $page = get_page_by_path('don-hang-ky-gui');
     if (!$page) {
         // Tạo trang mua-hang
@@ -93,7 +108,6 @@ function create_orders_table()
         id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id BIGINT(20) UNSIGNED NOT NULL,
         cart_ids VARCHAR(255) NOT NULL,
-        exchange_rate FLOAT(10,2) NOT NULL,
         status TINYINT DEFAULT 1,
         note TEXT NULL,
         is_gia_co TINYINT DEFAULT 0,
@@ -104,13 +118,8 @@ function create_orders_table()
         address VARCHAR(500) NULL,
         email VARCHAR(500) NULL,
         phone VARCHAR(500) NULL,
-        da_thanh_toan VARCHAR(500) NULL, -- Tổng tiền hàng
-        phi_mua_hang FLOAT(10,2) DEFAULT 0,
-        phi_bao_hiem FLOAT(10,2) DEFAULT 0,
-        phi_kiem_dem FLOAT(10,2) DEFAULT 0,
-        phi_gia_co FLOAT(10,2) DEFAULT 0,
-        chiet_khau_dich_vu FLOAT(10,2) DEFAULT 0,
-        phi_ship_noi_dia_trung FLOAT(10,2) DEFAULT 0,
+        da_thanh_toan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hàng
+        da_hoan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hoàn
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;";
     $wpdb->query($sql);
@@ -183,8 +192,6 @@ function create_order_via_ajax()
         exit;
     }
     $cart_ids_str = json_encode($cart_ids);
-    $exchange_rate = floatval(get_option('exchange_rate', 1.0));
-    $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
     $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
 
     $ho_ten = isset($_POST['ho_ten']) ? sanitize_textarea_field($_POST['ho_ten']) : '';
@@ -198,8 +205,6 @@ function create_order_via_ajax()
     $data = [
         'user_id' => $user_id,
         'cart_ids' => $cart_ids_str,
-        'exchange_rate' => $exchange_rate,
-        'phi_mua_hang' => $phi_mua_hang,
         'note' => $note,
         'is_gia_co' => $is_gia_co,
         'is_kiem_dem_hang' => $is_kiem_dem_hang,
@@ -212,8 +217,6 @@ function create_order_via_ajax()
     $format = [
         '%d',
         '%s',
-        '%f',
-        '%f',
         '%s',
         '%d',
         '%d',

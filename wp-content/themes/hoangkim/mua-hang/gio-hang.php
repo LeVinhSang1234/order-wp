@@ -16,12 +16,6 @@ foreach ($cart_items as $item) {
 $rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 $current_user = wp_get_current_user();
-
-function format_price_vnd($price)
-{
-    return number_format($price, 0, ',', '.') . ' ₫';
-}
-
 ?>
 
 <div class="dashboard">
@@ -149,20 +143,24 @@ function format_price_vnd($price)
         <div class="content-data">
             <div class="mt-3 address-info">
                 <div>
-                    <p>Họ tên:</p>
+                    <p>Họ tên: <span class="mess-error">*</span></p>
                     <input data-type="ho_ten" value="<?php echo $current_user->display_name ?>" />
+                    <span class="mess-error" item-type="name-error">Vui lòng nhập tên</span>
                 </div>
                 <div>
-                    <p>Địa chỉ:</p>
+                    <p>Địa chỉ: </p>
                     <input data-type="address" value="<?php echo display_user_address(); ?>" />
+                    <span class="mess-error" item-type="address-error">Vui lòng nhập địa chỉ</span>
                 </div>
                 <div>
-                    <p>Email:</p>
+                    <p>Email: <span class="mess-error">*</span></p>
                     <input data-type="email" value="<?php echo $current_user->user_email; ?>" />
+                    <span class="mess-error" item-type="email-error">Vui lòng nhập email</span>
                 </div>
                 <div>
-                    <p>Phone:</p>
+                    <p>Số điện thoại: <span class="mess-error">*</span></p>
                     <input data-type="phone" value="<?php echo display_user_phone(); ?>" />
+                    <span class="mess-error" item-type="phone-error">Vui lòng nhập số điện thoại</span>
                 </div>
                 <div class="mt-4 w-100 d-flex justify-content-center gap-2">
                     <button class="mt-2 btn-cancel btn-cancel-popup-order">
@@ -270,16 +268,40 @@ function format_price_vnd($price)
 
         $('.popup-info .btn-accept-order').on('click', function() {
             const shopId = $(this).attr('data-shop');
+            const ho_ten = $(`.popup-info input[data-type="ho_ten"]`).val()
+            const address = $(`.popup-info input[data-type="address"]`).val()
+            const email = $(`.popup-info input[data-type="email"]`).val()
+            const phone = $(`.popup-info input[data-type="phone"]`).val()
+
+            if (!ho_ten) {
+                $('.mess-error[item-type="name-error"]').addClass('mess-error__show')
+            } else $('.mess-error[item-type="name-error"]').removeClass('mess-error__show')
+
+            if (!address) {
+                $('.mess-error[item-type="address-error"]').addClass('mess-error__show')
+            } else $('.mess-error[item-type="address-error"]').removeClass('mess-error__show')
+
+            if (!email) {
+                $('.mess-error[item-type="email-error"]').addClass('mess-error__show')
+            } else $('.mess-error[item-type="email-error"]').removeClass('mess-error__show')
+
+            if (!phone) {
+                $('.mess-error[item-type="phone-error"]').addClass('mess-error__show')
+            } else $('.mess-error[item-type="phone-error"]').removeClass('mess-error__show')
+
+            if (!ho_ten || !address || !email || !phone) return
+
             $('.popup-info').removeClass("popup-info__active");
             $('.popup-info .btn-accept-order').removeAttr("data-shop");
+
             var data = {
                 action: 'create_order',
                 nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
                 note: 'Giao hàng nhanh',
-                ho_ten: $(`.popup-info input[data-type="ho_ten"]`).val(),
-                address: $(`.popup-info input[data-type="address"]`).val(),
-                email: $(`.popup-info input[data-type="email"]`).val(),
-                phone: $(`.popup-info input[data-type="phone"]`).val(),
+                ho_ten,
+                address,
+                email,
+                phone,
                 is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
                 is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
                 is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked")),
