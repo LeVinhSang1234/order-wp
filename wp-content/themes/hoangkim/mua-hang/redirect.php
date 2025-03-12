@@ -11,4 +11,6 @@ if (is_page('don-hang')) {
     include_once get_template_directory() . '/mua-hang/gio-hang.php';
 } else if (is_page('chi-tiet-don-hang')) {
     include_once get_template_directory() . '/mua-hang/chi-tiet-don-hang.php';
+} else if (is_page('don-hang-ky-gui')) {
+    include_once get_template_directory() . '/mua-hang/don-hang-ki-gui.php';
 }

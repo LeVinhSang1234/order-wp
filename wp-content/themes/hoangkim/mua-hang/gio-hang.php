@@ -1,7 +1,4 @@
 <?php
-
-use function YoastSEO_Vendor\GuzzleHttp\json_encode;
-
 global $wpdb;
 $table_name = $wpdb->prefix . 'cart';
 $user_id = get_current_user_id();
