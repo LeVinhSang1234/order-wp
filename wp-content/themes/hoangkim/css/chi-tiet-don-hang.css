@@ -1,0 +1,14 @@
+.chi-tiet-don-hang .status-box {
+  padding: 4px 16px;
+  font-size: 14px;
+  background-color: green;
+  color: white;
+  border-radius: 4px;
+}
+
+.list-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
