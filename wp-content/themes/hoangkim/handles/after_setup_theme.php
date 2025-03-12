@@ -120,6 +120,12 @@ function create_orders_table()
         phone VARCHAR(500) NULL,
         da_thanh_toan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hàng
         da_hoan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hoàn
+        exchange_rate FLOAT(10,2) DEFAULT NULL,
+        phi_mua_hang FLOAT(10,2) DEFAULT NULL,
+        phi_ship_noi_dia FLOAT(10,2) NULL,
+        phi_kiem_dem FLOAT(10,2) DEFAULT NULL,
+        phi_gia_co FLOAT(10,2) DEFAULT NULL,
+        chiet_khau_dich_vu FLOAT(10,2) DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;";
     $wpdb->query($sql);
@@ -149,11 +155,28 @@ function create_cart_table()
     $wpdb->query($sql);
 }
 
+function create_chat_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'chat';
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        user_id BIGINT(20) UNSIGNED NOT NULL,
+        order_id BIGINT(20) NOT NULL,
+        is_system TINYINT DEFAULT 0,
+        text TEXT NULL,
+        added_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
+
 function after_setup_theme()
 {
     create_muahang_page();
     create_orders_table();
     create_cart_table();
+    create_chat_table();
 }
 
 add_action('after_setup_theme', 'after_setup_theme');
@@ -197,7 +220,7 @@ function create_order_via_ajax()
     $ho_ten = isset($_POST['ho_ten']) ? sanitize_textarea_field($_POST['ho_ten']) : '';
     $address = isset($_POST['address']) ? sanitize_textarea_field($_POST['address']) : '';
     $email = isset($_POST['email']) ? sanitize_textarea_field($_POST['email']) : '';
-    $phone = isset($_POST['nophonete']) ? sanitize_textarea_field($_POST['phone']) : '';
+    $phone = isset($_POST['phone']) ? sanitize_textarea_field($_POST['phone']) : '';
     $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
     $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
     $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
@@ -237,6 +260,43 @@ function create_order_via_ajax()
         wp_send_json_success(['message' => 'Đơn hàng đã được tạo thành công.']);
     } else {
         wp_send_json_error(['message' => 'Lỗi khi tạo đơn hàng.']);
+    }
+    exit;
+}
+
+
+add_action('wp_ajax_update_order_fields', 'update_order_fields');
+
+function update_order_fields()
+{
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'Bạn không có quyền thực hiện hành động này.'));
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $note = isset($_POST['note']) ? sanitize_text_field($_POST['note']) : '';
+    $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
+    $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
+    $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+    if ($order_id <= 0) {
+        wp_send_json_error(array('message' => 'ID đơn hàng không hợp lệ.'));
+    }
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'orders';
+
+    $data = array(
+        'note' => $note,
+        'is_gia_co' => $is_gia_co,
+        'is_kiem_dem_hang' => $is_kiem_dem_hang,
+        'is_bao_hiem' => $is_bao_hiem
+    );
+
+    $where = array('id' => $order_id);
+    $updated = $wpdb->update($table_name, $data, $where);
+    if ($updated !== false) {
+        wp_send_json_success(array('message' => 'Đơn hàng đã được cập nhật thành công.'));
+    } else {
+        wp_send_json_error(array('message' => 'Cập nhật thất bại, vui lòng thử lại.'));
     }
     exit;
 }

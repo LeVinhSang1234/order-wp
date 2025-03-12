@@ -12,3 +12,84 @@
   gap: 16px;
   margin-top: 10px;
 }
+
+.chi-tiet-don-hang .order-status {
+  font-size: 14px;
+}
+
+.chi-tiet-don-hang .order-status > div {
+  opacity: 0.6;
+}
+
+.chi-tiet-don-hang .order-status .status-active {
+  color: green;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.content-list-data {
+  display: flex;
+}
+
+table.table-list-chi-tiet {
+  border: none !important;
+  box-shadow: none;
+}
+
+table.table-list-chi-tiet td {
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+.fs-13 {
+  font-size: 13px;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+.chi-tiet-don-hang textarea {
+  width: 100%;
+  max-width: 250px;
+  resize: none;
+}
+
+.ls-inline {
+  padding: 0;
+  list-style: none;
+}
+
+.ls-inline li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.divider {
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.4);
+}
+
+.box-red {
+  background-color: #ff0000 !important;
+}
+
+.status-red {
+  color: #ff0000 !important;
+}
+
+.chat-box-message {
+  width: 100%;
+  min-height: 180px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.input-chat-message {
+  width: 100%;
+  margin-top: 20px;
+  resize: vertical;
+  max-width: 100% !important;
+}
