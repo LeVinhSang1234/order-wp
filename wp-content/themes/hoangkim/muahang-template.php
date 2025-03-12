@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-content.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-dashboard.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/mua-hang-cart.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo get_template_directory_uri() . '/css/gio-hang.css' ?>" type="text/css" media="all" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>

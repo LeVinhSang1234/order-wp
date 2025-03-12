@@ -37,6 +37,8 @@ if (is_admin()) {
     require_once get_template_directory() . '/custom-ui/add-phone.php';
     require_once get_template_directory() . '/handles/after_setup_theme.php';
     require_once get_template_directory() . '/api/order.php';
+    require_once get_template_directory() . '/action/add-field-exchange.php';
+    require_once get_template_directory() . '/action/phi-mua-hang.php';
 }
 
 if (!is_admin()) {
@@ -55,3 +57,9 @@ require_once get_template_directory() . '/action/bar-admin.php';
 require_once get_template_directory() . '/api/dang-ki.php';
 require_once get_template_directory() . '/custom-ui/add-user-code.php';
 require_once get_template_directory() . '/api/order.php';
+
+
+function format_price_vnd($price)
+{
+    return number_format($price, 0, ',', '.') . ' ₫';
+}

@@ -23,8 +23,8 @@ function custom_user_registration()
         );
 
         $user_id = wp_insert_user($userdata);
-        if (!is_wp_error($user_id)) {
-            update_user_meta($user_id, 'phone', $phone);
+        if (!is_wp_error($user_id) && $phone) {
+            update_user_meta($user_id, 'user_phone', $phone);
         } else {
             $error_message = $user_id->get_error_message();
             return 'Lỗi khi tạo người dùng: ' . $error_message;

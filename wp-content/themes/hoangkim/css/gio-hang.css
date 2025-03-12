@@ -1,0 +1,63 @@
+.popup-info {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+.popup-info__active {
+  display: flex;
+}
+
+.popup-content {
+  width: 500px;
+  max-width: 85%;
+  background-color: white;
+  margin: auto;
+  padding: 16px;
+  border-radius: 4px;
+}
+
+.content-data {
+  display: flex;
+  gap: 24px;
+}
+
+.address-info {
+  flex: 1;
+}
+
+.address-info p {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.address-info input {
+  width: 100%;
+}
+
+.btn-cancel {
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  min-width: 100px;
+  font-size: 14px;
+}
+
+.table-list-order td > img {
+  width: 50px;
+  height: 50px;
+}
+
+.mess-error {
+  font-size: 12px;
+  color: #ff0000;
+  opacity: 0;
+}
+
+.mess-error__show {
+  opacity: 1;
+}
