@@ -1,7 +1,7 @@
 .mua-hang-content {
 	width: 100%;
 	display: flex;
-	height: calc(100dvh - 44px);
+	height: calc(100dvh - var(--header_height));
 }
 
 .menu-left {
@@ -68,7 +68,7 @@
 
 .mua-hang-content-right {
 	width: 100%;
-	height: calc(100dvh - 44px);
+	height: calc(100dvh - var(--header_height));
 	overflow: auto;
 }
 
