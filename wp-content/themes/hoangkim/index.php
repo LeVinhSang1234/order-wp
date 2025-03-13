@@ -1,5 +1,5 @@
 <?php
-if (is_page('doi-mat-khau') || is_page('tai-khoan') || is_page('nap-tien') || is_page('mua-hang') || is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('wallet') || is_page('khieu-nai') || is_page("gio-hang") || is_page('chi-tiet-don-hang')) {
+if (is_page('mua-hang') || is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('wallet') || is_page('khieu-nai') || is_page("gio-hang") || is_page('chi-tiet-don-hang')) {
     include_once get_template_directory() . '/muahang-template.php';
     exit;
 }

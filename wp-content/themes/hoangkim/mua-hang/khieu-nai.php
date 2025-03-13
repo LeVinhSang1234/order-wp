@@ -2,8 +2,8 @@
     <div class="mt-3 text-uppercase flex-1">
         <h4>DANH SÁCH KHIẾU NẠI SHOP</h4>
         <div class="notification-dashboard">
-            <div class="d-flex align-items-center gap-2">
-                <input placeholder="Mã đơn hàng" />
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <input class="w-filter-full" placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ";
@@ -18,10 +18,11 @@
             </div>
             <div class="mt-3">
                 Số khiếu nại: <strong>0</strong>
-                <table class="w-100 mt-2">
+                <div class="table-responsive">
+                <table class="w-100 mt-2" style="min-width: 1000px;">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th >#</th>
                             <th>Thông tin đơn hàng</th>
                             <th>Thông tin tài chính</th>
                             <th>Trạng thái đơn hàng</th>
@@ -29,6 +30,7 @@
                         </tr>
                     </thead>
                 </table>
+                </div>
             </div>
         </div>
     </div>

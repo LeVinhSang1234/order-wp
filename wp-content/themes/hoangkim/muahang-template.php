@@ -32,7 +32,7 @@
                             Bảng tin
                         </a>
                     </li>
-                    <!-- <li class="menu-group <?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('chi-tiet-don-hang')) ? 'menu-open' : '') ?>">
+                    <li class="menu-group <?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('chi-tiet-don-hang')) ? 'menu-open' : '') ?>">
                         <a class="<?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('chi-tiet-don-hang')) ? 'active' : '') ?>">
                             <span> <i class="fa-regular fa-clipboard"></i>
                                 Quản lý đơn hàng
@@ -41,20 +41,21 @@
                             <i class="fa-solid fa-chevron-down menu-icon-open"></i>
                         </a>
                         <ul class="menu-childs">
-                            
+                            <li>
+                                <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
+                                    <span> <i class="fa-regular fa-clipboard"></i>
+                                        Đơn hàng Order
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
+                                    <span> <i class="fa-regular fa-clipboard"></i>
+                                        Đơn hàng ký gửi
+                                    </span>
+                                </a>
+                            </li>
                         </ul>
-                    </li> -->
-                    <li>
-                        <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
-                            <i class="fa-regular fa-clipboard"></i>
-                            Đơn hàng Order
-                        </a>
-                    </li>
-                    <li>
-                        <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
-                            <i class="fa-solid fa-van-shuttle"></i>
-                            Đơn hàng ký gửi
-                        </a>
                     </li>
                     <li>
                         <a class="<?php echo (is_page('wallet') ? 'active' : '') ?>" href="<?php echo site_url() . '/wallet' ?>">
@@ -69,21 +70,15 @@
                         </a>
                     </li>
                     <li>
+                        <a>
+                            <i class="fa-solid fa-van-shuttle"></i>
+                            Đơn ký gửi
+                        </a>
+                    </li>
+                    <li>
                         <a class="<?php echo (is_page('gio-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/gio-hang' ?>">
                             <i class="fa-solid fa-cart-plus"></i>
                             Giỏ hàng
-                        </a>
-                    </li>
-                    <li>
-                        <a class="<?php echo (is_page('tai-khoan') ? 'active' : '') ?>" href="<?php echo site_url() . '/tai-khoan' ?>">
-                            <i class="fa-solid fa-user"></i>
-                            Tài khoản
-                        </a>
-                    </li>
-                    <li>
-                        <a class="<?php echo (is_page('doi-mat-khau') ? 'active' : '') ?>" href="<?php echo site_url() . '/doi-mat-khau' ?>">
-                            <i class="fa-solid fa-lock"></i>
-                            Đổi mật khẩu
                         </a>
                     </li>
                 </ul>
@@ -104,11 +99,33 @@
 
 <script>
     $(document).ready(function() {
-        $('.menu-group').on('click', function() {
+
+        // Toggle menu-left
+        $('menu-toggle').on('click', function() {
             if (!$(this).hasClass("menu-open")) {
-                $('.menu-group').removeClass('menu-open')
+                $('.menu-toggle').removeClass('menu-open')
             }
             $(this).toggleClass("menu-open")
         })
+
+
+        $('.menu-toggle').on('click', function() {
+            if (!$(this).hasClass("menu-open")) {
+                $('.menu-toggle').removeClass('menu-open')
+            }
+            $(this).toggleClass("menu-open")
+        });
+
+        $('.menu-toggle').on('click', function (event) {
+            event.stopPropagation();
+            $('.menu-left').toggleClass('menu-left-close');
+        });
+
+        $(document).on('click', function (event) {
+            if (!$(event.target).closest('.menu-left, .menu-toggle').length && $(window).width() < 769) {
+                $('.menu-left').addClass('menu-left-close');
+            }
+        });
+
     })
 </script>
