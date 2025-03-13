@@ -5,7 +5,7 @@ if (!$id) {
     exit();
 }
 $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Nhập kho TQ', 'Xuất kho TQ', 'Nhập kho VN', 'Đang giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
-$order = $wpdb->get_row($wpdb->prepare("SELECT * FROM wp_orders WHERE id = %d", $id));
+$order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}orders WHERE id = %d", $id));
 if ($order) {
 } else {
     echo "<script>location.href = '" . site_url('/404') . "';</script>";
@@ -34,8 +34,6 @@ if (!$phone) {
 }
 $query = "SELECT text,is_system FROM {$wpdb->prefix}chat WHERE order_id = $order->id";
 $chats = $wpdb->get_results($query);
-
-echo json_encode($chat);
 
 function getStatus($st)
 {
@@ -102,6 +100,7 @@ function getIndex($st)
             </div>
         </div>
         <div class="notification-dashboard">
+            <h5>HK_<?php echo $order->id ?></h5>
             <div class="list-status order-status">
                 <?php foreach ($status_str as $key => $status) { ?>
                     <?php if ($key > 0) { ?>
@@ -266,7 +265,7 @@ function getIndex($st)
 
 
 <script>
-    <?php if ($isDisabled) { ?>
+    <?php if (!$isDisabled) { ?>
         $('#update-order-fields').on('click', function(e) {
             e.preventDefault();
             var note = $('#order-note').val();
