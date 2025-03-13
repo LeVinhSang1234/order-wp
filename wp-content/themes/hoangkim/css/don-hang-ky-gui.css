@@ -1,0 +1,44 @@
+.text-uppercase {
+  margin-top: 15px;
+  font-size: 24px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.don-hang-ky-gui .alert {
+  padding: 15px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border: none;
+}
+
+.don-hang-ky-gui .alert-warning {
+  color: #72582b;
+  background-color: #f7f0ce;
+}
+
+.don-hang-ky-gui p {
+  margin: 0;
+}
+
+.frm_search_logistic .box-filter {
+  clear: both;
+  display: table;
+  width: 100%;
+  padding: 10px 0;
+  overflow: hidden;
+  margin-bottom: 15px;
+  border-bottom: 1px dashed #d7d7d7;
+}
+
+.marbot15 {
+  margin-bottom: 10px;
+}
+
+tr {
+  vertical-align: middle;
+}
