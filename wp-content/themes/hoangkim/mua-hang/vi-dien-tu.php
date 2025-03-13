@@ -3,8 +3,11 @@
         <div class="mt-3 flex-3 align-items-stretch">
             <h4 class="text-uppercase">Ví điện tử</h4>
             <div class="notification-dashboard" style="height: 150px">
-                <div>Số dư trong ví: <strong style="color: #ff0000">0</strong> VNĐ</div>
-                <div>Mã nạp tiền: <strong style="color: #ff0000">HT51646NT</strong></div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>Số dư trong ví: <strong style="color: #ff0000">0</strong> VNĐ</div>
+                    <button class="btn">Nạp tiền</button>
+                </div>
+                <div>Mã nạp tiền: <strong style="color: #ff0000">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
                 <div style="font-size: 12px" class="mt-2">
                     Tổng tiền hàng đã về chờ tất toán : <strong style="color: #ff0000">0</strong> đ
                 </div>
@@ -23,10 +26,18 @@
             </div>
         </div>
     </div>
-    <div class="mt-3 text-uppercase flex-1">
-        <h4>Nạp tiền vào ví điện tử</h4>
+    <div class="mt-3 flex-1">
+        <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
         <div class="notification-dashboard">
-            TODO
+            <div class="d-flex gap-4">
+                <img src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
+                <div>
+                    <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
+                    <div>Số tài khoản: <strong>868199533333</strong></div>
+                    <div>Chủ tài khoản: <strong>Lê Kim Trường</strong></div>
+                    <div>Nội dung chuyển khoản: <strong style="color: green">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="mt-3 text-uppercase flex-1">
