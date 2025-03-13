@@ -100,7 +100,7 @@ function getIndex($st)
             </div>
         </div>
         <div class="notification-dashboard">
-            <h5>HK_<?php echo $order->id ?></h5>
+            <div class="d-flex gap-2">Mã: <h5>HK_<?php echo $order->id ?></h5></div>
             <div class="list-status order-status">
                 <?php foreach ($status_str as $key => $status) { ?>
                     <?php if ($key > 0) { ?>
