@@ -5,7 +5,7 @@
             <div class="notification-dashboard" style="height: 150px">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>Số dư trong ví: <strong style="color: #ff0000">0</strong> VNĐ</div>
-                    <button class="btn">Nạp tiền</button>
+                    <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp tiền</a>
                 </div>
                 <div>Mã nạp tiền: <strong style="color: #ff0000">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
                 <div style="font-size: 12px" class="mt-2">

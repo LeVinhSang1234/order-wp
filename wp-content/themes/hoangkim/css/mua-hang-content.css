@@ -23,7 +23,7 @@
   padding: 7px 15px;
   width: 100%;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #212121;
   display: flex;
@@ -44,6 +44,7 @@
   width: 100%;
   height: calc(100dvh - 44px);
   overflow: auto;
+  flex: 1;
 }
 
 input,
