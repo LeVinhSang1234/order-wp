@@ -85,6 +85,8 @@ table.table-list-chi-tiet td {
   min-height: 180px;
   border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.4);
+  padding: 8px;
+  font-size: 13px;
 }
 
 .input-chat-message {
@@ -92,4 +94,8 @@ table.table-list-chi-tiet td {
   margin-top: 20px;
   resize: vertical;
   max-width: 100% !important;
+}
+
+.admin-system {
+  text-align: right;
 }

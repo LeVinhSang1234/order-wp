@@ -32,6 +32,10 @@ $phone = $order->phone;
 if (!$phone) {
     $phone = $order->email;
 }
+$query = "SELECT text,is_system FROM {$wpdb->prefix}chat WHERE order_id = $order->id";
+$chats = $wpdb->get_results($query);
+
+echo json_encode($chat);
 
 function getStatus($st)
 {
@@ -121,7 +125,7 @@ function getIndex($st)
                             </strong>
                             <div class="mt-2 fs-13">Người nhận: <strong><?php echo $order->ho_ten; ?></strong> / <?php echo $phone; ?></div>
                             <div class="mt-1 fs-13"><?php echo $order->address; ?></div>
-                            <textarea id="order-note" class="mt-1 fs-13" placeholder="Ghi chú đơn hàng"><?php echo $order->note; ?></textarea>
+                            <textarea <?php echo $order->status > 1 ? "disabled" : '' ?> id="order-note" class="mt-1 fs-13" placeholder="Ghi chú đơn hàng"><?php echo $order->note; ?></textarea>
                         </div>
                         <div class="flex-1">
                             <strong>
@@ -171,7 +175,7 @@ function getIndex($st)
                                         <a href="<?php echo $cart->shop_url ?>"><?php echo $cart->shop_id ?></a>
                                     </td>
                                     <td>
-                                        <input data-type="quantity-cart" data-item="<?php echo $cart->id ?>" value="<?php echo $cart->quantity ?>" />
+                                        <input <?php echo $order->status > 1 ? "disabled" : '' ?> data-type="quantity-cart" data-item="<?php echo $cart->id ?>" value="<?php echo $cart->quantity ?>" />
                                     </td>
                                     <td>
                                         <?php echo format_price_vnd($exchange_rate * $cart->price) ?>
@@ -246,7 +250,13 @@ function getIndex($st)
             </div>
             <div class="mt-3">
                 <h6>Chat với chúng tôi</h6>
-                <div class="chat-box-message"></div>
+                <div class="chat-box-message">
+                    <?php foreach ($chats as $chat) { ?>
+                        <div class="<?php echo ($chat->is_system === '1' ? " admin-system" : '') ?>">
+                            <?php echo $chat->text ?>
+                        </div>
+                    <?php } ?>
+                </div>
                 <textarea class="input-chat-message" placeholder="Nhập để trao đổi"></textarea>
                 <button id="btn-send-chat" class="btn btn-primary fs-13">Gửi</button>
             </div>
@@ -256,62 +266,23 @@ function getIndex($st)
 
 
 <script>
-    $('#update-order-fields').on('click', function(e) {
-        e.preventDefault();
-        var note = $('#order-note').val();
-        var is_gia_co = $('#is_gia_co').is(':checked') ? 1 : 0;
-        var is_kiem_dem_hang = $('#is_kiem_dem_hang').is(':checked') ? 1 : 0;
-        var is_bao_hiem = $('#is_bao_hiem').is(':checked') ? 1 : 0;
-        $.ajax({
-            url: '<?php echo admin_url("admin-ajax.php"); ?>',
-            type: 'POST',
-            data: {
-                action: 'update_order_fields',
-                order_id: '<?php echo $order->id ?>',
-                note: note,
-                is_gia_co: is_gia_co,
-                is_kiem_dem_hang: is_kiem_dem_hang,
-                is_bao_hiem: is_bao_hiem,
-            },
-            success: function(response) {
-                alert(response.data.message);
-                window.location.reload();
-            },
-            error: function() {
-                alert('Có lỗi xảy ra trong quá trình gửi yêu cầu.');
-            }
-        });
-    });
-
-    $('input[data-type="quantity-cart"]').on("change", function() {
-        const quantity = $(this).val()
-        const cart_id = $(this).attr('data-item');
-        $.ajax({
-            url: '<?php echo admin_url("admin-ajax.php"); ?>',
-            type: 'POST',
-            data: {
-                action: 'update_cart_quantity',
-                quantity,
-                cart_id
-            },
-            success: function(response) {
-                alert(response.data.message);
-                window.location.reload();
-            },
-            error: function() {
-                alert('Có lỗi xảy ra trong quá trình gửi yêu cầu.');
-            }
-        });
-    })
-    $('#cancel-order-fields').on("click", function() {
-        const bool = confirm("Bạn có chắc chắn muốn huỷ đơn hàng này không?")
-        if (bool) {
+    <?php if ($isDisabled) { ?>
+        $('#update-order-fields').on('click', function(e) {
+            e.preventDefault();
+            var note = $('#order-note').val();
+            var is_gia_co = $('#is_gia_co').is(':checked') ? 1 : 0;
+            var is_kiem_dem_hang = $('#is_kiem_dem_hang').is(':checked') ? 1 : 0;
+            var is_bao_hiem = $('#is_bao_hiem').is(':checked') ? 1 : 0;
             $.ajax({
                 url: '<?php echo admin_url("admin-ajax.php"); ?>',
                 type: 'POST',
                 data: {
-                    action: 'cancel_order',
-                    order_id: '<?php echo $order->id ?>'
+                    action: 'update_order_fields',
+                    order_id: '<?php echo $order->id ?>',
+                    note: note,
+                    is_gia_co: is_gia_co,
+                    is_kiem_dem_hang: is_kiem_dem_hang,
+                    is_bao_hiem: is_bao_hiem,
                 },
                 success: function(response) {
                     alert(response.data.message);
@@ -321,8 +292,48 @@ function getIndex($st)
                     alert('Có lỗi xảy ra trong quá trình gửi yêu cầu.');
                 }
             });
-        }
-    })
+        });
+        $('input[data-type="quantity-cart"]').on("change", function() {
+            const quantity = $(this).val()
+            const cart_id = $(this).attr('data-item');
+            $.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: 'POST',
+                data: {
+                    action: 'update_cart_quantity',
+                    quantity,
+                    cart_id
+                },
+                success: function(response) {
+                    alert(response.data.message);
+                    window.location.reload();
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra trong quá trình gửi yêu cầu.');
+                }
+            });
+        })
+        $('#cancel-order-fields').on("click", function() {
+            const bool = confirm("Bạn có chắc chắn muốn huỷ đơn hàng này không?")
+            if (bool) {
+                $.ajax({
+                    url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'cancel_order',
+                        order_id: '<?php echo $order->id ?>'
+                    },
+                    success: function(response) {
+                        alert(response.data.message);
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra trong quá trình gửi yêu cầu.');
+                    }
+                });
+            }
+        })
+    <?php } ?>
     $('#btn-send-chat').on("click", function() {
         const text = $('.input-chat-message').val();
         if (!text.trim()) return
