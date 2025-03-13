@@ -99,11 +99,33 @@
 
 <script>
     $(document).ready(function() {
-        $('.menu-group').on('click', function() {
+
+        // Toggle menu-left
+        $('menu-toggle').on('click', function() {
             if (!$(this).hasClass("menu-open")) {
-                $('.menu-group').removeClass('menu-open')
+                $('.menu-toggle').removeClass('menu-open')
             }
             $(this).toggleClass("menu-open")
         })
+
+
+        $('.menu-toggle').on('click', function() {
+            if (!$(this).hasClass("menu-open")) {
+                $('.menu-toggle').removeClass('menu-open')
+            }
+            $(this).toggleClass("menu-open")
+        });
+
+        $('.menu-toggle').on('click', function (event) {
+            event.stopPropagation();
+            $('.menu-left').toggleClass('menu-left-close');
+        });
+
+        $(document).on('click', function (event) {
+            if (!$(event.target).closest('.menu-left, .menu-toggle').length && $(window).width() < 769) {
+                $('.menu-left').addClass('menu-left-close');
+            }
+        });
+
     })
 </script>

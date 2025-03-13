@@ -13,28 +13,28 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
 
 <div class="dashboard">
     <div class="row">
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 pb-2">
             <div class="box-dashboard box-dashboard-green">
                 <h4>0 đ</h4>
                 <div class="title">Số dư</div>
                 <div class="view-detail">Xem chi tiết</div>
             </div>
         </div>
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 pb-2">
             <div class="box-dashboard box-dashboard-aqua">
                 <h4><?php echo $total_orders; ?> Đơn</h4>
                 <div class="title">Đơn hàng</div>
                 <div class="view-detail">Xem chi tiết</div>
             </div>
         </div>
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 pb-2">
             <div class="box-dashboard box-dashboard-cart">
                 <h4><?php echo $total_cart; ?> sản phẩm</h4>
                 <div class="title">Giỏ hàng</div>
                 <div class="view-detail">Xem chi tiết</div>
             </div>
         </div>
-        <div class="col-lg-3 col-xs-6">
+        <div class="col-lg-3 col-md-6 pb-2">
             <div class="box-dashboard box-dashboard-report">
                 <h4>...</h4>
                 <div class="title">Khiếu nại</div>
@@ -45,7 +45,7 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
     <div class="mt-3 text-uppercase flex-1">
         <h4>Thông báo</h4>
         <div class="notification-dashboard">
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center flex-wrap gap-2">
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ";
@@ -56,14 +56,14 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
                 $placeholder = "Đến";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select name="type">
+                <select class="w-filter-full" name="type">
                     <option>Loại thông báo</option>
                     <option>Ví điện tử</option>
                     <option>Đơn hàng</option>
                     <option>Khiếu nại</option>
                     <option>Vận đơn</option>
                 </select>
-                <select name="status">
+                <select class="w-filter-full" name="status">
                     <option>Trạng thái</option>
                     <option>Chưa xem</option>
                     <option>Đã xem</option>
@@ -72,7 +72,8 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
             </div>
             <div class="mt-3">
                 Số thông báo: <strong>0</strong>
-                <table class="w-100 mt-2">
+                <div class="table-responsive">
+                <table class="w-100 mt-2" style="min-width: 1000px;">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -83,6 +84,7 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
                         </tr>
                     </thead>
                 </table>
+                </div>
             </div>
         </div>
     </div>

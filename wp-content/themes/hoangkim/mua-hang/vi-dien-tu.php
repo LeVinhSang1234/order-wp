@@ -1,5 +1,5 @@
 <div class="dashboard">
-    <div class="d-flex w-100 gap-2">
+    <div class="d-flex flex-column flex-md-row w-100 gap-2">
         <div class="mt-3 flex-3 align-items-stretch">
             <h4 class="text-uppercase">Ví điện tử</h4>
             <div class="notification-dashboard" style="height: 150px">
@@ -29,8 +29,8 @@
     <div class="mt-3 flex-1">
         <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
         <div class="notification-dashboard">
-            <div class="d-flex gap-4">
-                <img src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
+            <div class="d-flex flex-column flex-md-row gap-4">
+                <img style="max-height: 350px; width: auto; object-fit: contain;"  src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
                 <div>
                     <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
                     <div>Số tài khoản: <strong>868199533333</strong></div>
@@ -43,8 +43,8 @@
     <div class="mt-3 text-uppercase flex-1">
         <h4>Lịch sử giao dịch</h4>
         <div class="notification-dashboard">
-            <div class="d-flex align-items-center gap-2">
-                <input placeholder="Mã đơn hàng" />
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <input class="w-filter-full" placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -55,7 +55,7 @@
                 $placeholder = "Đến ngày";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select name="status">
+                <select class="w-filter-full" name="status">
                     <option>Trạng thái</option>
                     <option>Chờ đặt cọc (0)</option>
                     <option>Chờ mua hàng (0)</option>
@@ -70,7 +70,7 @@
                     <option>Đã kết thúc (0)</option>
                     <option>Đã hủy (0)</option>
                 </select>
-                <select name="website">
+                <select class="w-filter-full" name="website">
                     <option>Website</option>
                     <option>Taobao.com</option>
                     <option>1688.com</option>
@@ -80,7 +80,8 @@
             </div>
             <div class="mt-3">
                 Số đơn hàng: <strong>0</strong>
-                <table class="w-100 mt-2">
+                <div class="table-responsive">
+                <table class="w-100 mt-2" style="min-width: 1000px;">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -91,6 +92,7 @@
                         </tr>
                     </thead>
                 </table>
+                </div>
             </div>
         </div>
     </div>
