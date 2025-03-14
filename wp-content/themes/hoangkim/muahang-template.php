@@ -32,30 +32,17 @@
                             Bảng tin
                         </a>
                     </li>
-                    <li class="menu-group <?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('chi-tiet-don-hang')) ? 'menu-open' : '') ?>">
-                        <a class="<?php echo ((is_page('don-hang') || is_page('don-hang-ky-gui') || is_page('chi-tiet-don-hang')) ? 'active' : '') ?>">
-                            <span> <i class="fa-regular fa-clipboard"></i>
-                                Quản lý đơn hàng
-                            </span>
-                            <i class="fa-solid fa-chevron-right menu-icon-close"></i>
-                            <i class="fa-solid fa-chevron-down menu-icon-open"></i>
+                    <li>
+                        <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
+                            <i class="fa-regular fa-clipboard"></i>
+                            Đơn hàng Order
                         </a>
-                        <ul class="menu-childs">
-                            <li>
-                                <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
-                                    <span> <i class="fa-regular fa-clipboard"></i>
-                                        Đơn hàng Order
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
-                                    <span> <i class="fa-regular fa-clipboard"></i>
-                                        Đơn hàng ký gửi
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                    <li>
+                        <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
+                            <i class="fa-solid fa-van-shuttle"></i>
+                            Đơn hàng ký gửi
+                        </a>
                     </li>
                     <li>
                         <a class="<?php echo (is_page('wallet') ? 'active' : '') ?>" href="<?php echo site_url() . '/wallet' ?>">

@@ -96,6 +96,45 @@ function create_muahang_page()
         );
         wp_insert_post($new_page);
     }
+    $page = get_page_by_path('nap-tien');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Nạp tiền', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'nap-tien', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+    $page = get_page_by_path('tai-khoan');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Tài khoản', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'tai-khoan', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+    $page = get_page_by_path('doi-mat-khau');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Đổi mật khẩu', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'doi-mat-khau', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
 }
 
 function create_orders_table()
