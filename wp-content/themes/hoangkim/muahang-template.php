@@ -68,6 +68,18 @@
                             Giỏ hàng
                         </a>
                     </li>
+                    <li>
+                        <a class="<?php echo (is_page('tai-khoan') ? 'active' : '') ?>" href="<?php echo site_url() . '/tai-khoan' ?>">
+                            <i class="fa-solid fa-user"></i>
+                            Tài khoản
+                        </a>
+                    </li>
+                    <li>
+                        <a class="<?php echo (is_page('doi-mat-khau') ? 'active' : '') ?>" href="<?php echo site_url() . '/doi-mat-khau' ?>">
+                            <i class="fa-solid fa-lock"></i>
+                            Đổi mật khẩu
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="mua-hang-content-right">
@@ -103,12 +115,12 @@
             $(this).toggleClass("menu-open")
         });
 
-        $('.menu-toggle').on('click', function (event) {
+        $('.menu-toggle').on('click', function(event) {
             event.stopPropagation();
             $('.menu-left').toggleClass('menu-left-close');
         });
 
-        $(document).on('click', function (event) {
+        $(document).on('click', function(event) {
             if (!$(event.target).closest('.menu-left, .menu-toggle').length && $(window).width() < 769) {
                 $('.menu-left').addClass('menu-left-close');
             }
