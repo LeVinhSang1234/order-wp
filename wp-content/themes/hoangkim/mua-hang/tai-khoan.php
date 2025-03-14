@@ -1,5 +1,4 @@
 <?php
-$current_user = wp_get_current_user();
 $user_id = get_current_user_id();
 $action = isset($_POST['action']) ? sanitize_textarea_field($_POST['action']) : '';
 $user_phone = isset($_POST['user_phone']) ? sanitize_textarea_field($_POST['user_phone']) : '';
@@ -18,7 +17,10 @@ if ($action === 'save') {
     update_user_meta($user_id, 'user_address', $user_address);
     $isSuccess = true;
 }
-
+$current_user = wp_get_current_user();
+if (!$display_name) {
+    $display_name = $current_user->display_name;
+}
 ?>
 
 <div class="dashboard">
@@ -37,7 +39,7 @@ if ($action === 'save') {
                     <strong style="width: 200px; text-align: right">Điện thoại</strong> <input name="user_phone" value="<?php echo display_user_phone(); ?>" style="width: 100%; max-width: 600px" />
                 </div>
                 <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Họ và tên</strong> <input name="display_name" value="<?php echo $current_user->display_name ?>" style="width: 100%; max-width: 600px" />
+                    <strong style="width: 200px; text-align: right">Họ và tên</strong> <input name="display_name" value="<?php echo $display_name ?>" style="width: 100%; max-width: 600px" />
                 </div>
                 <div class="mt-3 d-flex fs-13 gap-3 w-100">
                     <strong style="width: 200px; text-align: right">Địa chỉ</strong> <textarea name="user_address" style="width: 100%; max-width: 600px"><?php echo display_user_address() ?></textarea>

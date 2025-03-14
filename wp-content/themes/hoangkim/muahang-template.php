@@ -74,6 +74,12 @@
                             Đổi mật khẩu
                         </a>
                     </li>
+                    <li>
+                        <a href="<?php echo wp_logout_url(home_url())?>">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            Đăng xuất
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="mua-hang-content-right">
