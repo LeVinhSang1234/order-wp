@@ -57,12 +57,6 @@
                         </a>
                     </li>
                     <li>
-                        <a>
-                            <i class="fa-solid fa-van-shuttle"></i>
-                            Đơn ký gửi
-                        </a>
-                    </li>
-                    <li>
                         <a class="<?php echo (is_page('gio-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/gio-hang' ?>">
                             <i class="fa-solid fa-cart-plus"></i>
                             Giỏ hàng
@@ -99,26 +93,19 @@
 <script>
     $(document).ready(function() {
 
-        // Toggle menu-left
-        $('menu-toggle').on('click', function() {
-            if (!$(this).hasClass("menu-open")) {
-                $('.menu-toggle').removeClass('menu-open')
-            }
-            $(this).toggleClass("menu-open")
-        })
-
-
-        $('.menu-toggle').on('click', function() {
-            if (!$(this).hasClass("menu-open")) {
-                $('.menu-toggle').removeClass('menu-open')
-            }
-            $(this).toggleClass("menu-open")
-        });
-
         $('.menu-toggle').on('click', function(event) {
             event.stopPropagation();
-            $('.menu-left').toggleClass('menu-left-close');
-        });
+            $(".menu-toggle-close").addClass("menu-open")
+            $(this).addClass("menu-open")
+            $('.menu-left').addClass('menu-left-close');
+        })
+
+        $('.menu-toggle-close').on('click', function(event) {
+            event.stopPropagation();
+            $('.menu-toggle').removeClass('menu-open')
+            $(".menu-toggle-close").removeClass("menu-open")
+            $('.menu-left').removeClass('menu-left-close');
+        })
 
         $(document).on('click', function(event) {
             if (!$(event.target).closest('.menu-left, .menu-toggle').length && $(window).width() < 769) {

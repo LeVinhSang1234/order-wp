@@ -11,3 +11,16 @@
 .mua-hang-header .menu-toggle {
   cursor: pointer;
 }
+
+.mua-hang-header .menu-toggle.menu-open {
+  display: none;
+}
+
+.mua-hang-header .menu-toggle-close {
+  display: none;
+  cursor: pointer;
+}
+
+.mua-hang-header .menu-toggle-close.menu-open {
+  display: block;
+}
