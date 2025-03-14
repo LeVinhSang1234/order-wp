@@ -222,6 +222,7 @@ function create_wallet_transaction()
         ma_phieu_thu VARCHAR(50) NOT NULL,
         ghi_chu TEXT NULL,
         hinh_anh VARCHAR(255) NULL,
+        da_xu_ly TINYINT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) $charset_collate;";
     $wpdb->query($sql);
