@@ -1,7 +1,7 @@
 <?php
 $mockData = [
     [
-        "test" => 1
+        "test" => 1,
     ]
 ];
 echo "<script>console.log(" . json_encode($mockData) . ");</script>";
