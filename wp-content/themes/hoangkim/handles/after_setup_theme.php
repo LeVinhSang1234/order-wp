@@ -210,12 +210,30 @@ function create_chat_table()
     $wpdb->query($sql);
 }
 
+function create_wallet_transaction()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'wallet_transaction';
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+         id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        user_id BIGINT(20) UNSIGNED NOT NULL,
+        so_tien DECIMAL(15,2) NOT NULL,
+        ma_phieu_thu VARCHAR(50) NOT NULL,
+        ghi_chu TEXT NULL,
+        hinh_anh VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
+
 function after_setup_theme()
 {
     create_muahang_page();
     create_orders_table();
     create_cart_table();
     create_chat_table();
+    create_wallet_transaction();
 }
 
 add_action('after_setup_theme', 'after_setup_theme');

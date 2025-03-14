@@ -457,7 +457,8 @@ input:disabled {
 }
 
 .btn {
-  font-size: 14px;
+  font-size: 14px !important;
+  min-width: 100px;
 }
 
 @media screen and (max-width: 1000px) {
