@@ -18,12 +18,12 @@ $query = $wpdb->prepare(
     ...$cart_ids_array
 );
 $carts = $wpdb->get_results($query);
-$exchange_rate = $order->exchange_rate;
+$exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
 if (!$exchange_rate) {
     $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 }
 $isDisabled = $order->status > 1 ? 'disabled' : '';
-$phi_mua_hang = $order->phi_mua_hang;
+$phi_mua_hang = isset($order->phi_mua_hang) ? $order->phi_mua_hang : null;
 if (!$phi_mua_hang) {
     $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 }
@@ -100,7 +100,8 @@ function getIndex($st)
             </div>
         </div>
         <div class="notification-dashboard">
-            <div class="d-flex gap-2">Mã: <h5>HK_<?php echo $order->id ?></h5></div>
+            <div class="d-flex gap-2">Mã: <h5>HK_<?php echo $order->id ?></h5>
+            </div>
             <div class="list-status order-status">
                 <?php foreach ($status_str as $key => $status) { ?>
                     <?php if ($key > 0) { ?>
@@ -251,9 +252,7 @@ function getIndex($st)
                 <h6>Chat với chúng tôi</h6>
                 <div class="chat-box-message">
                     <?php foreach ($chats as $chat) { ?>
-                        <div class="<?php echo ($chat->is_system === '1' ? " admin-system" : '') ?>">
-                            <?php echo $chat->text ?>
-                        </div>
+                        <div class="<?php echo ($chat->is_system === '1' ? " admin-system" : '') ?>"><?php echo trim($chat->text) ?></div>
                     <?php } ?>
                 </div>
                 <textarea class="input-chat-message" placeholder="Nhập để trao đổi"></textarea>
@@ -304,7 +303,6 @@ function getIndex($st)
                     cart_id
                 },
                 success: function(response) {
-                    alert(response.data.message);
                     window.location.reload();
                 },
                 error: function() {

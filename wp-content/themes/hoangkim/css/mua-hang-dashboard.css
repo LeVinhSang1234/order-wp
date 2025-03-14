@@ -49,6 +49,11 @@
   font-size: 13px;
   padding: 4px 0;
   cursor: pointer;
+  color: white;
+}
+
+.view-detail:hover {
+  color: white;
 }
 .notification-dashboard {
   background-color: white;

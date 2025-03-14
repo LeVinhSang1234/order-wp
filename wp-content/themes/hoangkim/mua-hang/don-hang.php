@@ -104,13 +104,17 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                                 <td>
                                     Tạo ngày <?php echo $date->format('d/m/Y H:i') ?>
                                 </td>
-                                <td style="color: green; font-weight: 600">
+                                <td style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
                                     <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
                                 </td>
                                 <td>
                                     <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
-                                    <div><button style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
-                                    <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
+                                    <?php if ($order->status !== '10') { ?>
+                                        <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
+                                    <?php } ?>
+                                    <?php if (intval($order->status) > 10) { ?>
+                                        <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
+                                    <?php } ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -120,3 +124,52 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
         </div>
     </div>
 </div>
+<div class="popup-info">
+    <div class="popup-content" style="margin-top: 70px">
+        <h3 class="text-center">Khiếu nại</h3>
+        <div class="content-data">
+            <div class="mt-3 address-info">
+                <textarea id="text-khieu-nai" style="min-height: 100px; resize: none" class="w-100 fs-13" placeholder="Vui lòng nhập lý do khiếu nại"></textarea>
+                <div id="error-ly-do" style="display: none;" class="text-error mt-0">Vui lòng nhập lý do</div>
+            </div>
+        </div>
+        <button id="button_send_khieu_nai" style="float: right" class="btn btn-danger mt-3">Gửi</button>
+    </div>
+</div>
+
+<script>
+    $('.popup-info').on('click', function(event) {
+        if (document.querySelector('.popup-content')?.contains(event.target)) return
+        $(this).removeClass('popup-info__active')
+    })
+    $('button[button-type="khieu-nai"]').on('click', function() {
+        const orderId = $(this).attr('data-item')
+        $('.popup-info').addClass('popup-info__active')
+        $('#button_send_khieu_nai').attr('data-item', orderId)
+    })
+    $('#button_send_khieu_nai').on('click', function() {
+        const orderId = $(this).attr('data-item')
+        const text = $('#text-khieu-nai').val()
+        if (!text) {
+            return $('#error-ly-do').show()
+        };
+        $('.text-khieu-nai').val('')
+        $(this).removeClass('popup-info__active')
+        $.ajax({
+            url: '<?php echo admin_url("admin-ajax.php"); ?>',
+            type: 'POST',
+            data: {
+                action: 'send_khieu_nai',
+                order_id: orderId,
+                text
+            },
+            success: function(response) {
+                alert(response.data.message);
+                window.location.reload()
+            },
+            error: function() {
+                alert('Lỗi kết nối đến máy chủ.');
+            }
+        });
+    })
+</script>

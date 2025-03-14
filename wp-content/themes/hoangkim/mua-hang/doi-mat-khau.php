@@ -1,16 +1,18 @@
 <?php
+$isSuccess = isset($_GET['change_success']) ? true : false;
 $user_id = get_current_user_id();
 $reset_password = isset($_POST['reset_password']) ? sanitize_textarea_field($_POST['reset_password']) : '';
 $password = isset($_POST['password']) ? sanitize_textarea_field($_POST['password']) : '';
 $confirm_password = isset($_POST['confirm_password']) ? sanitize_textarea_field($_POST['confirm_password']) : '';
 $error = "";
-$isSuccess = false;
 if ($reset_password === 'change' && $password && $reset_password) {
     if ($password !== $confirm_password) {
         $error = "Mật khẩu không khớp";
     } else {
         wp_set_password($password, $user_id);
-        $isSuccess = true;
+        insert_notification("Thay đổi mật khẩu", "Bạn đã thay đổi mật khẩu thành công. Nếu không phải bạn hãy liên hệ với chúng tôi.", null);
+        echo "<script>window.location.href='/doi-mat-khau?change_success=true'</script>";
+        exit;
     }
 }
 ?>

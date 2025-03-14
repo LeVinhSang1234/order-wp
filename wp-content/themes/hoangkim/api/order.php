@@ -5,7 +5,7 @@ function save_cart()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(["message" => "❌ Bạn chưa đăng nhập!"], 401);
-        wp_die();
+        exit;
     }
 
     global $wpdb;
@@ -17,7 +17,7 @@ function save_cart()
     $cart_items = json_decode($json, true);
     if (empty($cart_items)) {
         wp_send_json_error(["message" => "❌ Giỏ hàng trống!"], 400);
-        wp_die();
+        exit;
     }
 
     foreach ($cart_items as $item) {
@@ -61,7 +61,7 @@ function save_cart()
                     "message"   => "❌ Lưu giỏ hàng thất bại!",
                     "mysql_error" => $wpdb->last_error
                 ], 500);
-                wp_die();
+                exit;
             }
         }
     }
@@ -75,7 +75,7 @@ function remove_cart()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(["message" => "❌ Bạn chưa đăng nhập!"], 401);
-        wp_die();
+        exit;
     }
 
     global $wpdb;
@@ -86,7 +86,7 @@ function remove_cart()
     $cart_item = json_decode($json, true);
     if (empty($cart_item) || !isset($cart_item['id'])) {
         wp_send_json_error(["message" => "❌ Không có id sản phẩm để xóa!"], 400);
-        wp_die();
+        exit;
     }
     $product_id = intval($cart_item['id']);
     $exists = $wpdb->get_var(
@@ -121,7 +121,7 @@ function update_cart_item_via_ajax()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
-        wp_die();
+        exit;
     }
 
     global $wpdb;
@@ -144,7 +144,7 @@ function update_cart_item_via_ajax()
 
     if (!$cart_item) {
         wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
-        wp_die();
+        exit;
     }
     $result = $wpdb->update(
         $cart_table,
@@ -158,7 +158,7 @@ function update_cart_item_via_ajax()
     );
     if ($result === false) {
         wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
-        wp_die();
+        exit;
     }
     wp_send_json_success(['message' => '✅ Giỏ hàng đã được cập nhật thành công!']);
 }
@@ -168,7 +168,7 @@ function update_cart_quantity()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
-        wp_die();
+        exit;
     }
 
     global $wpdb;
@@ -187,7 +187,7 @@ function update_cart_quantity()
 
     if (!$cart_item) {
         wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
-        wp_die();
+        exit;
     }
     $result = $wpdb->update(
         $cart_table,
@@ -199,7 +199,7 @@ function update_cart_quantity()
     );
     if ($result === false) {
         wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
-        wp_die();
+        exit;
     }
     wp_send_json_success(['message' => '✅ Số lượng đã được cập nhật thành công!']);
 }
@@ -210,7 +210,7 @@ function cancel_order()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
-        wp_die();
+        exit;
     }
 
     global $wpdb;
@@ -228,7 +228,7 @@ function cancel_order()
 
     if (!$order_item) {
         wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
-        wp_die();
+        exit;
     }
     $result = $wpdb->update(
         $order_table,
@@ -240,8 +240,9 @@ function cancel_order()
     );
     if ($result === false) {
         wp_send_json_error(['message' => '❌ Huỷ đơn hàng không thành công!'], 500);
-        wp_die();
+        exit;
     }
+    insert_notification("Huỷ đơn hàng", "Bạn đã huỷ đơn hàng thành công", array(array("order_id" => $order_id)));
     wp_send_json_success(['message' => '✅ Huỷ đơn hàng thành công!']);
 }
 add_action('wp_ajax_cancel_order', 'cancel_order');
@@ -254,15 +255,16 @@ function send_chat()
 {
     if (!is_user_logged_in()) {
         wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
-        wp_die();
+        exit;
     }
 
     $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
     $text = isset($_POST['text']) ? sanitize_text_field($_POST['text']) : '';
+    $user_id = get_current_user_id();
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'chat';
-    $user_id = get_current_user_id();
+
     $result = $wpdb->insert(
         $table_name,
         [
@@ -276,6 +278,226 @@ function send_chat()
         wp_send_json_success(array('message' => 'Chat thành công'));
     } else {
         wp_send_json_error(array('message' => 'Chat thất bại, vui lòng thử lại.'));
+    }
+    exit;
+}
+
+add_action('wp_ajax_send_khieu_nai', 'send_khieu_nai');
+
+function send_khieu_nai()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
+        exit;
+    }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $text = isset($_POST['text']) ? sanitize_text_field($_POST['text']) : '';
+    $user_id = get_current_user_id();
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'chat';
+    $order_table = $wpdb->prefix . 'orders';
+
+    $order_item = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $order_table WHERE id = %d AND user_id = %d",
+        $order_id,
+        $user_id
+    ));
+
+    if (!$order_item) {
+        wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
+        exit;
+    }
+
+    $result = $wpdb->insert(
+        $table_name,
+        [
+            'user_id'   => $user_id,
+            'text'      => "<span style='font-size: 12px'>Bạn đã khiếu nại với lý do</span>:\n" . '<span style="color: #ff0000">' . $text . '</span>',
+            'order_id'  => $order_id,
+            'is_system' => 1,
+        ],
+        ['%d', '%s', '%d', '%d']
+    );
+    if ($result === false) {
+        wp_send_json_error(array('message' => 'Có lỗi xảy ra, vui lòng thử lại.'));
+        exit;
+    }
+
+    $result = $wpdb->update(
+        $order_table,
+        [
+            'status' => 10,
+        ],
+        ['id' => $order_id, 'user_id' => $user_id],
+        ['%d', '%d'],
+    );
+    if ($result !== false) {
+        insert_notification("Khiếu nại đơn hàng", "Bạn đã khiếu nại đơn hàng thành công với lý do: " . $text, array(array("order_id" => $order_id)));
+        wp_send_json_success(array('message' => 'Khiếu nại thành công'));
+    } else {
+        wp_send_json_error(array('message' => 'Có lỗi xảy ra, vui lòng thử lại.'));
+    }
+    exit;
+}
+
+add_action('wp_ajax_create_order', 'create_order_via_ajax');
+function create_order_via_ajax()
+{
+    // Kiểm tra nonce bảo mật
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'create_order_nonce')) {
+        wp_send_json_error(['message' => 'Nonce không hợp lệ']);
+        exit;
+    }
+    $shop_id = isset($_POST['shop_id']) ? intval($_POST['shop_id']) : 0;
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
+        exit;
+    }
+    global $wpdb;
+    $cart_ids = $wpdb->get_col($wpdb->prepare(
+        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1",
+        $shop_id,
+        $user_id
+    ));
+    if (empty($cart_ids)) {
+        wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
+        exit;
+    }
+    if (empty($cart_ids)) {
+        wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
+        exit;
+    }
+    $cart_ids_str = json_encode($cart_ids);
+    $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
+
+    $ho_ten = isset($_POST['ho_ten']) ? sanitize_textarea_field($_POST['ho_ten']) : '';
+    $address = isset($_POST['address']) ? sanitize_textarea_field($_POST['address']) : '';
+    $email = isset($_POST['email']) ? sanitize_textarea_field($_POST['email']) : '';
+    $phone = isset($_POST['phone']) ? sanitize_textarea_field($_POST['phone']) : '';
+    $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
+    $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
+    $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+    $table = $wpdb->prefix . 'orders';
+    $data = [
+        'user_id' => $user_id,
+        'cart_ids' => $cart_ids_str,
+        'note' => $note,
+        'is_gia_co' => $is_gia_co,
+        'is_kiem_dem_hang' => $is_kiem_dem_hang,
+        'is_bao_hiem' => $is_bao_hiem,
+        'ho_ten' => $ho_ten,
+        'address' => $address,
+        'email' => $email,
+        'phone' => $phone,
+    ];
+    $format = [
+        '%d',
+        '%s',
+        '%s',
+        '%d',
+        '%d',
+        '%d',
+        '%s',
+        '%s',
+        '%s',
+        '%s'
+    ];
+    $result = $wpdb->insert($table, $data, $format);
+    if ($result !== false) {
+        insert_notification("Tạo đơn hàng", "Bạn đã tạo đơn hàng thành công", array(array("order_id" => $wpdb->insert_id)));
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->prefix}cart SET is_done = 1 WHERE id IN (" . implode(',', array_fill(0, count($cart_ids), '%d')) . ")",
+                ...$cart_ids
+            )
+        );
+        wp_send_json_success(['message' => 'Đơn hàng đã được tạo thành công.']);
+    } else {
+        wp_send_json_error(['message' => 'Lỗi khi tạo đơn hàng.']);
+    }
+    exit;
+}
+
+add_action('wp_ajax_update_order_fields', 'update_order_fields');
+
+function update_order_fields()
+{
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
+        exit;
+    }
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    global $wpdb;
+    $order_table = $wpdb->prefix . 'orders';
+    $order_item = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $order_table WHERE id = %d AND user_id = %d",
+        $order_id,
+        $user_id
+    ));
+
+    if (!$order_item) {
+        wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
+        exit;
+    }
+
+    $note = isset($_POST['note']) ? sanitize_text_field($_POST['note']) : '';
+    $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
+    $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
+    $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+    if ($order_id <= 0) {
+        wp_send_json_error(array('message' => 'ID đơn hàng không hợp lệ.'));
+    }
+    $table_name = $wpdb->prefix . 'orders';
+
+    $data = array(
+        'note' => $note,
+        'is_gia_co' => $is_gia_co,
+        'is_kiem_dem_hang' => $is_kiem_dem_hang,
+        'is_bao_hiem' => $is_bao_hiem
+    );
+
+    $where = array('id' => $order_id);
+    $updated = $wpdb->update($table_name, $data, $where);
+    if ($updated !== false) {
+        wp_send_json_success(array('message' => 'Đơn hàng đã được cập nhật thành công.'));
+    } else {
+        wp_send_json_error(array('message' => 'Cập nhật thất bại, vui lòng thử lại.'));
+    }
+    exit;
+}
+
+add_action('wp_ajax_read_notification', 'read_notification');
+
+function read_notification()
+{
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    $note = isset($_POST['note']) ? sanitize_text_field($_POST['note']) : '';
+    $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
+    $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
+    $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+    if ($order_id <= 0) {
+        wp_send_json_error(array('message' => 'ID đơn hàng không hợp lệ.'));
+    }
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'orders';
+
+    $data = array(
+        'note' => $note,
+        'is_gia_co' => $is_gia_co,
+        'is_kiem_dem_hang' => $is_kiem_dem_hang,
+        'is_bao_hiem' => $is_bao_hiem
+    );
+
+    $where = array('id' => $order_id);
+    $updated = $wpdb->update($table_name, $data, $where);
+    if ($updated !== false) {
+        wp_send_json_success(array('message' => 'Đơn hàng đã được cập nhật thành công.'));
+    } else {
+        wp_send_json_error(array('message' => 'Cập nhật thất bại, vui lòng thử lại.'));
     }
     exit;
 }

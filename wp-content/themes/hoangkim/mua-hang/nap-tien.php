@@ -28,7 +28,7 @@ if (isset($_POST['submit_wallet_transaction']) && is_user_logged_in()) {
         ),
         array('%d', '%f', '%s', '%s', '%s')
     );
-    echo "<script>window.location.href='/nap-tien/'</script>";
+    echo "<script>alert('Tạo phiếu nạp thành công. Vui lòng chờ hệ thống xử lý!');window.location.href='/nap-tien?wallet_success=true'</script>";
     exit;
 }
 ?>

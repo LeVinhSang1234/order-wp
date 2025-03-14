@@ -461,6 +461,10 @@ input:disabled {
   min-width: 100px;
 }
 
+.no-read {
+  background-color: #cfcfcf;
+}
+
 @media screen and (max-width: 1000px) {
   .bai-viet-noi-bat-wrap {
     display: none;

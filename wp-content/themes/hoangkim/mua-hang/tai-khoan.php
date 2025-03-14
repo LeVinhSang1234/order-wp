@@ -4,9 +4,7 @@ $action = isset($_POST['action']) ? sanitize_textarea_field($_POST['action']) : 
 $user_phone = isset($_POST['user_phone']) ? sanitize_textarea_field($_POST['user_phone']) : '';
 $display_name = isset($_POST['display_name']) ? sanitize_textarea_field($_POST['display_name']) : '';
 $user_address = isset($_POST['user_address']) ? sanitize_textarea_field($_POST['user_address']) : '';
-
-$isSuccess = false;
-
+$isSuccess = isset($_GET['change_success']) ? true : false;
 if ($action === 'save') {
     $updated_data = array(
         'ID'           => $user_id,
@@ -15,7 +13,8 @@ if ($action === 'save') {
     wp_update_user($updated_data);
     update_user_meta($user_id, 'user_phone', $user_phone);
     update_user_meta($user_id, 'user_address', $user_address);
-    $isSuccess = true;
+    insert_notification("Cập nhật thông tin tài khoản", "Bạn đã thay đổi thông tin tài khoản thành công!", null);
+    echo "<script>window.location.href='/tai-khoan?change_success=true'</script>";
 }
 $current_user = wp_get_current_user();
 if (!$display_name) {

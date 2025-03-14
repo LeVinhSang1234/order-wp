@@ -78,9 +78,9 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                                         <option value="6">Khách nhận hàng</option>
                                         <option value="7">Không rõ nguồn gốc</option>
                                     </select>
-                                    <script type="text/javascript">
+                                    <!-- <script type="text/javascript">
                                         cbo_Selected("sl_status_logistic", "");
-                                    </script>
+                                    </script> -->
                                 </div>
                             </div>
                             <div class="col-md-3 marbot15">

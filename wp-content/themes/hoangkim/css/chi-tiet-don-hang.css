@@ -87,6 +87,9 @@ table.table-list-chi-tiet td {
   border: 1px solid rgba(0, 0, 0, 0.4);
   padding: 8px;
   font-size: 13px;
+  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-chat-message {

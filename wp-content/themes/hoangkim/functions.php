@@ -27,6 +27,30 @@ function mytheme_setup()
 }
 add_action('after_setup_theme', 'mytheme_setup');
 
+function insert_notification($loai, $noi_dung, $du_lieu)
+{
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
+        exit;
+    }
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'notification';
+
+    $wpdb->insert(
+        $table_name,
+        array(
+            'user_id'   => $user_id,
+            'loai'      => sanitize_text_field($loai),
+            'noi_dung'  => $noi_dung ? sanitize_textarea_field($noi_dung) : null,
+            'du_lieu'  => $du_lieu ? json_encode($du_lieu) : null,
+        ),
+        array('%d', '%s', '%s', '%s', '%d')
+    );
+
+    return $wpdb->insert_id; // Trả về ID của bản ghi vừa tạo
+}
+
 if (is_admin()) {
     function load_custom_admin_css()
     {
