@@ -99,6 +99,12 @@
 <script>
     $(document).ready(function() {
 
+        $(window).resize(function() {
+            if ($(window).width() < 576) {
+                $('.menu-left').addClass('menu-left-close');
+            }
+        });
+
         $('.menu-toggle').on('click', function(event) {
             event.stopPropagation();
             $(".menu-toggle-close").addClass("menu-open")

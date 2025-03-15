@@ -55,8 +55,8 @@ $current_user = wp_get_current_user();
                                 </div>
                             </div>
                         </div>
-                        <div data-shop="<?php echo $shop_id ?>" class="table-wrap d-flex gap-3 mb-3 align-items-baseline">
-                            <table data-shop="<?php echo $shop_id ?>" class="table-cart flex-2 mt-1">
+                        <div data-shop="<?php echo $shop_id ?>" class="table-wrap d-flex gap-3 mb-3 align-items-baseline table-responsive">
+                            <table data-shop="<?php echo $shop_id ?>" class="table-cart flex-2 mt-1" style="min-width: 1000px;">
                                 <thead>
                                     <th class="text-center" style="width: 50px"></th>
                                     <th class="text-center" style="width: 100px">Hình ảnh</th>
@@ -121,7 +121,7 @@ $current_user = wp_get_current_user();
                                 <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
                                 <textarea data-shop="<?php echo $shop_id ?>" data-type="note-product" style="font-size: 13px;" class="w-100" placeholder="Ghi chú đơn hàng này"></textarea>
                                 <div class="w-100 d-flex justify-content-end">
-                                    <button data-shop="<?php echo $shop_id ?>" class="mt-2 btn-order" data-item="<?php echo $product['id'] ?>">
+                                    <button data-shop="<?php echo $shop_id ?>" class="mt-2 btn-order flex justify-content-center"  style="width: 200px;" data-item="<?php echo $product['id'] ?>">
                                         <i class="fa-solid fa-cart-plus"></i>
                                         Yêu cầu báo giá
                                     </button>

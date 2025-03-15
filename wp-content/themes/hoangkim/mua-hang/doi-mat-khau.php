@@ -22,21 +22,21 @@ if ($reset_password === 'change' && $password && $reset_password) {
         <h4 class="text-uppercase">Đổi mật khẩu</h4>
         <div class="notification-dashboard">
             <form class="w-100" action="" method="post">
-                <div class=" d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Mật khẩu mới</strong> <input name="password" type="password" value="<?php echo $password ?>" style="width: 100%; max-width: 600px" />
+                <div class=" d-flex flex-column flex-md-row align-items-start  fs-13 gap-3 w-100">
+                    <strong class="label-form-form">Mật khẩu mới</strong> <input name="password" type="password" value="<?php echo $password ?>" style="width: 100%; max-width: 600px" />
                 </div>
                 <input type="hidden" name="reset_password" value="change" />
-                <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Nhập lại mật khẩu</strong> <input name="confirm_password" value="<?php echo $confirm_password ?>" type="password" style="width: 100%; max-width: 600px" />
+                <div class="mt-3 d-flex flex-column flex-md-row align-items-start  fs-13 gap-3 w-100">
+                    <strong class="label-form-form">Nhập lại mật khẩu</strong> <input name="confirm_password" value="<?php echo $confirm_password ?>" type="password" style="width: 100%; max-width: 600px" />
                 </div>
                 <?php if ($error) { ?>
                     <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                        <strong style="width: 200px; text-align: right"></strong> <span class="text-error"><?php echo $error ?></span>
+                        <strong class="label-form-form"></strong> <span class="text-error"><?php echo $error ?></span>
                     </div>
                 <?php } ?>
                 <?php if ($isSuccess) { ?>
                     <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                        <strong style="width: 200px; text-align: right"></strong> <span class="text-success">Đổi mật khẩu thành công</span>
+                        <strong class="label-form-form"></strong> <span class="text-success">Đổi mật khẩu thành công</span>
                     </div>
                 <?php } ?>
                 <div class="mt-3 d-flex fs-13 gap-3 w-100">
