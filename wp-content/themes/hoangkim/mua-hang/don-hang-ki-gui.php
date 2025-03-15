@@ -34,8 +34,8 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
             <input type="hidden" name="str_bao_hiem" class="str_bao_hiem">
             <input type="hidden" name="str_kiem_dem" class="str_kiem_dem">
             <input type="hidden" name="str_gia_co" class="str_gia_co">
-            <div class="box_data">
-                <table class="table table-bordered tbl_add_orderext">
+            <div class="box_data table-responsive">
+                <table class="table table-bordered tbl_add_orderext" style="min-width: 1000px;">
                     <thead>
                         <tr class="hidden-xs">
                             <th>
@@ -58,7 +58,7 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                     </tbody>
                 </table>
             </div>
-            <div class="clear-both text-left">
+            <div class="clear-both text-left mt-3">
                 <a class="btn btn-primary save_order" style="color: #fff;" name="cmdsave" id="cmdsave">Lưu đơn hàng</a>
             </div>
         </form>
@@ -103,8 +103,8 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                     </div>
                 </form>
                 <div>
-                    <div class="box_data">
-                        <table class="table table-bordered">
+                    <div class="box_data table-responsive">
+                        <table class="table table-bordered" style="min-width: 1000px;">
                             <thead>
                                 <tr>
                                     <th>Ngày</th>

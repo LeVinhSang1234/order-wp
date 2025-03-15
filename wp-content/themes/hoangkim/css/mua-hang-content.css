@@ -33,6 +33,12 @@
     z-index: 10;
     border-right: 1px solid rgba(33, 33, 33, 0.12);
   }
+
+  .menu-left.menu-left-close {
+    width: 41px;
+    overflow: hidden;
+    position: relative;
+  }
 }
 
 .menu-left ul {

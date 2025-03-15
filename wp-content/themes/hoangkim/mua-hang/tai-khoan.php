@@ -28,20 +28,20 @@ if (!$display_name) {
         <div class="notification-dashboard">
             <form class="w-100" action="" method="post">
                 <input type="hidden" name="action" value="save" />
-                <div class="d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Tài khoản</strong> <input disabled value="<?php echo $current_user->user_login ?>" style="width: 100%; max-width: 600px" />
+                <div class="d-flex flex-column flex-md-row align-items-start  fs-13 gap-3 w-100">
+                    <strong class="label-form-form" >Tài khoản</strong> <input disabled value="<?php echo $current_user->user_login ?>" style="width: 100%; max-width: 600px" />
                 </div>
-                <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">E-mail</strong> <input disabled value="<?php echo $current_user->user_email ?>" style="width: 100%; max-width: 600px" />
+                <div class="mt-3 d-flex flex-column flex-md-row align-items-start fs-13 gap-3 w-100">
+                    <strong class="label-form-form" >E-mail</strong> <input disabled value="<?php echo $current_user->user_email ?>" style="width: 100%; max-width: 600px" />
                 </div>
-                <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Điện thoại</strong> <input name="user_phone" value="<?php echo display_user_phone(); ?>" style="width: 100%; max-width: 600px" />
+                <div class="mt-3 d-flex flex-column flex-md-row align-items-start fs-13 gap-3 w-100">
+                    <strong class="label-form-form" >Điện thoại</strong> <input name="user_phone" value="<?php echo display_user_phone(); ?>" style="width: 100%; max-width: 600px" />
                 </div>
-                <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Họ và tên</strong> <input name="display_name" value="<?php echo $display_name ?>" style="width: 100%; max-width: 600px" />
+                <div class="mt-3 d-flex flex-column flex-md-row align-items-start fs-13 gap-3 w-100">
+                    <strong class="label-form-form" >Họ và tên</strong> <input name="display_name" value="<?php echo $display_name ?>" style="width: 100%; max-width: 600px" />
                 </div>
-                <div class="mt-3 d-flex fs-13 gap-3 w-100">
-                    <strong style="width: 200px; text-align: right">Địa chỉ</strong> <textarea name="user_address" style="width: 100%; max-width: 600px"><?php echo display_user_address() ?></textarea>
+                <div class="mt-3 d-flex flex-column flex-md-row fs-13 gap-3 w-100">
+                    <strong class="label-form-form" >Địa chỉ</strong> <textarea name="user_address" style="width: 100%; max-width: 600px"><?php echo display_user_address() ?></textarea>
                 </div>
                 <?php if ($isSuccess) { ?>
                     <div class="mt-3 d-flex fs-13 gap-3 w-100">

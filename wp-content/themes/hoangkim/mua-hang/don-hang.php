@@ -23,8 +23,8 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
     <div class="mt-3 text-uppercase flex-1">
         <h4>Danh sách đơn hàng</h4>
         <div class="notification-dashboard">
-            <div class="d-flex align-items-center gap-2">
-                <input placeholder="Mã đơn hàng" />
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <input class="w-filter-full"  placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -35,7 +35,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                 $placeholder = "Đến ngày";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select name="status">
+                <select name="status" class="w-filter-full">
                     <option>Trạng thái</option>
                     <option value="1">Chờ đặt cọc (<?php echo $totals[1] ?>)</option>
                     <option value="2">Chờ mua hàng (<?php echo $totals[2] ?>)</option>
@@ -50,7 +50,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                     <option value="11">Đã kết thúc (<?php echo $totals[11] ?>)</option>
                     <option value="12">Đã hủy (<?php echo $totals[12] ?>)</option>
                 </select>
-                <select name="website">
+                <select class="w-filter-full" name="website">
                     <option>Website</option>
                     <option>Taobao.com</option>
                     <option>1688.com</option>
@@ -60,7 +60,8 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
             </div>
             <div class="mt-3">
                 Số đơn hàng: <strong>0</strong>
-                <table class="w-100 mt-2 table-list-order">
+                <div class="table-responsive">
+                <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                     <thead>
                         <tr>
                             <th class="text-center">#</th>
@@ -121,6 +122,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                         <?php } ?>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
