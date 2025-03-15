@@ -366,10 +366,6 @@ function create_order_via_ajax()
         wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
         exit;
     }
-    if (empty($cart_ids)) {
-        wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
-        exit;
-    }
     $cart_ids_str = json_encode($cart_ids);
     $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
 
@@ -498,6 +494,77 @@ function read_notification()
         wp_send_json_success(array('message' => 'Đơn hàng đã được cập nhật thành công.'));
     } else {
         wp_send_json_error(array('message' => 'Cập nhật thất bại, vui lòng thử lại.'));
+    }
+    exit;
+}
+
+
+add_action('wp_ajax_create_order_ki_gui', 'create_order_ki_gui');
+function create_order_ki_gui()
+{
+    // Kiểm tra nonce bảo mật
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'create_order_nonce')) {
+        wp_send_json_error(['message' => 'Nonce không hợp lệ']);
+        exit;
+    }
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
+        exit;
+    }
+    global $wpdb;
+    $current_user = wp_get_current_user();
+    $cart_ids_str = json_encode(array());
+    $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
+    $brand = isset($_POST['brand']) ? sanitize_textarea_field($_POST['brand']) : '';
+    $thuong_hieu = isset($_POST['thuong_hieu']) ? sanitize_textarea_field($_POST['thuong_hieu']) : '';
+    $van_don = isset($_POST['van_don']) ? sanitize_textarea_field($_POST['van_don']) : '';
+    $so_kien_hang = isset($_POST['so_kien_hang']) ? intval($_POST['so_kien_hang']) : '';
+
+    if (!$van_don) {
+        wp_send_json_error(['message' => 'Vận đơn là bắt buộc']);
+        exit;
+    }
+
+    $ho_ten = $current_user->display_name;
+    $address = display_user_address();
+    $email = $current_user->user_email;
+    $phone = display_user_phone();
+    $table = $wpdb->prefix . 'orders';
+    $data = [
+        'user_id' => $user_id,
+        'cart_ids' => $cart_ids_str,
+        'brand' => $brand,
+        'note' => $note,
+        'thuong_hieu' => $thuong_hieu,
+        'ho_ten' => $ho_ten,
+        'address' => $address,
+        'email' => $email,
+        'phone' => $phone,
+        'van_don' => $van_don,
+        'type' => 1,
+        'so_kien_hang' => $so_kien_hang,
+    ];
+    $format = [
+        '%d',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%s',
+        '%d',
+        '%d',
+    ];
+    $result = $wpdb->insert($table, $data, $format);
+    if ($result !== false) {
+        insert_notification("Tạo đơn hàng ký gửi", "Bạn đã tạo đơn hàng ký gửi thành công", array(array("order_id" => $wpdb->insert_id)));
+        wp_send_json_success(['message' => 'Đơn hàng đã được tạo thành công.']);
+    } else {
+        wp_send_json_error(['message' => 'Lỗi khi tạo đơn hàng.']);
     }
     exit;
 }

@@ -157,6 +157,10 @@ function create_orders_table()
         address VARCHAR(500) NULL,
         email VARCHAR(500) NULL,
         phone VARCHAR(500) NULL,
+        van_don VARCHAR(255) NULL,
+        brand VARCHAR(255) NULL,
+        thuong_hieu VARCHAR(255) NULL,
+        so_kien_hang BIGINT(20) NULL,
         da_thanh_toan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hàng
         da_hoan FLOAT(10,2) DEFAULT 0, -- Tổng tiền hoàn
         exchange_rate FLOAT(10,2) DEFAULT NULL,

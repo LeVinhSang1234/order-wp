@@ -1,14 +1,15 @@
 <?php
+global $wpdb;
 $table_name = $wpdb->prefix . 'orders';
 $user_id = get_current_user_id();
 $status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 $totals = [];
 foreach ($status_values as $status) {
-    $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$wpdb->prefix}orders WHERE status = %d AND user_id = %d", $status, $user_id));
+    $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$wpdb->prefix}orders WHERE status = %d AND user_id = %d AND type = 0", $status, $user_id));
     $totals[$status] = is_null($count) ? 0 : $count;
 }
 $query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d ORDER BY created_at DESC",
+    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 0 ORDER BY created_at DESC",
     $user_id
 );
 $orders = $wpdb->get_results($query);

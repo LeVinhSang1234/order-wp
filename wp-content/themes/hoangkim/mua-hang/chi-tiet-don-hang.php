@@ -4,20 +4,101 @@ if (!$id) {
     echo "<script>location.href = '" . site_url('/404') . "';</script>";
     exit();
 }
-$status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Nhập kho TQ', 'Xuất kho TQ', 'Nhập kho VN', 'Đang giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
 $order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}orders WHERE id = %d", $id));
 if ($order) {
 } else {
     echo "<script>location.href = '" . site_url('/404') . "';</script>";
     exit();
 }
-$cart_ids_array = json_decode($order->cart_ids, true);
-$placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
-$query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
-    ...$cart_ids_array
-);
-$carts = $wpdb->get_results($query);
+if ($order->type === '0') {
+    $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Nhập kho TQ', 'Xuất kho TQ', 'Nhập kho VN', 'Đang giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
+    $cart_ids_array = json_decode($order->cart_ids, true);
+    $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+    $query = $wpdb->prepare(
+        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+        ...$cart_ids_array
+    );
+    $carts = $wpdb->get_results($query);
+
+    function getStatus($st)
+    {
+        switch ($st) {
+            case 1:
+                return "Chờ đặt cọc";
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return 'Chờ mua hàng';
+            case 6:
+                return 'Nhập kho TQ';
+            case 7:
+                return 'Xuất kho TQ';
+            case 8:
+                return 'Nhập kho VN';
+            case 9:
+                return 'Đang giao hàng';
+            case 10:
+                return 'Chờ xử lý khiếu nại';
+            case 11:
+                return 'Đã kết thúc';
+            case 12:
+                return 'Đã huỷ';
+        }
+    }
+
+    function getIndex($st)
+    {
+        switch ($st) {
+            case 1:
+                return 1;
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return 2;
+            case 6:
+                return 3;
+            case 7:
+                return 4;
+            case 8:
+                return 5;
+            case 9:
+                return 6;
+            case 10:
+                return 7;
+            case 11:
+                return 8;
+            case 12:
+                return 9;
+        }
+    }
+} else {
+    $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập kho VN', 'Khách nhận hàng', 'Không rõ nguồn gốc'];
+    $carts = [];
+
+    function getStatus($st)
+    {
+        switch ($st) {
+            case 1:
+                return "NCC phát hàng";
+            case 2:
+                return "Nhập kho TQ";
+            case 3:
+                return "TQ gửi hàng";
+            case 4:
+                return "Nhập kho VN";
+            case 5:
+                return "Khách nhận hàng";
+            case 6:
+                return "Không rõ nguồn gốc";
+        }
+    }
+    function getIndex($st)
+    {
+        return intval($st);
+    }
+}
 $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
 if (!$exchange_rate) {
     $exchange_rate = floatval(get_option('exchange_rate', 1.0));
@@ -34,61 +115,6 @@ if (!$phone) {
 }
 $query = "SELECT text,is_system FROM {$wpdb->prefix}chat WHERE order_id = $order->id";
 $chats = $wpdb->get_results($query);
-
-function getStatus($st)
-{
-    switch ($st) {
-        case 1:
-            return "Chờ đặt cọc";
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            return 'Chờ mua hàng';
-        case 6:
-            return 'Nhập kho TQ';
-        case 7:
-            return 'Xuất kho TQ';
-        case 8:
-            return 'Nhập kho VN';
-        case 9:
-            return 'Đang giao hàng';
-        case 10:
-            return 'Chờ xử lý khiếu nại';
-        case 11:
-            return 'Đã kết thúc';
-        case 12:
-            return 'Đã huỷ';
-    }
-}
-
-function getIndex($st)
-{
-    switch ($st) {
-        case 1:
-            return 1;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            return 2;
-        case 6:
-            return 3;
-        case 7:
-            return 4;
-        case 8:
-            return 5;
-        case 9:
-            return 6;
-        case 10:
-            return 7;
-        case 11:
-            return 8;
-        case 12:
-            return 9;
-    }
-}
-
 ?>
 
 <div class="dashboard chi-tiet-don-hang">
@@ -240,7 +266,7 @@ function getIndex($st)
                         Còn thiếu:
                         <strong><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></strong>
                     </div>
-                    <?php if ($order->status < 2) { ?>
+                    <?php if ($order->status < 2 && $order->type !== '1') { ?>
                         <div class="mt-4 d-flex gap-3">
                             <button id="cancel-order-fields" class="btn btn-danger fs-13">Huỷ đơn hàng</button>
                             <button id="update-order-fields" class="btn btn-primary fs-13">Lưu thay đổi</button>

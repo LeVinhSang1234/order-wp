@@ -1,10 +1,16 @@
 <?php
 $mockData = [
-    [
-        "test" => 1,
-    ]
+    []
 ];
-echo "<script>console.log(" . json_encode($mockData) . ");</script>";
+global $wpdb;
+$user_id = get_current_user_id();
+$query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 1 ORDER BY created_at DESC",
+    $user_id
+);
+$orders = $wpdb->get_results($query);
+$status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập kho VN', 'Khách nhận hàng', 'Không rõ nguồn gốc'];
+
 ?>
 
 <div class="dashboard">
@@ -53,7 +59,7 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                 </table>
             </div>
             <div class="clear-both text-left">
-                <a class="btn btn-primary save_order" style="color: #fff;" name="cmdsave" id="cmdsave" onclick="return check_input();">Lưu đơn hàng</a>
+                <a class="btn btn-primary save_order" style="color: #fff;" name="cmdsave" id="cmdsave">Lưu đơn hàng</a>
             </div>
         </form>
         <hr>
@@ -93,13 +99,6 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                                     <input type="date" id="txtdateto" name="txtdateto" class="form-control txtdateto" placeholder="Đến ngày" value="">
                                 </div>
                             </div>
-
-                            <div class="col-lg-4 col-xs-12 marbot15">
-                                <div class="">
-                                    <button type="submit" class="btn btn-primary btn_search_mvd" value="search_mvd">TÌM KIẾM</button>
-                                    <a href="#" class="btn btn-success btn_xuat_excel_mvd">XUẤT EXCEL</a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </form>
@@ -108,21 +107,12 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" name="chk_all_order" class="chk_all_order">
-                                    </th>
                                     <th>Ngày</th>
                                     <th>Order Code</th>
                                     <th>Vận đơn</th>
                                     <th>Tên hàng hóa</th>
                                     <th>Thương hiệu</th>
                                     <th>Số kiện</th>
-                                    <!-- <th>Tổng tiền NDT</th> -->
-
-                                    <th class="hidden">Kiểm đếm</th>
-                                    <th class="hidden">Đóng gỗ</th>
-                                    <th class="hidden">Bảo hiểm</th>
-                                    <!-- <th>Tiền BH</th> -->
                                     <th>Kg tính phí</th>
                                     <th>Giá phí</th>
                                     <th>Thành tiền</th>
@@ -130,7 +120,29 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                                     <th>Lưu ý</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody-data"></tbody>
+                            <tbody id="tbody-data">
+                                <?php foreach ($orders as $order) {
+                                    $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
+                                ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $date->format('d/m/Y H:i') ?>
+                                        </td>
+                                        <td>
+                                            <a href="chi-tiet-don-hang/?id=<?php echo $order->id ?>"><?php echo "HK_" . $order->id ?></a>
+                                        </td>
+                                        <td><?php echo $order->van_don ?></td>
+                                        <td><?php echo $order->brand ?></td>
+                                        <td><?php echo $order->thuong_hieu ?></td>
+                                        <td><?php echo $order->so_kien_hang ?></td>
+                                        <td>--</td>
+                                        <td>--</td>
+                                        <td>--</td>
+                                        <td><?php echo $status_str[$order->status] ?></td>
+                                        <td><?php echo $order->note ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
                         </table>
                     </div>
                     <!-- <div class="text-left">
@@ -184,4 +196,39 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
         renderTable();
     }
     renderTable()
+
+    $(document).ready(function() {
+        $('.save_order').on('click', function() {
+            const data = [];
+            $('.tbl_add_orderext tbody tr').each((_, tr) => {
+                data.push({
+                    van_don: $(tr.querySelector('.txt_logistic_code')).val(),
+                    thuong_hieu: $(tr.querySelector('.txt_name_vn')).val(),
+                    brand: $(tr.querySelector('.txt_brand')).val(),
+                    so_kien_hang: $(tr.querySelector('.txt_quantity')).val(),
+                    note: $(tr.querySelector('.txt_note')).val(),
+                })
+            })
+            const error = data.some(e => !e.van_don || !e.thuong_hieu || !e.brand || !e.so_kien_hang);
+            if (error) return alert("Vui lòng nhập đầy đủ thông tin")
+            data.forEach(d => {
+                $.ajax({
+                    url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'create_order_ki_gui',
+                        nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
+                        ...d
+                    },
+                    success: function(response) {
+                        alert(response.data.message);
+                        window.location.reload()
+                    },
+                    error: function() {
+                        alert('Lỗi kết nối đến máy chủ.');
+                    }
+                });
+            })
+        })
+    })
 </script>
