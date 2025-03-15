@@ -2,17 +2,45 @@
 global $wpdb;
 $table_name = $wpdb->prefix . 'orders';
 $user_id = get_current_user_id();
+$time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
+$time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
+$status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+$van_don = isset($_GET['van_don']) ? sanitize_text_field($_GET['van_don']) : '';
 $status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 $totals = [];
 foreach ($status_values as $status) {
     $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$wpdb->prefix}orders WHERE status = %d AND user_id = %d AND type = 0", $status, $user_id));
     $totals[$status] = is_null($count) ? 0 : $count;
 }
-$query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 0 ORDER BY created_at DESC",
-    $user_id
-);
-$orders = $wpdb->get_results($query);
+
+$query = "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d";
+$params = [$user_id];
+
+
+if (!empty($time_from)) {
+    $query .= " AND created_at >= %s";
+    $params[] = $time_from;
+}
+
+if (!empty($time_to)) {
+    $query .= " AND created_at <= %s";
+    $params[] = $time_to;
+}
+
+if (!empty($status)) {
+    $query .= " AND status = %s";
+    $params[] = $status;
+}
+
+if (!empty($van_don)) {
+    $newString = str_replace("HK_", "", $van_don);
+    $query .= " AND id LIKE %s";
+    $params[] = '%' . $wpdb->esc_like($newString) . '%';
+}
+
+$query .= " AND type = 0 ORDER BY created_at ASC, created_at DESC ";
+
+$orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 
@@ -24,7 +52,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
         <h4>Danh sách đơn hàng</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <input class="w-filter-full"  placeholder="Mã đơn hàng" />
+                <input id="van_don" class="w-filter-full"  placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -35,8 +63,8 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                 $placeholder = "Đến ngày";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select name="status" class="w-filter-full">
-                    <option>Trạng thái</option>
+                <select name="status" id="status" class="w-filter-full">
+                    <option value="">Trạng thái</option>
                     <option value="1">Chờ đặt cọc (<?php echo $totals[1] ?>)</option>
                     <option value="2">Chờ mua hàng (<?php echo $totals[2] ?>)</option>
                     <option value="3">Đang mua hàng (<?php echo $totals[3] ?>)</option>
@@ -49,12 +77,6 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                     <option value="10">Chờ xử lý khiếu nại (<?php echo $totals[10] ?>)</option>
                     <option value="11">Đã kết thúc (<?php echo $totals[11] ?>)</option>
                     <option value="12">Đã hủy (<?php echo $totals[12] ?>)</option>
-                </select>
-                <select class="w-filter-full" name="website">
-                    <option>Website</option>
-                    <option>Taobao.com</option>
-                    <option>1688.com</option>
-                    <option>Tmall.com</option>
                 </select>
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
@@ -175,4 +197,45 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
             }
         });
     })
+
+    $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+        if (params.has('status')) $('#status').val(params.get('status'));
+        if (params.has('van_don')) $('#van_don').val(params.get('van_don'));
+
+        $('.btn-find').on('click', function (event) {
+            event.stopPropagation();
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const status = $('#status').val();
+            const van_don = $('#van_don').val();
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (status) params.set('status', status);
+            else params.delete('status');
+
+            if (van_don) params.set('van_don', van_don);
+            else params.delete('van_don');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
+    });
 </script>

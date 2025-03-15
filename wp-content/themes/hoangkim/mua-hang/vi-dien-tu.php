@@ -1,11 +1,38 @@
 <?php
 global $wpdb;
 $user_id = get_current_user_id();
-$query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d ORDER BY created_at DESC",
-    $user_id
-);
-$wallets = $wpdb->get_results($query);
+
+$time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
+$time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
+$status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+
+$ma_phieu_thu = isset($_GET['ma_phieu_thu']) ? sanitize_text_field($_GET['ma_phieu_thu']) : '';
+
+$query = "SELECT * FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d";
+$params = [$user_id];
+
+if (!empty($time_from)) {
+    $query .= " AND created_at >= %s";
+    $params[] = $time_from;
+}
+
+if (!empty($time_to)) {
+    $query .= " AND created_at <= %s";
+    $params[] = $time_to;
+}
+
+if (!empty($status)) {
+    $query .= " AND status LIKE %s";
+    $params[] = '%' . $wpdb->esc_like($type) . '%';
+}
+
+if (!empty($ma_phieu_thu)) {
+    $query .= " AND ma_phieu_thu = %s";
+    $params[] = $ma_phieu_thu;
+}
+
+$query .= " ORDER BY created_at DESC";
+$wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
 ?>
 
 <div class="dashboard">
@@ -54,7 +81,7 @@ $wallets = $wpdb->get_results($query);
         <h4>Lịch sử giao dịch</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <input class="w-filter-full" placeholder="Mã đơn hàng" />
+                <input id="ma_phieu_thu" class="w-filter-full" placeholder="Mã phiếu thu" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -65,27 +92,11 @@ $wallets = $wpdb->get_results($query);
                 $placeholder = "Đến ngày";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select class="w-filter-full" name="status">
-                    <option>Trạng thái</option>
-                    <option>Chờ đặt cọc (0)</option>
-                    <option>Chờ mua hàng (0)</option>
-                    <option>Đang mua hàng (0)</option>
-                    <option>Chờ shop phát hàng (0)</option>
-                    <option>Shop TQ Phát hàng (0)</option>
-                    <option>Kho TQ nhận hàng (0)</option>
-                    <option>Xuất kho TQ (0)</option>
-                    <option>Trong kho VN (0)</option>
-                    <option>Sẵn sàng giao hàng (0)</option>
-                    <option>Chờ xử lý khiếu nại (0)</option>
-                    <option>Đã kết thúc (0)</option>
-                    <option>Đã hủy (0)</option>
-                </select>
-                <select class="w-filter-full" name="website">
-                    <option>Website</option>
-                    <option>Taobao.com</option>
-                    <option>1688.com</option>
-                    <option>Tmall.com</option>
-                </select>
+                <!-- <select class="w-filter-full" name="status" id="status">
+                    <option value="">Trạng thái</option>
+                    <option value="">Đã duyệt</option>
+                    <option value="CHỜ DUYỆT">Chờ duyệt</option>
+                </select> -->
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
             <div class="mt-3">
@@ -94,7 +105,7 @@ $wallets = $wpdb->get_results($query);
                     <table class="w-100 mt-2" style="min-width: 1000px;">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Mã phiếu thu</th>
                                 <th>Thông tin đơn hàng</th>
                                 <th>Thông tin tài chính</th>
                                 <th>Trạng thái đơn hàng</th>
@@ -103,7 +114,7 @@ $wallets = $wpdb->get_results($query);
                         </thead>
                         <tbody>
                             <?php foreach ($wallets as $wallet) { ?>
-                                <td>#</td>
+                                <td><?php echo ($wallet-> ma_phieu_thu ) ?></td>
                                 <td>--</td>
                                 <td><?php echo format_price_vnd($wallet->so_tien) ?></td>
                                 <td><?php echo ($wallet->so_tien === '0' ? 'Chờ duyệt' : 'Đã duyệt') ?></td>
@@ -116,3 +127,52 @@ $wallets = $wpdb->get_results($query);
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+        if (params.has('status')) $('#status').val(params.get('status'));
+        if (params.has('ma_phieu_thu')) $('#ma_phieu_thu').val(params.get('ma_phieu_thu'));
+
+        $('.btn-find').on('click', function (event) {
+            event.stopPropagation();
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const ma_phieu_thu = $('#ma_phieu_thu').val();
+            const type = $('#status').val();
+
+
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (type) params.set('status', type.toUpperCase());
+            else params.delete('status');
+
+            if (ma_phieu_thu) params.set('ma_phieu_thu', ma_phieu_thu);
+            else params.delete('ma_phieu_thu');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
+    })
+
+
+</script>

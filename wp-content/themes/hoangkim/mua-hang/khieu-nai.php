@@ -1,11 +1,38 @@
 <?php
 global $wpdb;
 $user_id = get_current_user_id();
-$query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND status = 10 ORDER BY created_at DESC",
-    $user_id
-);
-$orders = $wpdb->get_results($query);
+$time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
+$time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
+$status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+$van_don = isset($_GET['van_don']) ? sanitize_text_field($_GET['van_don']) : '';
+
+$query = "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d";
+$params = [$user_id];
+
+if (!empty($time_from)) {
+    $query .= " AND created_at >= %s";
+    $params[] = $time_from;
+}
+
+if (!empty($time_to)) {
+    $query .= " AND created_at <= %s";
+    $params[] = $time_to;
+}
+
+if (!empty($status)) {
+    $query .= " AND status = %s";
+    $params[] = $status;
+}
+
+if (!empty($van_don)) {
+    $newString = str_replace("HK_", "", $van_don);
+    $query .= " AND id LIKE %s";
+    $params[] = '%' . $wpdb->esc_like($newString) . '%';
+}
+
+$query .= " AND status = 10 ORDER BY created_at DESC";
+
+$orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', 'Chờ shop phát hàng', 'Shop TQ Phát hàng', 'Kho TQ nhận hàng', 'Xuất kho TQ', 'Trong kho VN', 'Sẵn sàng giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
 $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
@@ -16,7 +43,7 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
         <h4>DANH SÁCH KHIẾU NẠI SHOP</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <input class="w-filter-full" placeholder="Mã đơn hàng" />
+                <input id="van_don" class="w-filter-full" placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ";
@@ -57,17 +84,23 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
                             $total = $total * $exchange_rate;
                             $total += $total * $phi_mua_hang;
                             $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
-                        ?>
+                            ?>
                             <tr style="text-transform: initial">
                                 <td class="text-center"><?php echo $order->id ?></td>
                                 <td><?php echo "HK_" . $order->id ?></td>
                                 <td style="font-size: 12px">
-                                    <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
-                                    <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
-                                    <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
+                                    <div class="d-flex justify-content-between">Tổng tiền
+                                        hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
+                                    <div class="d-flex justify-content-between">Tiền thanh toán:<span
+                                            style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span
+                                            style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span>
+                                    </div>
                                     <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
                                 </td>
-                                <td style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
+                                <td
+                                    style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
                                     <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
                                 </td>
                             </tr>
@@ -78,3 +111,48 @@ $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+        if (params.has('van_don')) $('#van_don').val(params.get('van_don'));
+
+        $('.btn-find').on('click', function (event) {
+            event.stopPropagation();
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const status = $('#status').val();
+            const van_don = $('#van_don').val();
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (status) params.set('status', status);
+            else params.delete('status');
+
+            if (van_don) params.set('van_don', van_don);
+            else params.delete('van_don');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
+    })
+
+
+</script>

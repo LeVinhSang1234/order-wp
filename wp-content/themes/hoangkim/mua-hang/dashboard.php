@@ -13,12 +13,32 @@ $total_cart = $wpdb->get_var($wpdb->prepare(
     "SELECT COUNT(*) FROM {$wpdb->prefix}cart WHERE user_id = %d and is_done = 0",
     $user_id
 ));
-$notifications = $wpdb->get_results(
-    $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}notification WHERE user_id = %d ORDER BY is_read ASC, created_at DESC",
-        $user_id,
-    )
-);
+
+$time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
+$time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
+$type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+
+$query = "SELECT * FROM {$wpdb->prefix}notification WHERE user_id = %d";
+$params = [$user_id];
+
+
+if (!empty($time_from)) {
+    $query .= " AND created_at >= %s";
+    $params[] = $time_from;
+}
+
+if (!empty($time_to)) {
+    $query .= " AND created_at <= %s";
+    $params[] = $time_to;
+}
+
+if (!empty($type)) {
+    $query .= " AND loai LIKE %s";
+    $params[] = '%' . $wpdb->esc_like($type) . '%';
+}
+$query .= " ORDER BY is_read ASC, created_at DESC";
+$notifications = $wpdb->get_results($wpdb->prepare($query, ...$params));
+
 $wpdb->update(
     "{$wpdb->prefix}notification",
     array('is_read' => 1),
@@ -73,17 +93,13 @@ $wpdb->update(
                 $placeholder = "Đến";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select class="w-filter-full" name="type">
+                <select class="w-filter-full" name="type" id="type">
                     <option>Loại thông báo</option>
-                    <option>Ví điện tử</option>
-                    <option>Đơn hàng</option>
-                    <option>Khiếu nại</option>
-                    <option>Vận đơn</option>
-                </select>
-                <select class="w-filter-full" name="status">
-                    <option>Trạng thái</option>
-                    <option>Chưa xem</option>
-                    <option>Đã xem</option>
+                    <option value="Ví điện tử">Ví điện tử</option>
+                    <option value="Đơn hàng">Đơn hàng</option>
+                    <option value="Khiếu nại">Khiếu nại</option>
+                    <option value="Vận đơn">Vận đơn</option>
+                    <option value="Tạo đơn hàng ký gửi">Tạo đơn hàng ký gửi</option>
                 </select>
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
@@ -102,7 +118,7 @@ $wpdb->update(
                         <tbody>
                             <?php foreach ($notifications as $key => $notification) {
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $notification->created_at);
-                            ?>
+                                ?>
                                 <tr class="<?php echo ($notification->is_read === '0' ? "no-read" : '') ?>">
                                     <td class="text-center"><?php echo $key + 1 ?></td>
                                     <td><?php echo $date->format('d/m/Y H:i') ?></td>
@@ -119,7 +135,49 @@ $wpdb->update(
 </div>
 
 <script>
-    $('.no-read').on("mouseover", function() {
+    $('.no-read').on("mouseover", function () {
         $(this).removeClass('no-read')
     })
+
+    $(document).ready(function () {
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+        if (params.has('type')) $('#type').val(params.get('type'));
+
+        $('.btn-find').on('click', function (event) {
+            event.stopPropagation();
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const type = $('#type').val();
+
+
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (type) params.set('type', type);
+            else params.delete('type');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
+    })
+
+
 </script>

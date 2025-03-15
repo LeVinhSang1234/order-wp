@@ -4,11 +4,39 @@ $mockData = [
 ];
 global $wpdb;
 $user_id = get_current_user_id();
-$query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 1 ORDER BY created_at DESC",
-    $user_id
-);
-$orders = $wpdb->get_results($query);
+$time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
+$time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
+$type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+$van_don = isset($_GET['van_don']) ? sanitize_text_field($_GET['van_don']) : '';
+
+$query = "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d";
+$params = [$user_id];
+
+
+if (!empty($time_from)) {
+    $query .= " AND created_at >= %s";
+    $params[] = $time_from;
+}
+
+if (!empty($time_to)) {
+    $query .= " AND created_at <= %s";
+    $params[] = $time_to;
+}
+
+if (!empty($type)) {
+    $query .= " AND type = %s";
+    $params[] = $type;
+}
+
+if (!empty($van_don)) {
+    $query .= " AND van_don LIKE %s";
+    $params[] = '%' . $wpdb->esc_like($van_don) . '%';
+}
+
+$query .= " AND type = 1 ORDER BY created_at ASC, created_at DESC ";
+
+$orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
+
 $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập kho VN', 'Khách nhận hàng', 'Không rõ nguồn gốc'];
 
 ?>
@@ -20,26 +48,24 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
             <p class="notification"></p>
             <p>
                 <em><u><strong>Chú ý:</strong></u></em><br>
-                - Để tạo đơn hàng ký gửi, quý khách vui lòng điền đầy đủ thông tin về mặt hàng của quý khách theo đúng định dạng của chúng tôi. Xin cám ơn!.
+                - Để tạo đơn hàng ký gửi, quý khách vui lòng điền đầy đủ thông tin về mặt hàng của quý khách theo đúng
+                định dạng của chúng tôi. Xin cám ơn!.
             </p>
             <p></p>
         </div>
-        <!-- <div class="notification-dashboard">
-            <div class="mt-3">
-
-            </div>
-        </div> -->
-        <form id="frm_action" class="form-horizontal" name="frm_action" method="post" action="" enctype="multipart/form-data">
+        <form id="frm_action" class="form-horizontal" name="frm_action" method="post" action=""
+            enctype="multipart/form-data">
             <input type="hidden" name="txtcustomer" id="txtcustomer" value="lsang2885@gmail.com">
             <input type="hidden" name="str_bao_hiem" class="str_bao_hiem">
             <input type="hidden" name="str_kiem_dem" class="str_kiem_dem">
             <input type="hidden" name="str_gia_co" class="str_gia_co">
             <div class="box_data table-responsive">
-                <table class="table table-bordered tbl_add_orderext" style="min-width: 1000px;">
+                <table class="w-100 mt-2 tbl_add_orderext" style="min-width: 1000px;">
                     <thead>
                         <tr class="hidden-xs">
                             <th>
-                                <a href="#" class="btn btn-success add_item_order" onclick="addItem(this)"><i class="fa fa-plus"></i></a>
+                                <a href="#" class="btn btn-success add_item_order" onclick="addItem(this)"><i
+                                        class="fa fa-plus"></i></a>
                             </th>
                             <th>Mã vận đơn<font color="red">*</font>
                             </th>
@@ -65,51 +91,37 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
         <hr>
         <div class="row">
             <div class="col-md-12 box_list_logistic" style="margin-top: 35px;">
-                <form name="frm_search_logistic" class="frm_search_logistic" method="post">
-                    <div class="box-filter">
-                        <div class="row">
-                            <div class="col-lg-3 col-xs-12 marbot15">
-                                <div class="">
-                                    <input name="search_logistic_code" type="text" class="form-control search_logistic_code" placeholder="Tìm theo mã vận đơn" value="">
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-xs-12 marbot15">
-                                <div class="">
-                                    <select name="sl_status_logistic" id="sl_status_logistic" class="form-control sl_status_logistic">
-                                        <option value="">--Chọn trạng thái--</option>
-                                        <option value="1">NCC phát hàng</option>
-                                        <option value="2">Nhập kho TQ</option>
-                                        <option value="3">TQ gửi hàng</option>
-                                        <option value="4">Nhập kho VN</option>
-                                        <option value="6">Khách nhận hàng</option>
-                                        <option value="7">Không rõ nguồn gốc</option>
-                                    </select>
-                                    <!-- <script type="text/javascript">
-                                        cbo_Selected("sl_status_logistic", "");
-                                    </script> -->
-                                </div>
-                            </div>
-                            <div class="col-md-3 marbot15">
-                                <div class="input-group date" data-provide="datepicker">
-                                    <input type="date" id="txtdatefrom" name="txtdatefrom" class="form-control txtdatefrom" placeholder="Từ ngày" value="">
-                                </div>
-                            </div>
-                            <div class="col-md-3 marbot15">
-                                <div class="input-group date" data-provide="datepicker">
-                                    <input type="date" id="txtdateto" name="txtdateto" class="form-control txtdateto" placeholder="Đến ngày" value="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <div>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <input id="van_don" class="w-filter-full" placeholder="Tìm theo mã vận đơn" />
+                    <?php
+                    $id = "time_from";
+                    $placeholder = "Từ ngày";
+                    include get_template_directory() . '/mua-hang/input-date-picker.php';
+                    ?>
+                    <?php
+                    $id = "time_to";
+                    $placeholder = "Đến ngày";
+                    include get_template_directory() . '/mua-hang/input-date-picker.php';
+                    ?>
+                    <select name="status" class="w-filter-full" id="type">
+                        <option value="">--Chọn trạng thái--</option>
+                        <option value="1">NCC phát hàng</option>
+                        <option value="2">Nhập kho TQ</option>
+                        <option value="3">TQ gửi hàng</option>
+                        <option value="4">Nhập kho VN</option>
+                        <option value="6">Khách nhận hàng</option>
+                        <option value="7">Không rõ nguồn gốc</option>
+                    </select>
+                    <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="mt-3">
                     <div class="box_data table-responsive">
-                        <table class="table table-bordered" style="min-width: 1000px;">
+                        <table class="w-100 mt-2" style="min-width: 1000px;">
                             <thead>
                                 <tr>
                                     <th>Ngày</th>
                                     <th>Order Code</th>
-                                    <th>Vận đơn</th>
+                                    <th>Mã vận đơn</th>
                                     <th>Tên hàng hóa</th>
                                     <th>Thương hiệu</th>
                                     <th>Số kiện</th>
@@ -123,13 +135,14 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                             <tbody id="tbody-data">
                                 <?php foreach ($orders as $order) {
                                     $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
-                                ?>
+                                    ?>
                                     <tr>
                                         <td>
                                             <?php echo $date->format('d/m/Y H:i') ?>
                                         </td>
                                         <td>
-                                            <a href="chi-tiet-don-hang/?id=<?php echo $order->id ?>"><?php echo "HK_" . $order->id ?></a>
+                                            <a
+                                                href="chi-tiet-don-hang/?id=<?php echo $order->id ?>"><?php echo "HK_" . $order->id ?></a>
                                         </td>
                                         <td><?php echo $order->van_don ?></td>
                                         <td><?php echo $order->brand ?></td>
@@ -145,12 +158,15 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                             </tbody>
                         </table>
                     </div>
-                    <!-- <div class="text-left">
-					<a href="#" class="btn btn-danger disabled btn_delete_logistic"><i class="fa fa-trash"></i> <span style="text-transform: uppercase;">Xóa vận đơn </span></a>
-				</div> -->
-                    <!-- phan trang -->
-                    <p align="center" class="paging"><strong>Total:</strong> 0 <strong>on</strong> 0 <strong>page</strong><br></p>
-                    <!--end phan trang -->
+                    <p align="center" class="paging">
+                        <strong>Total:</strong><?php echo count(value: $orders) ?><strong>on</strong>
+                        <?php
+                        $result = count(value: $orders) / 10;
+                        $rounded_up = ceil($result);
+                        echo $rounded_up;
+                        ?>
+                        <strong>page</strong><br>
+                    </p>
                 </div>
             </div>
         </div>
@@ -197,8 +213,10 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
     }
     renderTable()
 
-    $(document).ready(function() {
-        $('.save_order').on('click', function() {
+    $(document).ready(function () {
+
+        // create order
+        $('.save_order').on('click', function () {
             const data = [];
             $('.tbl_add_orderext tbody tr').each((_, tr) => {
                 data.push({
@@ -220,15 +238,54 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                         nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
                         ...d
                     },
-                    success: function(response) {
+                    success: function (response) {
                         alert(response.data.message);
                         window.location.reload()
                     },
-                    error: function() {
+                    error: function () {
                         alert('Lỗi kết nối đến máy chủ.');
                     }
                 });
             })
         })
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+        if (params.has('type')) $('#type').val(params.get('type'));
+        if (params.has('van_don')) $('#van_don').val(params.get('van_don'));
+
+        $('.btn-find').on('click', function (event) {
+            event.stopPropagation();
+
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const type = $('#type').val();
+            const van_don = $('#van_don').val();
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (type) params.set('type', type);
+            else params.delete('type');
+
+            if (van_don) params.set('van_don', van_don);
+            else params.delete('van_don');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
     })
 </script>
