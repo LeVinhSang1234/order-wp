@@ -1,3 +1,13 @@
+<?php
+global $wpdb;
+$user_id = get_current_user_id();
+$query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d ORDER BY created_at DESC",
+    $user_id
+);
+$wallets = $wpdb->get_results($query);
+?>
+
 <div class="dashboard">
     <div class="d-flex flex-column flex-md-row w-100 gap-2">
         <div class="mt-3 flex-3 align-items-stretch">
@@ -30,7 +40,7 @@
         <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-column flex-md-row gap-4">
-                <img style="max-height: 350px; width: auto; object-fit: contain;"  src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
+                <img style="max-height: 350px; width: auto; object-fit: contain;" src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
                 <div>
                     <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
                     <div>Số tài khoản: <strong>868199533333</strong></div>
@@ -81,17 +91,26 @@
             <div class="mt-3">
                 Số đơn hàng: <strong>0</strong>
                 <div class="table-responsive">
-                <table class="w-100 mt-2" style="min-width: 1000px;">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Thông tin đơn hàng</th>
-                            <th>Thông tin tài chính</th>
-                            <th>Trạng thái đơn hàng</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                </table>
+                    <table class="w-100 mt-2" style="min-width: 1000px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Thông tin đơn hàng</th>
+                                <th>Thông tin tài chính</th>
+                                <th>Trạng thái đơn hàng</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($wallets as $wallet) { ?>
+                                <td>#</td>
+                                <td>--</td>
+                                <td><?php echo format_price_vnd($wallet->so_tien) ?></td>
+                                <td><?php echo ($wallet->so_tien === '0' ? 'Chờ duyệt' : 'Đã duyệt') ?></td>
+                                <td>Nạp tiền vào hệ thống</td>
+                            <?php } ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

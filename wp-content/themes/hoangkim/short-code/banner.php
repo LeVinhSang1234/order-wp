@@ -22,13 +22,13 @@ function mytheme_banner_shortcode()
         '<div class="sub_title">CÔNG CỤ ĐẶT HÀNG TRUNG QUỐC </div>' .
         '<div class="desc_">(Lưu ý: Chỉ sử dụng trên máy tính)</div>' .
         '<div class="list_link">' .
-        '<a href="todo" class="link" rel="nofollow">' .
+        '<a href="https://chromewebstore.google.com/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-ho%C3%A0ng-ki/bjledagpiehdnlcjjcoafkijhggfpeag" class="link" rel="nofollow">' .
         '<div class=" img-wrap">' .
         "<img src='" . site_url() . "/wp-content/uploads/2025/02/chrome.png'" . 'alt="" data-ll-status="loaded" class="entered lazyloaded" />' .
         '</div>' .
         '<div class="desc">Tải về cho trình duyệt <br>Google Chrome </div>' .
         '</a>' .
-        '<a href="todo" class="link" rel="nofollow">' .
+        '<a href="https://chromewebstore.google.com/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-ho%C3%A0ng-ki/bjledagpiehdnlcjjcoafkijhggfpeag" class="link" rel="nofollow">' .
         '<div class=" img-wrap">' .
         "<img src='" . site_url() . "/wp-content/uploads/2025/02/coccoc.png' alt=\"\" data-ll-status=\"loaded\" class=\"entered lazyloaded\" />" .
         '</div>' .
