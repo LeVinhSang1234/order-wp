@@ -4,7 +4,11 @@ $mockData = [
         "test" => 1
     ]
 ];
-echo "<script>console.log(" . json_encode($mockData) . ");</script>";
+$mockDetailData = [
+    [
+        "test" => 1
+    ]
+];
 ?>
 
 <div class="dashboard">
@@ -127,49 +131,8 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
                                     <th>Lưu ý</th>
                                 </tr>
                             </thead>
-                            <tbody id=''>
-                                <tr class="row_logistic_17260">
-                                    <td>
-                                        <input type="checkbox" name="chk_select_order[]" class=" chk_select_order" value="17260">
-                                    </td>
-                                    <td>
-                                        09:46<br>
-                                        13/03/2025 </td>
-                                    <td>
-                                        <a href="https://hungthinh36.com/don-hang-extension/chi-tiet/16864" target="_blank">
-                                            KG_16864 </a>
-                                    </td>
-                                    <td>
-                                        1 </td>
-                                    <td>
-                                        1 </td>
-                                    <td>
-                                        1 </td>
-                                    <td align="center">
-                                        1 </td>
-                                    <td align="center" class="hidden">
-                                        <i class="fa fa-remove" style="color:red;"></i>
-                                    </td>
-                                    <td align="center" class="hidden">
-                                        <i class="fa fa-remove" style="color:red;"></i>
-                                    </td>
-                                    <td align="center" class="hidden">
-                                        <i class="fa fa-remove" style="color:red;"></i>
-                                    </td>
-                                    <td align="center">
-                                        0.0 kg
-                                    </td>
-                                    <td align="center">
-                                        ...
-                                    </td>
-                                    <td align="center">
-                                        ...
-                                    </td>
-                                    <td align="center">
-                                        NCC phát hàng </td>
-                                    <td>
-                                        1 </td>
-                                </tr>
+                            <tbody id='table-detail-order'>
+
                             </tbody>
                         </table>
                     </div>
@@ -182,6 +145,7 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
 
 <script type="text/javascript">
     var mockData = <?php echo json_encode($mockData); ?>;
+    var mockDetailData = <?php echo json_encode($mockDetailData); ?>;
 
     function renderTableCreateOrder() {
         var tbody = document.querySelector('#tbody-create-order');
@@ -206,22 +170,35 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
     }
 
     function renderTableDetailOrder() {
-        var tbody = document.querySelector('#tbody-create-order');
+        var tbody = document.querySelector('#table-detail-order');
         tbody.innerHTML = "";
-        mockData.forEach((item, index) => {
-            var row = `<tr>
-            <td align="left" class="cls_td">
-                <a href="#" class="btn_action btn_del" onclick="deleteItem(${index});return false;">
-                    <i class="fa fa-trash fa_del"></i>
-                </a>
-            </td>
-            <td><input name="txt_logistic_code[]" class="form-control txt_logistic_code"
-                type="text" placeholder="Mã vận đơn" required=""></td>
-            <td><input name="txt_name_vn[]" class="form-control txt_name_vn" type="text" placeholder="Tên hàng hóa..."></td>
-            <td><input name="txt_brand[]" class="form-control txt_brand" type="text" placeholder="Thương hiệu..."></td>
-            <td><input name="txt_quantity[]" min="1" class="form-control txt_quantity" type="number" value="1" placeholder="SL"></td>
-            <td class="cls_td"><input name="txt_note[]" class="form-control txt_note" placeholder="Loại hàng, Kích thước..."></td>
-        </tr>`;
+        mockDetailData.forEach((item, index) => {
+            var row = `<tr class="row_logistic_17260">
+                                    <td>
+                                        <input type="checkbox" name="chk_select_order[]" class=" chk_select_order" value="17260">
+                                    </td>
+                                    <td>
+                                        09:46<br>
+                                        13/03/2025 </td>
+                                    <td>
+                                        <a href="https://hungthinh36.com/don-hang-extension/chi-tiet/16864" target="_blank">
+                                            KG_16864 </a>
+                                    </td>
+                                    <td>1 </td>
+                                    <td> 1 </td>
+                                    <td> 1 </td>
+                                    <td align="center"> 1 </td>
+                                    <td align="center" class="hidden"> <i class="fa fa-remove" style="color:red;"></i>
+                                    </td>
+                                    <td align="center" class="hidden"> <i class="fa fa-remove" style="color:red;"></i> </td>
+                                    <td align="center" class="hidden"> <i class="fa fa-remove" style="color:red;"></i> </td>
+                                    <td align="center"> 0.0 kg </td>
+                                    <td align="center"> ...
+                                    </td>
+                                    <td align="center"> ... </td>
+                                    <td align="center"> NCC phát hàng </td>
+                                    <td> 1 </td>
+                                </tr>`;
 
             tbody.innerHTML += row;
         });
@@ -239,4 +216,5 @@ echo "<script>console.log(" . json_encode($mockData) . ");</script>";
         renderTableCreateOrder();
     }
     renderTableCreateOrder()
+    renderTableDetailOrder()
 </script>
