@@ -161,6 +161,11 @@ function render_order_detail()
 
   $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem'];
 
+  $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
+  if (!$exchange_rate) {
+    $exchange_rate = floatval(get_option('exchange_rate', 1.0));
+  }
+
   echo "<div class='wrap'><h2>Chi tiết đơn hàng #{$order->id}</h2>";
 
   echo "<div class='order-card'>";
@@ -206,6 +211,7 @@ function render_order_detail()
                     <img width='40px' src='{$cart->product_image}' />
                     <a href='{$cart->product_url}'>" . parse_url($cart->product_url, PHP_URL_HOST) . "</a>
                 </div>
+                
             </td>
             <td>
                 <a href='{$cart->shop_url}'>{$cart->shop_id}</a>
