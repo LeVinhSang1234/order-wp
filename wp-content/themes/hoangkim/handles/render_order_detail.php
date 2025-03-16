@@ -152,6 +152,8 @@ function render_order_detail()
     "chiet_khau_dich_vu"
   ];
 
+  $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem'];
+
   echo "<div class='wrap'><h2>Chi tiết đơn hàng #{$order->id}</h2>";
 
   echo "<div class='order-card'>";
@@ -160,10 +162,21 @@ function render_order_detail()
     $label = isset($field_labels[$field]) ? $field_labels[$field] : ucfirst(str_replace('_', ' ', $field));
     $editable = in_array($field, $editable_fields) ? "contenteditable='true'" : "";
     $class = in_array($field, $editable_fields) ? "class='editable'" : "";
-    echo "<div class='order-item'>
-            <strong>{$label}:</strong>
-            <div {$editable} $class data-id='{$order->id}' data-field='{$field}'>{$value}</div>
-          </div>";
+    if (in_array($field, $checkbox_fields)) {
+      $checked = $value == 1 ? "checked" : "";
+      echo "<div class='order-item'>
+              <strong>{$label}:</strong>
+              <div><input disabled type='checkbox' data-id='{$order->id}' data-field='{$field}' {$checked}></div>
+            </div>";
+    } else {
+      // Nếu là ô có thể chỉnh sửa
+      $editable = in_array($field, $editable_fields) ? "contenteditable='true'" : "";
+      $class = in_array($field, $editable_fields) ? "class='editable'" : "";
+      echo "<div class='order-item'>
+              <strong>{$label}:</strong>
+              <div {$editable} {$class} data-id='{$order->id}' data-field='{$field}'>{$value}</div>
+            </div>";
+    }
   }
 
   echo "</div>";
