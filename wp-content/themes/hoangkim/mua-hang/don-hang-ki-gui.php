@@ -159,9 +159,9 @@ $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập
                         </table>
                     </div>
                     <p align="center" class="paging">
-                        <strong>Total:</strong><?php echo count(value: $orders) ?><strong>on</strong>
+                        <strong>Total:</strong><?php echo count($orders) ?><strong>on</strong>
                         <?php
-                        $result = count(value: $orders) / 10;
+                        $result = count($orders) / 10;
                         $rounded_up = ceil($result);
                         echo $rounded_up;
                         ?>
