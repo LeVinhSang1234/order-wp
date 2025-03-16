@@ -42,3 +42,11 @@
 tr {
   vertical-align: middle;
 }
+
+.marbot15 input {
+  width: 100% !important;
+}
+
+.don-hang-ky-gui .hidden {
+  display: none;
+}

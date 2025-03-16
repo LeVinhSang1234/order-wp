@@ -9,6 +9,8 @@ $mockDetailData = [
         "test" => 1
     ]
 ];
+require_once get_template_directory() . '/mua-hang/input-date-picker.php';
+
 ?>
 
 <div class="dashboard">
@@ -87,13 +89,20 @@ $mockDetailData = [
                                 </div>
                             </div>
                             <div class="col-md-3 marbot15">
-                                <div class="input-group date" data-provide="datepicker">
-                                    <input type="date" id="txtdatefrom" name="txtdatefrom" class="form-control txtdatefrom" placeholder="Từ ngày" value="">
-                                </div>
+                                <?php
+                                $id = "time_from";
+                                $placeholder = "Từ ngày";
+                                include get_template_directory() . '/mua-hang/input-date-picker.php';
+                                ?>
+
                             </div>
                             <div class="col-md-3 marbot15">
                                 <div class="input-group date" data-provide="datepicker">
-                                    <input type="date" id="txtdateto" name="txtdateto" class="form-control txtdateto" placeholder="Đến ngày" value="">
+                                    <?php
+                                    $id = "time_to";
+                                    $placeholder = "Đến ngày";
+                                    include get_template_directory() . '/mua-hang/input-date-picker.php';
+                                    ?>
                                 </div>
                             </div>
 
@@ -120,7 +129,6 @@ $mockDetailData = [
                                     <th>Tên hàng hóa</th>
                                     <th>Thương hiệu</th>
                                     <th>Số kiện</th>
-
                                     <th class="hidden">Kiểm đếm</th>
                                     <th class="hidden">Đóng gỗ</th>
                                     <th class="hidden">Bảo hiểm</th>

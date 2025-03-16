@@ -149,11 +149,34 @@ function create_cart_table()
     $wpdb->query($sql);
 }
 
+function create_ky_gui_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'consignment';
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        order_code VARCHAR(500) NULL,
+        shipping_invoice VARCHAR(500) NULL,
+        product_name VARCHAR(255) NULL,
+        brand  VARCHAR(255) NULL,
+        number_of_packages  VARCHAR(500) NULL,
+        chargeable_weight INT(11) NOT NULL DEFAULT 0,
+        fee INT(11) NOT NULL DEFAULT 0,
+        total_amount INT(11) NOT NULL DEFAULT 0,
+        stauts VARCHAR(500) NULL,
+        note VARCHAR(500) NULL
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
+
 function after_setup_theme()
 {
     create_muahang_page();
     create_orders_table();
     create_cart_table();
+    create_ky_gui_table();
 }
 
 add_action('after_setup_theme', 'after_setup_theme');
