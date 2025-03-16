@@ -65,6 +65,7 @@ if (is_admin()) {
     require_once get_template_directory() . '/action/phi-mua-hang.php';
     require_once get_template_directory() . '/handles/custom_ui_admin.php';
     require_once get_template_directory() . '/handles/render_order_detail.php';
+    require_once get_template_directory() . '/handles/render_transaction.php';
 }
 
 if (!is_admin()) {

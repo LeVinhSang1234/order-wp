@@ -42,9 +42,11 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
             <div class="notification-dashboard" style="height: 150px">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>Số dư trong ví: <strong style="color: #ff0000">0</strong> VNĐ</div>
-                    <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp tiền</a>
+                    <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
+                        tiền</a>
                 </div>
-                <div>Mã nạp tiền: <strong style="color: #ff0000">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
+                <div>Mã nạp tiền: <strong style="color: #ff0000">HK_<?php echo get_current_user_id() ?>_NT</strong>
+                </div>
                 <div style="font-size: 12px" class="mt-2">
                     Tổng tiền hàng đã về chờ tất toán : <strong style="color: #ff0000">0</strong> đ
                 </div>
@@ -54,11 +56,16 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
         <div class="mt-3 flex-1">
             <h4 class="text-uppercase">Tài chính</h4>
             <div class="notification-dashboard" style="height: 150px">
-                <div class="mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền nạp : <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng chi tiêu : <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền đơn hàng : <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tiền đang cọc : <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Cần thanh toán : <span><strong style="color: #ff0000">0</strong> đ</span></div>
+                <div class="mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền nạp : <span><strong
+                            style="color: #ff0000">0</strong> đ</span></div>
+                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng chi tiêu :
+                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
+                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền đơn
+                    hàng : <span><strong style="color: #ff0000">0</strong> đ</span></div>
+                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tiền đang cọc :
+                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
+                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Cần thanh toán :
+                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
                 <div class="border-dotted"></div>
             </div>
         </div>
@@ -67,12 +74,14 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
         <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-column flex-md-row gap-4">
-                <img style="max-height: 350px; width: auto; object-fit: contain;" src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
+                <img style="max-height: 350px; width: auto; object-fit: contain;"
+                    src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
                 <div>
                     <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
                     <div>Số tài khoản: <strong>868199533333</strong></div>
                     <div>Chủ tài khoản: <strong>Lê Kim Trường</strong></div>
-                    <div>Nội dung chuyển khoản: <strong style="color: green">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
+                    <div>Nội dung chuyển khoản: <strong
+                            style="color: green">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
                 </div>
             </div>
         </div>
@@ -114,11 +123,14 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
                         </thead>
                         <tbody>
                             <?php foreach ($wallets as $wallet) { ?>
-                                <td><?php echo ($wallet-> ma_phieu_thu ) ?></td>
-                                <td>--</td>
-                                <td><?php echo format_price_vnd($wallet->so_tien) ?></td>
-                                <td><?php echo ($wallet->so_tien === '0' ? 'Chờ duyệt' : 'Đã duyệt') ?></td>
-                                <td>Nạp tiền vào hệ thống</td>
+                                <tr>
+                                    <td><?php echo ($wallet->ma_phieu_thu) ?></td>
+                                    <td>--</td>
+                                    <td><?php echo format_price_vnd($wallet->so_tien) ?></td>
+                                    <td><?php echo ($wallet-> da_xu_ly === "0" ? 'Chờ duyệt' : 'Đã duyệt') ?></td>
+                                    <td>Nạp tiền vào hệ thống</td>
+                                </tr>
+
                             <?php } ?>
                         </tbody>
                     </table>
