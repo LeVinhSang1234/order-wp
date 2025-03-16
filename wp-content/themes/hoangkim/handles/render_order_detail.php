@@ -106,6 +106,13 @@ function render_order_detail()
 
   $order_id = intval($_GET['id']);
   $order = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}orders WHERE id = $order_id");
+  $cart_ids_array = json_decode($order->cart_ids, true);
+  $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+  $query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+    ...$cart_ids_array
+  );
+  $carts = $wpdb->get_results($query);
 
   if (!$order) {
     echo '<div class="error"><p>Đơn hàng không tồn tại!</p></div>';
@@ -180,6 +187,37 @@ function render_order_detail()
   }
 
   echo "</div>";
+
+  echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%'>
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Cửa hàng</th>
+                    <th>Số lượng</th>
+                    <th style='width: 120px;'>Giá tiền</th>
+                </tr>
+            </thead>
+            <tbody>";
+
+  foreach ($carts as $cart) {
+    echo "<tr>
+            <td>
+                <div class='d-flex align-items-center gap-2'>
+                    <img width='40px' src='{$cart->product_image}' />
+                    <a href='{$cart->product_url}'>" . parse_url($cart->product_url, PHP_URL_HOST) . "</a>
+                </div>
+            </td>
+            <td>
+                <a href='{$cart->shop_url}'>{$cart->shop_id}</a>
+            </td>
+            <td>
+                <input " . ($order->status > 1 ? "disabled" : "") . " data-type='quantity-cart' data-item='{$cart->id}' value='{$cart->quantity}' />
+            </td>
+            <td>" . format_price_vnd($order->exchange_rate * $cart->price) . "</td>
+          </tr>";
+  }
+
+  echo "</tbody></table>";
   echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
   echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
   echo "</div>";
