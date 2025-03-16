@@ -174,3 +174,64 @@ function display_user_phone()
     $user_address = get_user_meta($user_id, 'user_phone', true);
     return esc_html($user_address);
 }
+
+
+
+// Thêm trường user_wallet vào trang chỉnh sửa người dùng
+function add_user_wallet_field($user)
+{
+?>
+    <h3>Wallet</h3>
+
+    <table class="form-table">
+        <tr>
+            <th><label for="user_wallet">Tổng số dư</label></th>
+            <td>
+                <input type="text" name="user_wallet" id="user_wallet" value="<?php echo esc_attr(get_user_meta($user->ID, 'user_wallet', true)); ?>" class="regular-text" /><br />
+                <span class="description">Nhập Số tiền.</span>
+            </td>
+        </tr>
+    </table>
+<?php
+}
+add_action('show_user_profile', 'add_user_wallet_field');
+add_action('edit_user_profile', 'add_user_wallet_field');
+
+// Lưu giá trị trường user_wallet
+function save_user_wallet_field($user_id)
+{
+    // Kiểm tra quyền truy cập
+    if (!current_user_can('edit_user', $user_id)) {
+        return false;
+    }
+
+    // Lưu giá trị của user_wallet
+    if (isset($_POST['user_wallet'])) {
+        update_user_meta($user_id, 'user_wallet', sanitize_text_field($_POST['user_wallet']));
+    }
+}
+add_action('personal_options_update', 'save_user_wallet_field');
+add_action('edit_user_profile_update', 'save_user_wallet_field');
+
+// Hiển thị code trong màn list
+function custom_add_user_wallet_column($columns)
+{
+    $columns['user_wallet'] = 'Tổng số dư';
+    return $columns;
+}
+add_filter('manage_users_columns', 'custom_add_user_wallet_column');
+function custom_show_user_wallet_column($value, $column_name, $user_id)
+{
+    if ($column_name === 'user_wallet') {
+        return esc_html(get_user_meta($user_id, 'user_wallet', true));
+    }
+    return $value;
+}
+add_filter('manage_users_custom_column', 'custom_show_user_wallet_column', 10, 3);
+
+function display_user_wallet()
+{
+    $user_id = get_current_user_id();
+    $user_address = get_user_meta($user_id, 'user_wallet', true);
+    return esc_html($user_address);
+}
