@@ -4,8 +4,8 @@ $table_name = $wpdb->prefix . 'orders';
 $user_id = get_current_user_id();
 $time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from']) : '';
 $time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
-$status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
-$van_don = isset($_GET['van_don']) ? sanitize_text_field($_GET['van_don']) : '';
+$status_search = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+$order_id = isset($_GET['order_id']) ? sanitize_text_field($_GET['order_id']) : '';
 $status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 $totals = [];
 foreach ($status_values as $status) {
@@ -27,13 +27,13 @@ if (!empty($time_to)) {
     $params[] = $time_to;
 }
 
-if (!empty($status)) {
+if (!empty($status_search)) {
     $query .= " AND status = %s";
-    $params[] = $status;
+    $params[] = $status_search;
 }
 
-if (!empty($van_don)) {
-    $newString = str_replace("HK_", "", $van_don);
+if (!empty($order_id)) {
+    $newString = str_replace("HK_", "", $order_id);
     $query .= " AND id LIKE %s";
     $params[] = '%' . $wpdb->esc_like($newString) . '%';
 }
@@ -52,7 +52,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
         <h4>Danh sách đơn hàng</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <input id="van_don" class="w-filter-full"  placeholder="Mã đơn hàng" />
+                <input id="order_id" class="w-filter-full"  placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -203,7 +203,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
         if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
         if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
         if (params.has('status')) $('#status').val(params.get('status'));
-        if (params.has('van_don')) $('#van_don').val(params.get('van_don'));
+        if (params.has('order_id')) $('#order_id').val(params.get('order_id'));
 
         $('.btn-find').on('click', function (event) {
             event.stopPropagation();
@@ -218,7 +218,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
             const time_from = formatDate($('#time_from').val());
             const time_to = formatDate($('#time_to').val());
             const status = $('#status').val();
-            const van_don = $('#van_don').val();
+            const order_id = $('#order_id').val();
             let url = new URL(window.location.href);
             let params = url.searchParams;
 
@@ -231,8 +231,8 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
             if (status) params.set('status', status);
             else params.delete('status');
 
-            if (van_don) params.set('van_don', van_don);
-            else params.delete('van_don');
+            if (order_id) params.set('order_id', order_id);
+            else params.delete('order_id');
 
             window.history.pushState({}, '', url.pathname + '?' + params.toString());
             window.location.reload();
