@@ -277,6 +277,37 @@ table:not(.ui-datepicker-calendar) td {
 	border-radius: 4px;
 }
 
+.menu-group {
+	font-weight: bold;
+	padding: 10px 15px;
+	color: #333;
+	cursor: pointer;
+	user-select: none;
+}
+
+.menu-group span::after {
+	content: "▼"; /* Mũi tên chỉ xuống */
+	float: right;
+	transition: transform 0.3s ease;
+}
+
+.menu-group.open span::after {
+	transform: rotate(180deg); /* Quay mũi tên khi mở */
+}
+
+.menu-items {
+	list-style: none;
+	padding-left: 15px;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.menu-group.open .menu-items {
+	max-height: 300px; /* Đủ lớn để chứa toàn bộ menu */
+	padding-top: 5px;
+}
+
 .menu-item ul.sub-menu li {
 	text-transform: initial;
 	text-align: start;

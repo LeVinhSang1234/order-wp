@@ -19,4 +19,8 @@ if (is_page('don-hang')) {
     include_once get_template_directory() . '/mua-hang/tai-khoan.php';
 } else if (is_page('doi-mat-khau')) {
     include_once get_template_directory() . '/mua-hang/doi-mat-khau.php';
+} else if (is_page('don-ngoai-san')) {
+    include_once get_template_directory() . '/mua-hang/don-ngoai-san.php';
+} else if (is_page('don-thanh-toan-ho')) {
+    include_once get_template_directory() . '/mua-hang/don-thanh-toan-ho.php';
 }

@@ -1,0 +1,84 @@
+<?php
+global $wpdb;
+if (isset($_POST['submit_wallet_transaction'])) {
+    $table_name = $wpdb->prefix . 'orders';
+
+    $link_san_pham = sanitize_text_field($_POST['link_san_pham']);
+    $link_hinh_anh = sanitize_text_field($_POST['link_hinh_anh']);
+    $mausac_kich_thuoc = sanitize_text_field($_POST['mausac_kich_thuoc']);
+    $so_luong = intval($_POST['so_luong']);
+    $gia_tien = floatval($_POST['gia_tien']);
+    $yeu_cau_khac = sanitize_text_field($_POST['yeu_cau_khac']);
+    $created_at = current_time('mysql');
+    $user_id = get_current_user_id();
+
+    $wpdb->insert(
+        $table_name,
+        [
+            'user_id'            => $user_id,
+            'product_link'       => $link_san_pham,
+            'image_link'         => $link_hinh_anh,
+            'variant'            => $mausac_kich_thuoc,
+            'quantity'           => $so_luong,
+            'price'              => $gia_tien,
+            'additional_request' => $yeu_cau_khac,
+            'created_at'         => $created_at
+        ],
+        ['%d', '%s', '%s', '%s', '%d', '%f', '%s', '%s']
+    );
+
+    if ($wpdb->insert_id) {
+        echo '<script>alert("Tạo đơn hàng thành công!");</script>';
+    } else {
+        echo '<script>alert("Có lỗi xảy ra khi tạo đơn hàng!");</script>';
+    }
+}
+?>
+
+<div class="dashboard">
+  <div class="mt-3 flex-1">
+    <h4 class="text-uppercase">TẠO ĐƠN NGOÀI SÀN</h4>
+    <div class="notification-dashboard">
+      <form class="w-100" method="post" action="" enctype="multipart/form-data">
+        <div class="d-flex align-items-center fs-13 gap-3 w-100">
+          <strong style="width: 200px; text-align: right">Link sản phẩm</strong>
+          <input require type="text" name="link_san_pham" placeholder="Link sản phẩm..." required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
+          <strong style="width: 200px; text-align: right">Link Hình ảnh</strong>
+          <input require type="text" name="link_hinh_anh" placeholder="Link Hình ảnh..." required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+          <strong style="width: 200px; text-align: right">Màu sắc, kích thước</strong>
+          <input require type="number" name="mausac_kich_thuoc" placeholder="Màu sắc, kích thước..." required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+          <strong class="mt-1" style="width: 200px; text-align: right">Số lượng</strong>
+          <input require type="number" name="so_luong" placeholder="Số lượng..." required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+          <strong class="mt-1" style="width: 200px; text-align: right">Giá tiền (¥)</strong>
+          <input require type="number" name="gia_tien" placeholder="Giá tiền (¥)..." required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+          <strong class="mt-1" style="width: 200px; text-align: right">Yêu cầu khác</strong>
+          <input require type="number" name="yeu_cau_khac" placeholder="Yêu cầu thêm" required
+            style="width: 100%; max-width: 600px" />
+        </div>
+        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+          <strong style="width: 200px; text-align: right"></strong>
+          <button type="submit" name="submit_wallet_transaction" class="btn btn-primary">+ Tạo đơn hàng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+
+</script>

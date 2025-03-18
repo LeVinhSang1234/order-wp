@@ -45,7 +45,7 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
                     <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                         tiền</a>
                 </div>
-                <div>Mã nạp tiền: <strong style="color: #ff0000">HK_<?php echo get_current_user_id() ?>_NT</strong>
+                <div>Mã nạp tiền: <strong style="color: #ff0000">HK-MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong>
                 </div>
                 <div style="font-size: 12px" class="mt-2">
                     Tổng tiền hàng đã về chờ tất toán : <strong style="color: #ff0000">0</strong> đ
@@ -81,7 +81,7 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
                     <div>Số tài khoản: <strong>868199533333</strong></div>
                     <div>Chủ tài khoản: <strong>Lê Kim Trường</strong></div>
                     <div>Nội dung chuyển khoản: <strong
-                            style="color: green">HK_<?php echo get_current_user_id() ?>_NT</strong></div>
+                            style="color: green">MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong></div>
                 </div>
             </div>
         </div>

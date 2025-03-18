@@ -30,6 +30,34 @@ function create_muahang_page()
         wp_insert_post($new_page);
     }
 
+    $page = get_page_by_path('don-ngoai-san');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Đơn ngoài sàn', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'don-ngoai-san', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+
+    $page = get_page_by_path('don-thanh-toan-ho');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => ' Đơn thanh toán hộ', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'don-thanh-toan-ho', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+
     $page = get_page_by_path('chi-tiet-don-hang');
     if (!$page) {
         // Tạo trang mua-hang
