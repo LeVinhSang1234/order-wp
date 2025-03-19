@@ -97,15 +97,29 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                     </thead>
                     <tbody>
                         <?php foreach ($orders as $order) {
-                            $cart_ids_array = json_decode($order->cart_ids, true);
-                            $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
-                            $query = $wpdb->prepare(
-                                "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
-                                ...$cart_ids_array
-                            );
-                            $carts = $wpdb->get_results($query);
+                            $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
+
+                            if (!is_array($cart_ids_array)) {
+                                $cart_ids_array = []; // Đảm bảo biến này luôn là một mảng
+                            }
+            
+                            // Kiểm tra nếu có dữ liệu thì mới chạy query
+                            if (!empty($cart_ids_array)) {
+                                $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+                                $query = $wpdb->prepare(
+                                    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+                                    ...$cart_ids_array
+                                );
+                                $carts = $wpdb->get_results($query);
+                            } else {
+                                $carts = [];
+                            }
+
                             $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
-                            $total = 0;
+                            if(!$image_url) {
+                                $image_url = $order->link_hinh_anh;
+                            }
+                            $total = floatval($order->phi_mua_hang ?? 0);
                             foreach ($carts as $cart) {
                                 $total += $cart->price;
                             }

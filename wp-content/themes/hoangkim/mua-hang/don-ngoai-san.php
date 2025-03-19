@@ -19,22 +19,22 @@ if (isset($_POST['submit_don_ngoai_san'])) {
     $table_name,
     [
       'user_id'            => $user_id,
-      'thuong_hieu'        => $link_san_pham,
+      'link_san_pham'      => $link_san_pham,
       'type'               => 0,
-      'brand'              => $link_hinh_anh,
-      // 'variant'            => $mau_sac_kich_thuoc,
+      'link_hinh_anh'      => $link_hinh_anh,
+      'mau_sac_kich_thuoc' => $mau_sac_kich_thuoc,
       'so_kien_hang'       => $so_luong,
       'phi_mua_hang'       => $gia_tien,
       'note'               => $yeu_cau_khac,
       'created_at'         => $created_at
     ],
-    ['%d', '%s', '%s', '%s', '%d', '%f', '%s', '%s']
+    ['%d', '%s', '%d', '%s', '%s', '%f', '%f', '%s', '%s']
   );
 
   if ($wpdb->insert_id) {
     echo "<script>alert('Tạo đơn hàng thành công!');window.location.href='/don-ngoai-san/'</script>";
   } else {
-    echo "<script>alert('Có lỗi xảy ra khi tạo đơn hàng!');window.location.href='/don-ngoai-san/'</script>";
+    echo "<script>alert('Có lỗi xảy ra khi tạo đơn hàng!')'</script>";
   }
 }
 ?>
