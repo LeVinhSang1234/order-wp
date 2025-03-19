@@ -12,7 +12,7 @@ if (!is_admin()) {
 // Block user go to the admin page
 function restrict_wp_admin_access()
 {
-    if (is_user_logged_in() && is_admin() && !current_user_can('administrator')) {
+    if (is_user_logged_in() && is_admin() && !current_user_can('administrator') && strpos($_SERVER['REQUEST_URI'], 'admin-ajax.php') === false) {
         wp_redirect(home_url());
         exit;
     }
