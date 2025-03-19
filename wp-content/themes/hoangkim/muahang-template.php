@@ -32,6 +32,7 @@
                             Bảng tin
                         </a>
                     </li>
+                    
                     <li>
                         <a class="<?php echo (is_page('don-hang') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang' ?>">
                             <i class="fa-regular fa-clipboard"></i>
@@ -42,6 +43,18 @@
                         <a class="<?php echo (is_page('don-hang-ky-gui') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-hang-ky-gui' ?>">
                             <i class="fa-solid fa-van-shuttle"></i>
                             Đơn hàng ký gửi
+                        </a>
+                    </li>
+                    <li>
+                        <a class="<?php echo (is_page('don-ngoai-san') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-ngoai-san' ?>">
+                            <i class="fa-regular fa-clipboard"></i>
+                            Đơn ngoài sàn
+                        </a>
+                    </li>
+                    <li>
+                        <a class="<?php echo (is_page('don-thanh-toan-ho') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-thanh-toan-ho' ?>">
+                            <i class="fa-regular fa-clipboard"></i>
+                            Đơn thanh toán hộ
                         </a>
                     </li>
                     <li>

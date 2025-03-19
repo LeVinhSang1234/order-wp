@@ -30,6 +30,34 @@ function create_muahang_page()
         wp_insert_post($new_page);
     }
 
+    $page = get_page_by_path('don-ngoai-san');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => 'Đơn ngoài sàn', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'don-ngoai-san', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+
+    $page = get_page_by_path('don-thanh-toan-ho');
+    if (!$page) {
+        // Tạo trang mua-hang
+        $new_page = array(
+            'post_title'    => ' Đơn thanh toán hộ', // Tiêu đề trang
+            'post_content'  => '',
+            'post_status'   => 'publish', // Đặt trang thành "đã xuất bản"
+            'post_author'   => 1, // ID của tác giả (1 là admin mặc định)
+            'post_type'     => 'page', // Kiểu bài viết là "page"
+            'post_name'     => 'don-thanh-toan-ho', // Đường dẫn
+        );
+        wp_insert_post($new_page);
+    }
+
     $page = get_page_by_path('chi-tiet-don-hang');
     if (!$page) {
         // Tạo trang mua-hang
@@ -174,6 +202,46 @@ function create_orders_table()
     $wpdb->query($sql);
 }
 
+function update_orders_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'orders';
+
+    $columns_to_add = [
+        'link_san_pham' => "VARCHAR(255) NULL",
+        'link_hinh_anh' => "VARCHAR(255) NULL",
+        'mau_sac_kich_thuoc' => "VARCHAR(255) NULL"
+    ];
+
+    foreach ($columns_to_add as $column => $definition) {
+        $exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column'");
+        if (empty($exists)) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column $definition");
+        }
+    }
+}
+
+update_orders_table();
+
+function create_orders_support()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'orders_support';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        order_id VARCHAR(500) NULL,
+        trang_thai TINYINT DEFAULT 0,
+        phi_dich_vu FLOAT(10,2) DEFAULT NULL,
+        tong_tien FLOAT(10,2) DEFAULT NULL,
+        ghi_chu TEXT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
+
+
 function create_cart_table()
 {
     global $wpdb;
@@ -253,6 +321,7 @@ function after_setup_theme()
 {
     create_muahang_page();
     create_orders_table();
+    create_orders_support();
     create_cart_table();
     create_chat_table();
     create_wallet_transaction();
