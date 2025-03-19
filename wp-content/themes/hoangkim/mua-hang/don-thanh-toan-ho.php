@@ -10,36 +10,30 @@ $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 
 // Xử lý khi người dùng gửi yêu cầu
-if (isset($_POST['submit_don_thanh_toan_ho']) && check_admin_referer('submit_don_thanh_toan_ho_action', 'submit_don_thanh_toan_ho_nonce')) {
-    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-    $exchange_rate = isset($_POST['ty_gia']) ? floatval($_POST['ty_gia']) : 1.0;
-    $service_fee = isset($_POST['phi_dich_vu']) ? floatval($_POST['phi_dich_vu']) : 0;
-    $note = isset($_POST['ghi_chu']) ? sanitize_text_field($_POST['ghi_chu']) : '';
-    
-    $order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table_name} WHERE id = %d", $order_id));
+if (isset($_POST['submit_don_thanh_toan_ho']) && is_user_logged_in()) {
+  $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+  $exchange_rate = isset($_POST['ty_gia']) ? floatval($_POST['ty_gia']) : 1.0;
+  $service_fee = isset($_POST['phi_dich_vu']) ? floatval($_POST['phi_dich_vu']) : 0;
+  $note = isset($_POST['ghi_chu']) ? sanitize_text_field($_POST['ghi_chu']) : '';
 
-    if ($order) {
-        $wpdb->insert(
-            $table_name,
-            [
-                'user_id' => $user_id,
-                'status' => 'pending',
-                'note' => $note,
-                'exchange_rate' => $exchange_rate,
-                'phi_mua_hang' => $service_fee,
-                'created_at' => current_time('mysql')
-            ],
-            ['%d', '%s', '%s', '%f', '%f', '%s']
-        );
+  $order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table_name} WHERE id = %d", $order_id));
 
-        if ($wpdb->insert_id) {
-            // wp_redirect(add_query_arg('success', '1'));
-            exit;
-        } else {
-            // wp_redirect(add_query_arg('error', '1'));
-            exit;
-        }
-    }
+  if ($order) {
+    $wpdb->update(
+      $table_name,
+      [
+        'user_id' => $user_id,
+        'status' => 'pending',
+        'note' => $note,
+        'exchange_rate' => $exchange_rate,
+        'phi_mua_hang' => $service_fee
+      ],
+      ['id' => $order_id, 'user_id' => $user_id],
+      ['%d', '%s', '%s', '%f', '%f', '%s']
+    );
+    echo "<script>alert('Tạo yêu cầu thành công!');window.location.href='/don-thanh-toan-ho/'</script>";
+    exit;
+  }
 }
 ?>
 
@@ -50,30 +44,33 @@ if (isset($_POST['submit_don_thanh_toan_ho']) && check_admin_referer('submit_don
       <form class="w-100" method="post" action="" enctype="multipart/form-data">
         <div class="d-flex align-items-center fs-13 gap-3 w-100">
           <strong style="width: 200px; text-align: right">Chọn đơn hàng:</strong>
-          <select class="w-filter-full" name="order_id" id="orderSelect" style="width: 100%; max-width: 600px">
+          <select class="w-filter-full" name="order_id" id="orderSelect"
+            style="width: 100%; max-width: 600px">
             <?php foreach ($orders as $order_item) : ?>
-            <option value="<?php echo esc_attr($order_item->id); ?>"
-              data_ty_gia="<?php echo esc_attr($order_item->exchange_rate ?: $exchange_rate); ?>"
-              data-total_amount="<?php echo esc_attr(($order_item->gia_tien * $exchange_rate) + $phi_mua_hang); ?>"
-              data-phi_dich_vu="<?php echo esc_attr($order_item->exchange_rate ?: $exchange_rate); ?>">
-              <?php echo esc_html($order_item->id); ?>
-            </option>
+              <option value="<?php echo esc_attr($order_item->id); ?>"
+                data_ty_gia="<?php echo esc_attr($order_item->exchange_rate ?: $exchange_rate); ?>"
+                data-total_amount="<?php echo esc_attr(($order_item->gia_tien * $exchange_rate) + $phi_mua_hang); ?>"
+                data-phi_dich_vu="<?php echo esc_attr($order_item->exchange_rate ?: $exchange_rate); ?>">
+                <?php echo "HK_" . sprintf('%02d', esc_html($order_item->id)); ?>
+              </option>
             <?php endforeach; ?>
           </select>
         </div>
-        <div class="mt-3 d-flex fs-13 gap-3 w-100">
+        <div class="d-flex align-items-center fs-13 gap-3 w-100">
           <strong class="mt-1" style="width: 200px; text-align: right"></strong>
-          <div style="margin-top: -10px"><span>Tổng tiền thanh toán: </span><span class="text-danger fw-bold"
-              id="total_amount">0</span></div>
+          <div style="width: 100%; max-width: 600px;">
+            <span>Tổng tiền thanh toán: </span>
+            <span class="text-danger fw-bold" id="total_amount">0</span>
+          </div>
         </div>
         <div class="mt-3 d-flex align-items-center fs-13 gap-3 w-100">
           <strong style="width: 200px; text-align: right">Tỷ giá:</strong>
-          <input readonly disabled value="<?php echo esc_attr($exchange_rate); ?>" require type="number" name="ty_gia"
-            placeholder="Tỷ giá..." required style="width: 100%; max-width: 600px" />
+          <input readonly disabled value="<?php echo esc_attr($exchange_rate); ?>" require type="number"
+            name="ty_gia" placeholder="Tỷ giá..." required style="width: 100%; max-width: 600px" />
         </div>
         <div class="mt-3 d-flex fs-13 gap-3 w-100">
           <strong style="width: 200px; text-align: right">Phí dịch vụ:</strong>
-          <input readonly disabled require type="number" name="phi_dich_vu" placeholder="Phí dịch vụ..." required
+          <input require type="number" name="phi_dich_vu" placeholder="Phí dịch vụ..." required
             style="width: 100%; max-width: 600px" />
         </div>
         <div class="mt-3 d-flex fs-13 gap-3 w-100">
@@ -82,38 +79,39 @@ if (isset($_POST['submit_don_thanh_toan_ho']) && check_admin_referer('submit_don
         </div>
         <div class="mt-3 d-flex fs-13 gap-3 w-100">
           <strong style="width: 200px; text-align: right"></strong>
-          <button type="submit" name="submit_don_thanh_toan_ho" class="btn btn-primary">+ Gửi yêu cầu</button>
+          <button type="submit" name="submit_don_thanh_toan_ho" class="btn btn-primary textleft">+ Gửi yêu
+            cầu</button>
         </div>
       </form>
       <?php if (isset($_GET['success'])) : ?>
-      <div class="alert alert-success">Yêu cầu thanh toán đã được gửi thành công!</div>
+        <div class="alert alert-success">Yêu cầu thanh toán đã được gửi thành công!</div>
       <?php endif; ?>
     </div>
   </div>
 </div>
 
 <script>
-$(document).ready(function() {
-  const orderSelect = document.getElementById("orderSelect");
-  if (!orderSelect) return;
+  $(document).ready(function() {
+    const orderSelect = document.getElementById("orderSelect");
+    if (!orderSelect) return;
 
-  const exchangeRateInput = document.querySelector("input[name='ty_gia']");
-  const serviceFeeInput = document.querySelector("input[name='phi_dich_vu']");
-  const totalAmountText = document.getElementById("total_amount");
+    const exchangeRateInput = document.querySelector("input[name='ty_gia']");
+    const serviceFeeInput = document.querySelector("input[name='phi_dich_vu']");
+    const totalAmountText = document.getElementById("total_amount");
 
-  function updateFields() {
-    const selectedOption = orderSelect.options[orderSelect.selectedIndex];
-    if (!selectedOption) return;
+    function updateFields() {
+      const selectedOption = orderSelect.options[orderSelect.selectedIndex];
+      if (!selectedOption) return;
 
-    const exchangeRate = parseFloat(selectedOption.getAttribute("data_ty_gia")) || 0;
-    const totalAmount = parseFloat(selectedOption.getAttribute("data-total_amount")) || 0;
-    const serviceFee = parseFloat(serviceFeeInput.value) || 0;
+      const exchangeRate = parseFloat(selectedOption.getAttribute("data_ty_gia")) || 0;
+      const totalAmount = parseFloat(selectedOption.getAttribute("data-total_amount")) || 0;
+      const serviceFee = parseFloat(serviceFeeInput.value) || 0;
 
-    if (exchangeRateInput) exchangeRateInput.value = exchangeRate;
-    if (totalAmountText) totalAmountText.textContent = (totalAmount + serviceFee).toLocaleString() + "đ";
-  }
+      if (exchangeRateInput) exchangeRateInput.value = exchangeRate;
+      if (totalAmountText) totalAmountText.textContent = (totalAmount + serviceFee).toLocaleString() + "đ";
+    }
 
-  orderSelect.addEventListener("change", updateFields);
-  updateFields();
-})
+    orderSelect.addEventListener("change", updateFields);
+    updateFields();
+  })
 </script>
