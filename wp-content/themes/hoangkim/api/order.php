@@ -358,7 +358,7 @@ function create_order_via_ajax()
     }
     global $wpdb;
     $cart_ids = $wpdb->get_col($wpdb->prepare(
-        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1",
+        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1 AND is_done = 0",
         $shop_id,
         $user_id
     ));

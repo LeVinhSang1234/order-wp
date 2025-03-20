@@ -6,7 +6,7 @@ $time_from = isset($_GET['time_from']) ? sanitize_text_field($_GET['time_from'])
 $time_to = isset($_GET['time_to']) ? sanitize_text_field($_GET['time_to']) : '';
 $status_search = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
 $order_id = isset($_GET['order_id']) ? sanitize_text_field($_GET['order_id']) : '';
-$status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+$status_values = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
 $totals = [];
 foreach ($status_values as $status) {
     $count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(id) FROM {$wpdb->prefix}orders WHERE status = %d AND user_id = %d AND type = 0", $status, $user_id));
@@ -44,7 +44,7 @@ $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 
-$status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', 'Chờ shop phát hàng', 'Shop TQ Phát hàng', 'Kho TQ nhận hàng', 'Xuất kho TQ', 'Trong kho VN', 'Sẵn sàng giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
+$status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 ?>
 
 <div class="dashboard">
@@ -64,29 +64,25 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
                 <select name="status" id="status" class="w-filter-full">
-                    <option value="">Trạng thái</option>
-                    <option value="1">Chờ đặt cọc (<?php echo $totals[1] ?>)</option>
-                    <option value="2">Chờ mua hàng (<?php echo $totals[2] ?>)</option>
-                    <option value="3">Đang mua hàng (<?php echo $totals[3] ?>)</option>
-                    <option value="4">Chờ shop phát hàng (<?php echo $totals[4] ?>)</option>
-                    <option value="5">Shop TQ Phát hàng (<?php echo $totals[5] ?>)</option>
-                    <option value="6">Kho TQ nhận hàng (<?php echo $totals[6] ?>)</option>
-                    <option value="7">Xuất kho TQ (<?php echo $totals[7] ?>)</option>
-                    <option value="8">Trong kho VN (<?php echo $totals[8] ?>)</option>
-                    <option value="9">Sẵn sàng giao hàng (<?php echo $totals[9] ?>)</option>
-                    <option value="10">Chờ xử lý khiếu nại (<?php echo $totals[10] ?>)</option>
-                    <option value="11">Đã kết thúc (<?php echo $totals[11] ?>)</option>
-                    <option value="12">Đã hủy (<?php echo $totals[12] ?>)</option>
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="1">Chờ báo giá (<?php echo $totals[1] ?>)</option>
+                    <option value="2">Đang mua hàng (<?php echo $totals[2] ?>)</option>
+                    <option value="3">Đã mua hàng (<?php echo $totals[3] ?>)</option>
+                    <option value="4">NCC phát hàng (<?php echo $totals[4] ?>)</option>
+                    <option value="5">Nhập kho TQ (<?php echo $totals[5] ?>)</option>
+                    <option value="6">Nhập kho VN (<?php echo $totals[6] ?>)</option>
+                    <option value="7">Khách nhận hàng (<?php echo $totals[7] ?>)</option>
+                    <option value="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</option>
+                    <option value="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</option>
                 </select>
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
             <div class="mt-3">
-                Số đơn hàng: <strong>0</strong>
+            Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
                 <div class="table-responsive">
                 <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                     <thead>
                         <tr>
-                            <th class="text-center">#</th>
                             <th>Mã đơn hàng</th>
                             <th class="text-center">Sản phẩm</th>
                             <th>Tổng Tiền (VNĐ)</th>
@@ -117,7 +113,7 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
 
                             $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
                             if(!$image_url) {
-                                $image_url = $order->link_hinh_anh;
+                                $image_url = $order-> link_hinh_anh;
                             }
                             $total = floatval($order->phi_mua_hang ?? 0);
                             foreach ($carts as $cart) {
@@ -128,7 +124,6 @@ $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Đang mua hàng', '
                             $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
                         ?>
                             <tr style="text-transform: initial">
-                                <td class="text-center"><?php echo $order->id ?></td>
                                 <td><?php echo "HK_" . $order->id ?></td>
                                 <td class="text-center">
                                     <img src="<?php echo $image_url ?>" />

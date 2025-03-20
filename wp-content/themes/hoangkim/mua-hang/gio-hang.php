@@ -17,7 +17,14 @@ $current_user = wp_get_current_user();
 
 <div class="dashboard">
   <div class="mt-3 flex-1">
-    <h4 class="text-uppercase">Giỏ hàng</h4>
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <h4 class="text-uppercase">Giỏ hàng</h4>
+      <button class="btn-order-all flex justify-content-center" style="width: 200px;"
+        data-item="<?php echo $product['id'] ?>">
+        <i class="fa-solid fa-cart-plus"></i>
+        Yêu cầu tất cả
+      </button>
+    </div>
     <div class="notification-dashboard">
       <div class="mt-3">
         <?php if (count($cart_items) <= 0) { ?>
@@ -183,45 +190,39 @@ $current_user = wp_get_current_user();
 </div>
 <script>
 $(document).ready(function() {
-
   function formatCurrencyVND(amount) {
-    if (!amount) return '--'
-    return new Intl.NumberFormat("vi-VN", {
+    return amount ? new Intl.NumberFormat("vi-VN", {
       style: "currency",
-      currency: "VND",
-    }).format(amount);
+      currency: "VND"
+    }).format(amount) : '--';
   }
 
-  $('.table-cart .icon-remove').on('click', function() {
-    const id = $(this).attr('data-item');
-    const userConfirmed = confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?");
-    if (!userConfirmed) return
-    return fetch(`${origin}/wp-admin/admin-ajax.php?action=remove_cart`, {
+  $('.table-cart').on('click', '.icon-remove', function() {
+    if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
+    fetch(`${origin}/wp-admin/admin-ajax.php?action=remove_cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          id
+          id: $(this).data('item')
         }),
         credentials: "include",
       })
-      .catch(() => null)
       .finally(() => window.location.reload());
-  })
+  });
 
   $('input[data-type="select-carts"]').on("click", function() {
-    const val = $(this).is(":checked")
-    const shopId = $(this).attr('data-item')
-    $(`input[data-shop="${shopId}"]`).click();
-  })
+    $(`input[data-shop="${$(this).data('item')}"]`).click();
+  });
 
-  $('input[data-type="select-cart"]').on("click", function() {
-    const shopId = $(this).attr('data-shop');
-    const val = $(this).is(":checked")
-    const productId = $(this).attr('data-item');
-    const quantity = $(`input[data-shop="${shopId}"][data-item="${productId}"][data-type="product-quantity"]`)
-      .val()
+  $('input[data-type="select-cart"], input[data-type="product-quantity"]').on("change", function() {
+    const shopId = $(this).data('shop');
+    const productId = $(this).data('item');
+    const isSelect = $('input[data-shop="' + shopId + '"][data-item="' + productId +'"][data-type="select-cart"]').is(":checked");
+    const quantity = parseInt($(this).val()) || 1;
+
+    $(this).val(quantity);
     fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
         method: "POST",
         headers: {
@@ -230,136 +231,80 @@ $(document).ready(function() {
         body: JSON.stringify({
           cart_id: productId,
           quantity,
-          is_select: Number(val)
-        }),
+          is_select: Number(isSelect)
+        })
       })
-      .catch(() => null)
-      .finally(() => window.location.reload());
-  })
-
-  $('input[data-type="product-quantity"]').on('change', function() {
-    const shopId = $(this).attr('data-shop');
-    const productId = $(this).attr('data-item');
-    const val = $(`input[data-shop="${shopId}"][data-item="${productId}"][data-type="select-cart"]`).is(
-      ":checked")
-    const quantity = parseInt($(this).val()) || 1
-    $(this).val(quantity)
-    fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          cart_id: productId,
-          quantity,
-          is_select: Number(val)
-        }),
-      })
-      .catch(() => null)
-      .finally(() => window.location.reload());
-  })
-  $('button.btn-order').on('click', function() {
-    const shopId = $(this).attr('data-shop');
-    let isExistedCheck = false;
-
-    $(`input[data-type="select-cart"][data-shop="${shopId}"]`).each(function() {
-      if ($(this).is(":checked")) isExistedCheck = true;
-    });
-
-    if (!isExistedCheck) return alert("Vui lòng chọn sản phẩm sẽ mua!");
-
-    // Lấy thông tin người dùng từ input ngoài popup
-    const ho_ten = $(`.popup-info input[data-type="ho_ten"]`).val()
-    const address = $(`.popup-info input[data-type="address"]`).val()
-    const email = $(`.popup-info input[data-type="email"]`).val()
-    const phone = $(`.popup-info input[data-type="phone"]`).val()
-
-    var data = {
-      action: 'create_order',
-      nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
-      note: 'Giao hàng nhanh',
-      ho_ten,
-      address,
-      email,
-      phone,
-      is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
-      is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
-      is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked")),
-      shop_id: shopId
-    };
-
-    $.ajax({
-      url: '<?php echo admin_url("admin-ajax.php"); ?>',
-      type: 'POST',
-      data: data,
-      success: function(response) {
-        alert(response.data.message);
-        window.location.reload();
-      },
-      error: function() {
-        alert('Lỗi kết nối đến máy chủ.');
-      }
-    });
-  })
-
-  $('.btn-cancel-popup-order').on("click", function() {
-    $('.popup-info').removeClass("popup-info__active");
-    $('.popup-info .btn-accept-order').removeAttr("data-shop");
-  })
-
-  $('.popup-info .btn-accept-order').on('click', function() {
-    const shopId = $(this).attr('data-shop');
-    const ho_ten = $(`.popup-info input[data-type="ho_ten"]`).val()
-    const address = $(`.popup-info input[data-type="address"]`).val()
-    const email = $(`.popup-info input[data-type="email"]`).val()
-    const phone = $(`.popup-info input[data-type="phone"]`).val()
-
-    if (!ho_ten) {
-      $('.mess-error[item-type="name-error"]').addClass('mess-error__show')
-    } else $('.mess-error[item-type="name-error"]').removeClass('mess-error__show')
-
-    if (!address) {
-      $('.mess-error[item-type="address-error"]').addClass('mess-error__show')
-    } else $('.mess-error[item-type="address-error"]').removeClass('mess-error__show')
-
-    if (!email) {
-      $('.mess-error[item-type="email-error"]').addClass('mess-error__show')
-    } else $('.mess-error[item-type="email-error"]').removeClass('mess-error__show')
-
-    if (!phone) {
-      $('.mess-error[item-type="phone-error"]').addClass('mess-error__show')
-    } else $('.mess-error[item-type="phone-error"]').removeClass('mess-error__show')
-
-    if (!ho_ten || !address || !email || !phone) return
-
-    $('.popup-info').removeClass("popup-info__active");
-    $('.popup-info .btn-accept-order').removeAttr("data-shop");
-
-    var data = {
-      action: 'create_order',
-      nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
-      note: 'Giao hàng nhanh',
-      ho_ten,
-      address,
-      email,
-      phone,
-      is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
-      is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
-      is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked")),
-      shop_id: shopId
-    };
-    $.ajax({
-      url: '<?php echo admin_url("admin-ajax.php"); ?>',
-      type: 'POST',
-      data: data,
-      success: function(response) {
-        alert(response.data.message);
+      .finally(() => {
         window.location.reload()
-      },
-      error: function() {
-        alert('Lỗi kết nối đến máy chủ.');
+      });
+  });
+
+  $('button.btn-order').on('click', function() {
+    const shopId = $(this).data('shop');
+    if (!$(`input[data-type="select-cart"][data-shop="${shopId}"]:checked`).length) return alert(
+      "Vui lòng chọn sản phẩm sẽ mua!");
+
+    const data = {
+      action: 'create_order',
+      nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
+      shop_id: shopId,
+      ho_ten: $('.popup-info input[data-type="ho_ten"]').val(),
+      address: $('.popup-info input[data-type="address"]').val(),
+      email: $('.popup-info input[data-type="email"]').val(),
+      phone: $('.popup-info input[data-type="phone"]').val(),
+      note: $('.textarea[data-type="note-product"]').val(),
+      is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
+      is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
+      is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked"))
+    };
+
+    $.post('<?php echo admin_url("admin-ajax.php"); ?>', data, function(response) {
+      alert(response.data.message);
+      window.location.reload();
+    }).fail(() => alert('Lỗi kết nối đến máy chủ.'));
+  });
+
+  $('.btn-order-all').on('click', function() {
+    const allProducts = [];
+
+    $('input[data-type="select-cart"]').prop("checked", true).trigger("change");
+
+    $('.table-cart tbody tr').each(function() {
+      const checkbox = $(this).find('input[data-type="select-cart"]');
+      if (checkbox.is(":checked")) {
+        allProducts.push({
+          id: checkbox.data("item"),
+          shop_id: checkbox.data("shop"),
+          quantity: $(this).find('input[data-type="product-quantity"]').val(),
+          price: $(this).find('td[data-type="price"]').data("item")
+        });
       }
     });
-  })
+
+    if (!allProducts.length) return alert("Vui lòng chọn ít nhất một sản phẩm!");
+    console.log(allProducts);
+    fetch(`${origin}/wp-admin/admin-ajax.php?action=submit_all_cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          products: allProducts,
+          ho_ten: $(`input[data-type="ho_ten"]`).val(),
+          address: $(`input[data-type="address"]`).val(),
+          email: $(`input[data-type="email"]`).val(),
+          phone: $(`input[data-type="phone"]`).val(),
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Đã gửi yêu cầu đặt hàng thành công!");
+          location.reload();
+        } else {
+          alert("Có lỗi xảy ra, vui lòng thử lại.");
+        }
+      });
+  });
 })
 </script>

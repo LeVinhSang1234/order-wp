@@ -547,6 +547,6 @@ input:disabled {
   }
 }
 
-table:not(.ui-datepicker-calendar) thead tr {
+/* table:not(.ui-datepicker-calendar) thead tr {
 	background-color: #fe7f4a;
-}
+} */

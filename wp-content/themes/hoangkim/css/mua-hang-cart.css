@@ -1,5 +1,6 @@
+
 .cart-header {
-  background: #fe7f4a;
+  background: #005b8e !important;
   padding: 5px 17px;
   color: #fff;
   display: flex;
@@ -58,7 +59,7 @@ table.table-cart td {
   color: red;
 }
 
-.btn-order,
+.btn-order-all,
 .btn-accept-order {
   border: none;
   outline: none;
@@ -72,12 +73,27 @@ table.table-cart td {
   gap: 6px;
 }
 
+.btn-order-all i,
 .btn-order i,
 .btn-accept-order i {
   margin-top: 3px;
 }
 
+.btn-order-all:hover,
 .btn-order:hover,
 .btn-accept-order:hover {
   opacity: 0.8;
+}
+
+.btn-order {
+  background-color: #20c997;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }

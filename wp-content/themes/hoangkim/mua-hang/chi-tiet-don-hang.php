@@ -15,7 +15,7 @@ if ($order->type === '0') {
     $cart_ids_array = json_decode($order->cart_ids, true);
     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
     $query = $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
         ...$cart_ids_array
     );
     $carts = $wpdb->get_results($query);
