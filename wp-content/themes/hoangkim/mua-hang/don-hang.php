@@ -52,7 +52,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
         <h4>Danh sách đơn hàng</h4>
         <div class="notification-dashboard">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <input id="order_id" class="w-filter-full"  placeholder="Mã đơn hàng" />
+                <input id="order_id" class="w-filter-full" placeholder="Mã đơn hàng" />
                 <?php
                 $id = "time_from";
                 $placeholder = "Từ ngày";
@@ -78,81 +78,81 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
             <div class="mt-3">
-            Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
+                Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
                 <div class="table-responsive">
-                <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
-                    <thead>
-                        <tr>
-                            <th>Mã đơn hàng</th>
-                            <th class="text-center">Sản phẩm</th>
-                            <th>Tổng Tiền (VNĐ)</th>
-                            <th>Thời gian</th>
-                            <th>Trạng thái</th>
-                            <th>Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($orders as $order) {
-                            $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
-
-                            if (!is_array($cart_ids_array)) {
-                                $cart_ids_array = []; // Đảm bảo biến này luôn là một mảng
-                            }
-            
-                            // Kiểm tra nếu có dữ liệu thì mới chạy query
-                            if (!empty($cart_ids_array)) {
-                                $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
-                                $query = $wpdb->prepare(
-                                    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
-                                    ...$cart_ids_array
-                                );
-                                $carts = $wpdb->get_results($query);
-                            } else {
-                                $carts = [];
-                            }
-
-                            $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
-                            if(!$image_url) {
-                                $image_url = $order-> link_hinh_anh;
-                            }
-                            $total = floatval($order->phi_mua_hang ?? 0);
-                            foreach ($carts as $cart) {
-                                $total += $cart->price;
-                            }
-                            $total = $total * $exchange_rate;
-                            $total += $total * $phi_mua_hang;
-                            $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
-                        ?>
-                            <tr style="text-transform: initial">
-                                <td><?php echo "HK_" . $order->id ?></td>
-                                <td class="text-center">
-                                    <img src="<?php echo $image_url ?>" />
-                                </td>
-                                <td style="font-size: 12px">
-                                    <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
-                                    <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
-                                    <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
-                                    <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
-                                </td>
-                                <td>
-                                    Tạo ngày <?php echo $date->format('d/m/Y H:i') ?>
-                                </td>
-                                <td style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
-                                    <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
-                                </td>
-                                <td>
-                                    <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
-                                    <?php if ($order->status !== '10') { ?>
-                                        <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
-                                    <?php } ?>
-                                    <?php if (intval($order->status) > 10) { ?>
-                                        <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
-                                    <?php } ?>
-                                </td>
+                    <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th class="text-center">Sản phẩm</th>
+                                <th>Tổng Tiền (VNĐ)</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
+                                <th>Thao Tác</th>
                             </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($orders as $order) {
+                                $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
+
+                                if (!is_array($cart_ids_array)) {
+                                    $cart_ids_array = []; // Đảm bảo biến này luôn là một mảng
+                                }
+
+                                // Kiểm tra nếu có dữ liệu thì mới chạy query
+                                if (!empty($cart_ids_array)) {
+                                    $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+                                    $query = $wpdb->prepare(
+                                        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+                                        ...$cart_ids_array
+                                    );
+                                    $carts = $wpdb->get_results($query);
+                                } else {
+                                    $carts = [];
+                                }
+
+                                $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
+                                if (!$image_url) {
+                                    $image_url = $order->link_hinh_anh;
+                                }
+                                $total = floatval($order->phi_mua_hang ?? 0);
+                                foreach ($carts as $cart) {
+                                    $total += $cart->price;
+                                }
+                                $total = $total * $exchange_rate;
+                                $total += $total * $phi_mua_hang;
+                                $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
+                            ?>
+                                <tr style="text-transform: initial">
+                                    <td><?php echo "HK_" . $order->id ?></td>
+                                    <td class="text-center">
+                                        <img src="<?php echo $image_url ?>" />
+                                    </td>
+                                    <td style="font-size: 12px">
+                                        <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
+                                        <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
+                                        <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
+                                        <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
+                                    </td>
+                                    <td>
+                                        Tạo ngày <?php echo $date->format('d/m/Y H:i') ?>
+                                    </td>
+                                    <td style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
+                                        <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
+                                    </td>
+                                    <td>
+                                        <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
+                                        <?php if ($order->status !== '10') { ?>
+                                            <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
+                                        <?php } ?>
+                                        <?php if (intval($order->status) > 10) { ?>
+                                            <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -207,14 +207,14 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
         });
     })
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         const params = new URLSearchParams(window.location.search);
         if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
         if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
         if (params.has('status')) $('#status').val(params.get('status'));
         if (params.has('order_id')) $('#order_id').val(params.get('order_id'));
 
-        $('.btn-find').on('click', function (event) {
+        $('.btn-find').on('click', function(event) {
             event.stopPropagation();
 
             const formatDate = (dateStr) => {
