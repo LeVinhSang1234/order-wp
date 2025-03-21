@@ -173,12 +173,16 @@ function update_cart_quantity()
 
     global $wpdb;
     $cart_table = $wpdb->prefix . 'cart';
+    $order_table = $wpdb->prefix . 'orders';
     $user_id = get_current_user_id();
 
     if (isset($_POST['cart_id'], $_POST['quantity'])) {
         $cart_id = intval($_POST['cart_id']);
         $quantity = intval($_POST['quantity']);
     }
+
+    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+    
     $cart_item = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $cart_table WHERE id = %d AND user_id = %d",
         $cart_id,
@@ -189,6 +193,20 @@ function update_cart_quantity()
         wp_send_json_error(['message' => '❌ Không tìm thấy sản phẩm trong giỏ hàng của bạn!'], 404);
         exit;
     }
+
+    $total_price = 0;
+
+    $total_price = $cart_item->price * $quantity;
+
+
+    // Tính phí dịch vụ dựa trên tổng giá trị đơn hàng
+    if ($total_price < 5000000) {
+        $service_fee = $total_price * 0.03; // 3%
+    } elseif ($total_price >= 5000000 && $total_price <= 50000000) {
+        $service_fee = $total_price * 0.02; // 2%
+    } else {
+        $service_fee = $total_price * 0.015; // 1.5%
+    }
     $result = $wpdb->update(
         $cart_table,
         [
@@ -197,6 +215,31 @@ function update_cart_quantity()
         ['id' => $cart_id, 'user_id' => $user_id],
         ['%d', '%d'],
     );
+
+    if ($result === false) {
+        wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
+        exit;
+    }
+
+    // Cập nhật phí dịch vụ vào đơn hàng
+    if ($order_id > 0) {
+        $order_item = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $order_table WHERE id = %d AND user_id = %d",
+            $order_id,
+            $user_id
+        ));
+
+        if ($order_item) {
+            $wpdb->update(
+                $order_table,
+                ['chiet_khau_dich_vu' => $service_fee],
+                ['id' => $order_id, 'user_id' => $user_id],
+                ['%f'],
+                ['%d', '%d']
+            );
+        }
+    }
+
     if ($result === false) {
         wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
         exit;

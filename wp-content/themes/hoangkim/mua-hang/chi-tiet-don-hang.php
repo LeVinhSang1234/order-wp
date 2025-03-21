@@ -326,7 +326,8 @@ $chats = $wpdb->get_results($query);
                 data: {
                     action: 'update_cart_quantity',
                     quantity,
-                    cart_id
+                    cart_id,
+                    order_id: '<?php echo $order->id ?>'
                 },
                 success: function(response) {
                     window.location.reload();

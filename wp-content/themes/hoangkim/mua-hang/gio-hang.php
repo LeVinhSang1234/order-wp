@@ -279,6 +279,8 @@ $current_user = wp_get_current_user();
           quantity: parseInt(quantity, 10) || 1
         });
       });
+      console.log(products);
+      
       fetch(`${origin}/wp-admin/admin-ajax.php?action=submit_all_cart`, {
           method: "POST",
           headers: {
