@@ -356,6 +356,7 @@ function create_order_via_ajax()
         wp_send_json_error(['message' => 'Bạn cần đăng nhập để tạo đơn hàng.']);
         exit;
     }
+
     global $wpdb;
     $cart_ids = $wpdb->get_col($wpdb->prepare(
         "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1 AND is_done = 0",
@@ -366,9 +367,24 @@ function create_order_via_ajax()
         wp_send_json_error(['message' => 'Không tìm thấy giỏ hàng cho cửa hàng này.']);
         exit;
     }
+
+    // Tính tổng giá trị đơn hàng
+    $total_price = $wpdb->get_var($wpdb->prepare(
+        "SELECT SUM(price * quantity) FROM {$wpdb->prefix}cart WHERE id IN (" . implode(',', array_fill(0, count($cart_ids), '%d')) . ")",
+        ...$cart_ids
+    ));
+
+    // Tính phí dịch vụ dựa trên tổng giá trị đơn hàng
+    if ($total_price < 5000000) {
+        $service_fee = $total_price * 0.03; // 3%
+    } elseif ($total_price >= 5000000 && $total_price <= 50000000) {
+        $service_fee = $total_price * 0.02; // 2%
+    } else {
+        $service_fee = $total_price * 0.015; // 1.5%
+    }
+
     $cart_ids_str = json_encode($cart_ids);
     $note = isset($_POST['note']) ? sanitize_textarea_field($_POST['note']) : '';
-
     $ho_ten = isset($_POST['ho_ten']) ? sanitize_textarea_field($_POST['ho_ten']) : '';
     $address = isset($_POST['address']) ? sanitize_textarea_field($_POST['address']) : '';
     $email = isset($_POST['email']) ? sanitize_textarea_field($_POST['email']) : '';
@@ -376,10 +392,13 @@ function create_order_via_ajax()
     $is_gia_co = isset($_POST['is_gia_co']) ? intval($_POST['is_gia_co']) : 0;
     $is_kiem_dem_hang = isset($_POST['is_kiem_dem_hang']) ? intval($_POST['is_kiem_dem_hang']) : 0;
     $is_bao_hiem = isset($_POST['is_bao_hiem']) ? intval($_POST['is_bao_hiem']) : 0;
+
+    // Lưu thông tin đơn hàng vào database
     $table = $wpdb->prefix . 'orders';
     $data = [
         'user_id' => $user_id,
         'cart_ids' => $cart_ids_str,
+        'chiet_khau_dich_vu' => $service_fee,
         'note' => $note,
         'is_gia_co' => $is_gia_co,
         'is_kiem_dem_hang' => $is_kiem_dem_hang,
@@ -390,20 +409,12 @@ function create_order_via_ajax()
         'phone' => $phone,
     ];
     $format = [
-        '%d',
-        '%s',
-        '%s',
-        '%d',
-        '%d',
-        '%d',
-        '%s',
-        '%s',
-        '%s',
-        '%s'
+        '%d', '%s', '%f', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s'
     ];
     $result = $wpdb->insert($table, $data, $format);
+
     if ($result !== false) {
-        insert_notification("Tạo đơn hàng", "Bạn đã tạo đơn hàng thành công", array(array("order_id" => $wpdb->insert_id)));
+        insert_notification("Tạo đơn hàng", "Bạn đã tạo đơn hàng thành công", [["order_id" => $wpdb->insert_id]]);
         $wpdb->query(
             $wpdb->prepare(
                 "UPDATE {$wpdb->prefix}cart SET is_done = 1 WHERE id IN (" . implode(',', array_fill(0, count($cart_ids), '%d')) . ")",

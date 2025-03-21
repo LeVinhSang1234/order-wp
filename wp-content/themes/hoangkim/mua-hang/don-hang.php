@@ -117,7 +117,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 }
                                 $total = floatval($order->phi_mua_hang ?? 0);
                                 foreach ($carts as $cart) {
-                                    $total += $cart->price;
+                                    $total += floatval($cart->price) * intval($cart->quantity);
                                 }
                                 $total = $total * $exchange_rate;
                                 $total += $total * $phi_mua_hang;

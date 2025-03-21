@@ -237,8 +237,8 @@ $chats = $wpdb->get_results($query);
                         <strong><?php echo format_price_vnd($order->phi_gia_co ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        (6) Chiết khấu phí dịch vụ:
-                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu ?? 0) ?></strong>
+                        (6) Phí dịch vụ:
+                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?></strong>
                     </div>
                     <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
                         Số tiền phải đặt cọc (80%):
