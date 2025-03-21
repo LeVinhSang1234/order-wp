@@ -15,7 +15,7 @@ if ($order->type === '0') {
     $cart_ids_array = json_decode($order->cart_ids, true);
     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
     $query = $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
         ...$cart_ids_array
     );
     $carts = $wpdb->get_results($query);
@@ -214,31 +214,31 @@ $chats = $wpdb->get_results($query);
                 <div class="col-md-5 mt-4 fs-13">
                     <div class="divider d-flex justify-content-between align-items-center">
                         Tỷ giá tiền tệ:
-                        <strong><?php echo format_price_vnd($exchange_rate) ?></strong>
+                        <strong><?php echo format_price_vnd($exchange_rate ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (1) Tiền hàng:
-                        <strong><?php echo format_price_vnd($totalPrice * $exchange_rate) ?></strong>
+                        <strong><?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (2) Phí mua hàng (<?php echo $phi_mua_hang ?>%):
-                        <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * $phi_mua_hang) ?></strong>
+                        <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * $phi_mua_hang ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (3) Phí ship nội địa TQ:
-                        <strong><?php echo format_price_vnd($order->phi_ship_noi_dia) ?></strong>
+                        <strong><?php echo format_price_vnd($order->phi_ship_noi_dia ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (4) Phí kiểm đếm:
-                        <strong><?php echo format_price_vnd($order->phi_kiem_dem) ?></strong>
+                        <strong><?php echo format_price_vnd($order->phi_kiem_dem ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (5) Phí gia cố:
-                        <strong><?php echo format_price_vnd($order->phi_gia_co) ?></strong>
+                        <strong><?php echo format_price_vnd($order->phi_gia_co ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (6) Chiết khấu phí dịch vụ:
-                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu) ?></strong>
+                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu ?? 0) ?></strong>
                     </div>
                     <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
                         Số tiền phải đặt cọc (80%):

@@ -546,3 +546,7 @@ input:disabled {
     text-align: left
   }
 }
+
+/* table:not(.ui-datepicker-calendar) thead tr {
+	background-color: #fe7f4a;
+} */
