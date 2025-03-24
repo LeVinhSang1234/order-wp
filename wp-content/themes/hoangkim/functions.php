@@ -67,14 +67,10 @@ function submit_all_cart_handler()
     $address = $data['address'] ?? '';
     $email   = $data['email'] ?? '';
     $phone   = $data['phone'] ?? '';
-    $products_input = $data['products'] ?? []; 
+    $shop_id = $data['shop_id'] ?? '';
+    $products_input = $data['products'] ?? [];
 
-    $products = $wpdb->get_results(
-        $wpdb->prepare("SELECT * FROM $table_cart WHERE user_id = %d AND is_done = 0 ORDER BY added_at DESC", $user_id),
-        ARRAY_A
-    );
-
-    if (empty($products)) {
+    if (empty($products_input)) {
         wp_send_json_error(['message' => 'Không có sản phẩm nào được chọn!']);
         return;
     }
@@ -82,36 +78,31 @@ function submit_all_cart_handler()
     $cart_ids = [];
     $total_price = 0;
 
-    foreach ($products as &$product) {
-        $product_id = $product['id'];
+    foreach ($products_input as $input_product) {
+        $product_id = $input_product['id'];
+        $quantity = intval($input_product['quantity']);
 
-        // Tìm quantity được gửi lên từ request
-        $new_quantity = 1; // Giá trị mặc định
-        foreach ($products_input as $input_product) {
-            if ($input_product['id'] == $product_id) {
-                $new_quantity = intval($input_product['quantity']);
-                break;
-            }
+        $product_data = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $table_cart WHERE id = %d AND user_id = %d AND is_done = 0", $product_id, $user_id),
+            ARRAY_A
+        );
+        if (!$product_data) {
+            continue;
         }
-
         // Cập nhật quantity vào product
-        $product['quantity'] = $new_quantity;
-
+        $product_data['quantity'] = $quantity;
         // Cập nhật database
         $wpdb->update(
             $table_cart,
-            ['is_done' => 1, 'quantity' => $new_quantity],  // Cập nhật thêm quantity
+            ['is_done' => 1, 'quantity' => $quantity],
             ['id' => $product_id, 'user_id' => $user_id],
-            ['%d', '%d'], // Format cho `is_done` và `quantity`
-            ['%d', '%d'] // Format cho `id` và `user_id`
+            ['%d', '%d'],
+            ['%d', '%d']
         );
-
         // Tính tổng tiền
         $cart_ids[] = (string) $product_id;
-        $total_price += floatval($product['price']) * $new_quantity;
+        $total_price += floatval($product_data['price']) * $quantity;
     }
-
-
     // Tính phí dịch vụ dựa trên tổng giá
     if ($total_price < 5000000) {
         $service_fee = $total_price * 0.03; // 3%
@@ -133,7 +124,7 @@ function submit_all_cart_handler()
         'address'    => sanitize_text_field($address),
         'email'      => sanitize_email($email),
         'phone'      => sanitize_text_field($phone),
-        'chiet_khau_dich_vu' => $service_fee, // Lưu phí dịch vụ
+        'chiet_khau_dich_vu' => $service_fee,
         'created_at' => current_time('mysql')
     ];
 
@@ -151,7 +142,6 @@ function submit_all_cart_handler()
         'cart_ids'    => $cart_ids,
         'total_price' => $total_price,
         'service_fee' => $service_fee,
-        'updated_products' => $products // Gửi lại danh sách sản phẩm đã cập nhật quantity
     ]);
 }
 
