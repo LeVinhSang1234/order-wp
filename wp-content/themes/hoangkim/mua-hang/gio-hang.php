@@ -222,8 +222,6 @@ $current_user = wp_get_current_user();
       const isSelect = $('input[data-shop="' + shopId + '"][data-item="' + productId + '"][data-type="select-cart"]').is(":checked");
       const quantity = parseInt($(this).val()) || 1;
 
-      console.log(quantity);
-
       $(this).val(quantity);
 
       fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
@@ -269,40 +267,48 @@ $current_user = wp_get_current_user();
 
     $('.btn-order-all').on('click', function() {
       $('input[data-type="select-cart"]').prop("checked", true).trigger("change");
-      let products = [];
+      let productsByShop = {};
+
       $('input[data-type="select-cart"]:checked').each(function() {
+        const shopId = $(this).data('shop');
         const productId = $(this).attr('data-item');
         const quantity = $(`input[data-type="product-quantity"][data-item="${productId}"]`).val();
 
-        products.push({
+        if (!productsByShop[shopId]) {
+          productsByShop[shopId] = [];
+        }
+
+        productsByShop[shopId].push({
           id: productId,
           quantity: parseInt(quantity, 10) || 1
         });
       });
-      console.log(products);
-      
-      fetch(`${origin}/wp-admin/admin-ajax.php?action=submit_all_cart`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            ho_ten: $(`input[data-type="ho_ten"]`).val(),
-            address: $(`input[data-type="address"]`).val(),
-            email: $(`input[data-type="email"]`).val(),
-            phone: $(`input[data-type="phone"]`).val(),
-            products: products 
+
+      for (const shopId in productsByShop) {
+        fetch(`${origin}/wp-admin/admin-ajax.php?action=submit_all_cart`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              ho_ten: $(`input[data-type="ho_ten"]`).val(),
+              address: $(`input[data-type="address"]`).val(),
+              email: $(`input[data-type="email"]`).val(),
+              phone: $(`input[data-type="phone"]`).val(),
+              shop_id: shopId,
+              products: productsByShop[shopId]
+            })
           })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert("Đã gửi yêu cầu đặt hàng thành công!");
-            location.reload();
-          } else {
-            alert("Có lỗi xảy ra, vui lòng thử lại.");
-          }
-        });
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert("Đã gửi yêu cầu đặt hàng thành công!");
+              location.reload();
+            } else {
+              alert("Có lỗi xảy ra, vui lòng thử lại.");
+            }
+          });
+      }
     });
   })
 </script>
