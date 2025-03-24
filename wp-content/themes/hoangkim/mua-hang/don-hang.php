@@ -63,19 +63,19 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 $placeholder = "Đến ngày";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <select name="status" id="status" class="w-filter-full">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="1">Chờ báo giá (<?php echo $totals[1] ?>)</option>
-                    <option value="2">Đang mua hàng (<?php echo $totals[2] ?>)</option>
-                    <option value="3">Đã mua hàng (<?php echo $totals[3] ?>)</option>
-                    <option value="4">NCC phát hàng (<?php echo $totals[4] ?>)</option>
-                    <option value="5">Nhập kho TQ (<?php echo $totals[5] ?>)</option>
-                    <option value="6">Nhập kho VN (<?php echo $totals[6] ?>)</option>
-                    <option value="7">Khách nhận hàng (<?php echo $totals[7] ?>)</option>
-                    <option value="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</option>
-                    <option value="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</option>
-                </select>
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="status-tabs d-flex flex-wrap gap-2 mt-2">
+                <button class="status-tab <?php echo empty($status_search) ? 'active' : ''; ?>" data-status="">Tất cả</button>
+                <button class="status-tab <?php echo $status_search == '1' ? 'active' : ''; ?>" data-status="1">Chờ báo giá (<?php echo $totals[1] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '2' ? 'active' : ''; ?>" data-status="2">Đang mua hàng (<?php echo $totals[2] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '3' ? 'active' : ''; ?>" data-status="3">Đã mua hàng (<?php echo $totals[3] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '4' ? 'active' : ''; ?>" data-status="4">NCC phát hàng (<?php echo $totals[4] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '5' ? 'active' : ''; ?>" data-status="5">Nhập kho TQ (<?php echo $totals[5] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '6' ? 'active' : ''; ?>" data-status="6">Nhập kho VN (<?php echo $totals[6] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '7' ? 'active' : ''; ?>" data-status="7">Khách nhận hàng (<?php echo $totals[7] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '8' ? 'active' : ''; ?>" data-status="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '9' ? 'active' : ''; ?>" data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
             </div>
             <div class="mt-3">
                 Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
@@ -83,6 +83,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                         <thead>
                             <tr>
+                                <th class="text-center">STT</th>
                                 <th>Mã đơn hàng</th>
                                 <th class="text-center">Sản phẩm</th>
                                 <th>Tổng Tiền (VNĐ)</th>
@@ -92,7 +93,9 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($orders as $order) {
+                            <?php 
+                            $stt = 1;
+                            foreach ($orders as $order) {
                                 $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
 
                                 if (!is_array($cart_ids_array)) {
@@ -117,14 +120,15 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 }
                                 $total = floatval($order->phi_mua_hang ?? 0);
                                 foreach ($carts as $cart) {
-                                    $total += $cart->price;
+                                    $total += floatval($cart->price) * intval($cart->quantity);
                                 }
                                 $total = $total * $exchange_rate;
                                 $total += $total * $phi_mua_hang;
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
                             ?>
                                 <tr style="text-transform: initial">
-                                    <td><?php echo "HK_" . $order->id ?></td>
+                                    <td class="text-center"><?php echo $stt++; ?></td>
+                                    <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></td>
                                     <td class="text-center">
                                         <img src="<?php echo $image_url ?>" />
                                     </td>
@@ -171,6 +175,33 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
     </div>
 </div>
 
+<style>
+.status-tabs {
+    margin: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.status-tab {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+    padding: 4px 16px;
+}
+.status-tab:hover {
+    background: #f5f5f5;
+}
+.status-tab.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+</style>
+
 <script>
     $('.popup-info').on('click', function(event) {
         if (document.querySelector('.popup-content')?.contains(event.target)) return
@@ -209,10 +240,47 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
 
     $(document).ready(function() {
         const params = new URLSearchParams(window.location.search);
+        if (params.has('order_id')) $('#order_id').val(params.get('order_id'));
         if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
         if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
-        if (params.has('status')) $('#status').val(params.get('status'));
-        if (params.has('order_id')) $('#order_id').val(params.get('order_id'));
+        if (params.has('status')) {
+            $('.status-tab[data-status="' + params.get('status') + '"]').addClass('active');
+        }
+
+        $('.status-tab').on('click', function() {
+            $('.status-tab').removeClass('active');
+            $(this).addClass('active');
+
+            // Trigger search automatically when tab is clicked
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date)) return '';
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+            };
+
+            const time_from = formatDate($('#time_from').val());
+            const time_to = formatDate($('#time_to').val());
+            const status = $(this).data('status');
+            const order_id = $('#order_id').val();
+            let url = new URL(window.location.href);
+            let params = url.searchParams;
+
+            if (time_from) params.set('time_from', time_from);
+            else params.delete('time_from');
+
+            if (time_to) params.set('time_to', time_to);
+            else params.delete('time_to');
+
+            if (status) params.set('status', status);
+            else params.delete('status');
+
+            if (order_id) params.set('order_id', order_id);
+            else params.delete('order_id');
+
+            window.history.pushState({}, '', url.pathname + '?' + params.toString());
+            window.location.reload();
+        });
 
         $('.btn-find').on('click', function(event) {
             event.stopPropagation();
@@ -226,7 +294,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
 
             const time_from = formatDate($('#time_from').val());
             const time_to = formatDate($('#time_to').val());
-            const status = $('#status').val();
+            const status = $('.status-tab.active').data('status');
             const order_id = $('#order_id').val();
             let url = new URL(window.location.href);
             let params = url.searchParams;
