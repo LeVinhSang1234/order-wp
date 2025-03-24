@@ -1,5 +1,6 @@
 <?php
 $id = isset($_GET['id']) ? $_GET['id'] : 0;
+$user_id = get_current_user_id();
 if (!$id) {
     echo "<script>location.href = '" . site_url('/404') . "';</script>";
     exit();
@@ -10,95 +11,14 @@ if ($order) {
     echo "<script>location.href = '" . site_url('/404') . "';</script>";
     exit();
 }
-if ($order->type === '0') {
-    $status_str = ["", "Chờ đặt cọc", 'Chờ mua hàng', 'Nhập kho TQ', 'Xuất kho TQ', 'Nhập kho VN', 'Đang giao hàng', 'Chờ xử lý khiếu nại', 'Đã kết thúc', 'Đã hủy'];
-    $cart_ids_array = json_decode($order->cart_ids, true);
-    $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
-    $query = $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
-        ...$cart_ids_array
-    );
-    $carts = $wpdb->get_results($query);
-
-    function getStatus($st)
-    {
-        switch ($st) {
-            case 1:
-                return "Chờ đặt cọc";
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return 'Chờ mua hàng';
-            case 6:
-                return 'Nhập kho TQ';
-            case 7:
-                return 'Xuất kho TQ';
-            case 8:
-                return 'Nhập kho VN';
-            case 9:
-                return 'Đang giao hàng';
-            case 10:
-                return 'Chờ xử lý khiếu nại';
-            case 11:
-                return 'Đã kết thúc';
-            case 12:
-                return 'Đã huỷ';
-        }
-    }
-
-    function getIndex($st)
-    {
-        switch ($st) {
-            case 1:
-                return 1;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                return 2;
-            case 6:
-                return 3;
-            case 7:
-                return 4;
-            case 8:
-                return 5;
-            case 9:
-                return 6;
-            case 10:
-                return 7;
-            case 11:
-                return 8;
-            case 12:
-                return 9;
-        }
-    }
-} else {
-    $status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập kho VN', 'Khách nhận hàng', 'Không rõ nguồn gốc'];
-    $carts = [];
-
-    function getStatus($st)
-    {
-        switch ($st) {
-            case 1:
-                return "NCC phát hàng";
-            case 2:
-                return "Nhập kho TQ";
-            case 3:
-                return "TQ gửi hàng";
-            case 4:
-                return "Nhập kho VN";
-            case 5:
-                return "Khách nhận hàng";
-            case 6:
-                return "Không rõ nguồn gốc";
-        }
-    }
-    function getIndex($st)
-    {
-        return intval($st);
-    }
-}
+$status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
+$cart_ids_array = json_decode($order->cart_ids, true);
+$placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+$query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
+    ...$cart_ids_array
+);
+$carts = $wpdb->get_results($query);
 $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
 if (!$exchange_rate) {
     $exchange_rate = floatval(get_option('exchange_rate', 1.0));
@@ -121,17 +41,17 @@ $chats = $wpdb->get_results($query);
     <div class="mt-3 flex-1">
         <div class="d-flex align-items: center gap-3 mb-2">
             <h4 class="text-uppercase mb-0">Chi tiết đơn hàng</h4>
-            <div class="status-box <?php echo ($order->status == 12 ? "box-red" : "") ?>">
-                <?php echo getStatus($order->status) ?>
+            <div class="status-box <?php echo ($order->status == 8 ? "box-red" : "") ?>">
+                <?php echo $status_str[$order->status] ?>
             </div>
         </div>
         <div class="notification-dashboard">
-            <div class="d-flex gap-2">Mã: <h5>HK_<?php echo $order->id ?></h5>
+            <div class="d-flex gap-2">Mã: <h5>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></h5>
             </div>
             <div class="list-status order-status">
                 <?php foreach ($status_str as $key => $status) { ?>
                     <?php if ($key > 0) { ?>
-                        <div class="<?php echo (($order->status == 12 && $key === getIndex($order->status)) ? "status-red" : "") ?> <?php echo ($key === getIndex($order->status) ? "status-active" : "") ?>" data-item="<?php echo $key ?>">
+                        <div class="<?php echo (($order->status == 8 && $key === intval($order->status)) ? "status-red" : "") ?> <?php echo ($key === intval($order->status) ? "status-active" : "") ?>" data-item="<?php echo $key ?>">
                             <?php echo $status ?>
                         </div>
                         <?php if ($key !== count($status_str) - 1) { ?>

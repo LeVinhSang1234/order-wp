@@ -74,8 +74,8 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 <button class="status-tab <?php echo $status_search == '5' ? 'active' : ''; ?>" data-status="5">Nhập kho TQ (<?php echo $totals[5] ?>)</button>
                 <button class="status-tab <?php echo $status_search == '6' ? 'active' : ''; ?>" data-status="6">Nhập kho VN (<?php echo $totals[6] ?>)</button>
                 <button class="status-tab <?php echo $status_search == '7' ? 'active' : ''; ?>" data-status="7">Khách nhận hàng (<?php echo $totals[7] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '8' ? 'active' : ''; ?>" data-status="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '9' ? 'active' : ''; ?>" data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '8' ? 'active bg-danger btn-danger' : ''; ?>" data-status="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '9' ? 'active bg-warning btn-warning text-secondary' : ''; ?>" data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
             </div>
             <div class="mt-3">
                 Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
@@ -141,15 +141,18 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                     <td>
                                         Tạo ngày <?php echo $date->format('d/m/Y H:i') ?>
                                     </td>
-                                    <td style="color: <?php echo ($order->status === '10' ? "#ff0000" : "green") ?>; font-weight: 600">
+                                    <td style="color: <?php 
+                                        echo ($order->status === '8') ? "#ff0000" : 
+                                             (($order->status === '9') ? "#ffc107" : "green"); 
+                                    ?>; font-weight: 600">
                                         <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
                                     </td>
                                     <td>
                                         <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
-                                        <?php if ($order->status !== '10') { ?>
+                                        <?php if ($order->status !== '8') { ?>
                                             <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
                                         <?php } ?>
-                                        <?php if (intval($order->status) > 10) { ?>
+                                        <?php if (intval($order->status) == 8) { ?>
                                             <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
                                         <?php } ?>
                                     </td>
