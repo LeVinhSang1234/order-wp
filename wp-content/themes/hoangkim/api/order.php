@@ -276,7 +276,7 @@ function cancel_order()
     $result = $wpdb->update(
         $order_table,
         [
-            'status' => 12,
+            'status' => 8,
         ],
         ['id' => $order_id, 'user_id' => $user_id],
         ['%d', '%d'],
@@ -371,7 +371,7 @@ function send_khieu_nai()
     $result = $wpdb->update(
         $order_table,
         [
-            'status' => 10,
+            'status' => 9,
         ],
         ['id' => $order_id, 'user_id' => $user_id],
         ['%d', '%d'],
