@@ -95,6 +95,7 @@ $chats = $wpdb->get_results($query);
                         <thead>
                             <tr>
                                 <th>Sản phẩm</th>
+                                <th class="text-center" style="width: 250px">Size - Màu sắc</th>
                                 <th>Cửa hàng</th>
                                 <th>Số lượng</th>
                                 <th style="width: 120px;">Giá tiền</th>
@@ -117,6 +118,7 @@ $chats = $wpdb->get_results($query);
                                             </a>
                                         </div>
                                     </td>
+                                    <td class="text-center"><?php echo $cart->size ?> <br><?php echo$cart->color ?></td>
                                     <td>
                                         <a href="<?php echo $cart->shop_url ?>"><?php echo $cart->shop_id ?></a>
                                     </td>

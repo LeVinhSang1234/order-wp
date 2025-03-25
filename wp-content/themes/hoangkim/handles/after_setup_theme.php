@@ -223,6 +223,26 @@ function update_orders_table()
 
 update_orders_table();
 
+function update_cart_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'cart';
+
+    $columns_to_add = [
+        'size' => "VARCHAR(255) NULL",
+        'color' => "VARCHAR(255) NULL",
+    ];
+
+    foreach ($columns_to_add as $column => $definition) {
+        $exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column'");
+        if (empty($exists)) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column $definition");
+        }
+    }
+}
+
+update_cart_table();
+
 function create_orders_support()
 {
     global $wpdb;

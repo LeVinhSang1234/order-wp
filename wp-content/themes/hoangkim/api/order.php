@@ -52,9 +52,11 @@ function save_cart()
                     'web'           => sanitize_text_field($item['web']),
                     'quantity'      => intval($item['quantity']),
                     'price'         => floatval(str_replace('?', '0', $item['price'])),
-                    'added_at'      => current_time('mysql')
+                    'added_at'      => current_time('mysql'),
+                    'size'      => sanitize_text_field($item['size']),
+                    'color'      => sanitize_text_field($item['color']),
                 ],
-                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s']
+                ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s', '%s', '%s']
             );
             if ($result === false) {
                 wp_send_json_error([

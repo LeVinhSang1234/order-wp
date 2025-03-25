@@ -69,6 +69,7 @@ $current_user = wp_get_current_user();
                 <thead>
                   <th class="text-center" style="width: 50px"></th>
                   <th class="text-center" style="width: 100px">Hình ảnh</th>
+                  <th class="text-center" style="width: 250px">Size - Màu sắc</th>
                   <th>Ghi chú</th>
                   <th>Đơn giá tạm tính</th>
                   <th>Số lượng</th>
@@ -85,6 +86,7 @@ $current_user = wp_get_current_user();
                           data-type="select-cart" type="checkbox" />
                       </td>
                       <td class="text-center"><img src="<?php echo $product['product_image'] ?>" /></td>
+                      <td class="text-center"><?php echo $product['size'] ?> <br><?php echo $product['color'] ?></td>
                       <td>
                         <textarea readonly class="w-100"><?php echo $product['product_note'] ?></textarea>
                       </td>
