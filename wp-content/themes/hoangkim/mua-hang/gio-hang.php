@@ -11,7 +11,6 @@ foreach ($cart_items as $item) {
   $grouped_cart[$item['shop_id']][] = $item;
 }
 $rate = floatval(get_option('exchange_rate', 1.0));
-$phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 $current_user = wp_get_current_user();
 ?>
 
@@ -106,7 +105,17 @@ $current_user = wp_get_current_user();
                     </tr>
                   <?php }
                   $totalPrice = $totalPrice * $rate;
-                  $phiMua = $totalPrice * $phi_mua_hang;
+                  $percent_service_fee = 0;
+                  if ($total_price < 5000000) {
+                    $service_fee = $totalPrice * 0.03; // 3%
+                    $percent_service_fee = 3;
+                  } elseif ($totalPrice >= 5000000 && $totalPrice <= 50000000) {
+                    $service_fee = $totalPrice * 0.02; // 2%
+                    $percent_service_fee = 2;
+                  } else {
+                    $service_fee = $totalPrice * 0.015; // 1.5%
+                    $percent_service_fee = 1.5;
+                  }
                   ?>
                 </tbody>
               </table>
@@ -116,8 +125,8 @@ $current_user = wp_get_current_user();
                     Tiền hàng<strong data-type="total-money-product"><?php echo format_price_vnd($totalPrice) ?></strong>
                   </li>
                   <li>
-                    Phí mua hàng (<?php echo $phi_mua_hang; ?>%)<strong data-type="phi-mua-product">
-                      <?php echo format_price_vnd($phiMua) ?>
+                    Phí dịch vụ (<?php echo $percent_service_fee; ?>%)<strong data-type="phi-dich-vu">
+                      <?php echo format_price_vnd($service_fee) ?>
                     </strong>
                   </li>
                   <li>
@@ -131,7 +140,7 @@ $current_user = wp_get_current_user();
                   </li>
                   <li class="text-uppercase">
                     TỔNG TIỀN TẠM TÍNH<strong
-                      data-type="total-product"><?php echo format_price_vnd($totalPrice + $phiMua) ?></strong>
+                      data-type="total-product"><?php echo format_price_vnd($totalPrice + $phi_dich_vu) ?></strong>
                   </li>
                 </ul>
                 <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
