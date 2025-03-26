@@ -91,7 +91,6 @@ $chats = $wpdb->get_results($query);
                         <thead>
                             <tr>
                                 <th>Sản phẩm</th>
-                                <th class="text-center" style="width: 250px">Size - Màu sắc</th>
                                 <th>Cửa hàng</th>
                                 <th>Số lượng</th>
                                 <th style="width: 120px;">Giá tiền</th>
@@ -105,6 +104,7 @@ $chats = $wpdb->get_results($query);
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <img width="40px" src="<?php echo $cart->product_image ?>" />
+                                            <div>
                                             <a href="<?php echo $cart->product_url ?>">
                                                 <?php
                                                 $url_without_https = str_replace("https://", "", $cart->product_url);
@@ -112,9 +112,11 @@ $chats = $wpdb->get_results($query);
                                                 echo $parts[0];
                                                 ?>
                                             </a>
+                                            <div><?php echo $cart->size ?> <br><?php echo$cart->color ?></div>
+                                            </div>
+                                            
                                         </div>
                                     </td>
-                                    <td class="text-center"><?php echo $cart->size ?> <br><?php echo$cart->color ?></td>
                                     <td>
                                         <a href="<?php echo $cart->shop_url ?>"><?php echo $cart->shop_id ?></a>
                                     </td>
