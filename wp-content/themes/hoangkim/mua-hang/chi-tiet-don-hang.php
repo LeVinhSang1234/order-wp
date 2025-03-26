@@ -24,10 +24,6 @@ if (!$exchange_rate) {
     $exchange_rate = floatval(get_option('exchange_rate', 1.0));
 }
 $isDisabled = $order->status > 1 ? 'disabled' : '';
-$phi_mua_hang = isset($order->phi_mua_hang) ? $order->phi_mua_hang : null;
-if (!$phi_mua_hang) {
-    $phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
-}
 $totalPrice = 0;
 $phone = $order->phone;
 if (!$phone) {
@@ -143,23 +139,19 @@ $chats = $wpdb->get_results($query);
                         <strong><?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        (2) Phí mua hàng (<?php echo $phi_mua_hang ?>%):
-                        <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * $phi_mua_hang ?? 0) ?></strong>
-                    </div>
-                    <div class="divider d-flex justify-content-between align-items-center">
-                        (3) Phí ship nội địa TQ:
+                        (2) Phí ship nội địa TQ:
                         <strong><?php echo format_price_vnd($order->phi_ship_noi_dia ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        (4) Phí kiểm đếm:
+                        (3) Phí kiểm đếm:
                         <strong><?php echo format_price_vnd($order->phi_kiem_dem ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        (5) Phí gia cố:
+                        (4) Phí gia cố:
                         <strong><?php echo format_price_vnd($order->phi_gia_co ?? 0) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        (6) Phí dịch vụ:
+                        (5) Phí dịch vụ:
                         <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?></strong>
                     </div>
                     <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
