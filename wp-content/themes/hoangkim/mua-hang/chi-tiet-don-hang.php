@@ -163,7 +163,6 @@ $chats = $wpdb->get_results($query);
                         <strong>
                             <?php
                             $total = $totalPrice * $exchange_rate;
-                            $total += $total * $phi_mua_hang;
                             $total += $order->phi_ship_noi_dia;
                             $total += $order->phi_kiem_dem;
                             $total += $order->phi_gia_co;
