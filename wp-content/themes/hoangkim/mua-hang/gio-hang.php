@@ -106,7 +106,7 @@ $current_user = wp_get_current_user();
                   <?php }
                   $totalPrice = $totalPrice * $rate;
                   $percent_service_fee = 0;
-                  if ($total_price < 5000000) {
+                  if ($totalPrice < 5000000) {
                     $service_fee = $totalPrice * 0.03; // 3%
                     $percent_service_fee = 3;
                   } elseif ($totalPrice >= 5000000 && $totalPrice <= 50000000) {
@@ -140,7 +140,7 @@ $current_user = wp_get_current_user();
                   </li>
                   <li class="text-uppercase">
                     TỔNG TIỀN TẠM TÍNH<strong
-                      data-type="total-product"><?php echo format_price_vnd($totalPrice + $phi_dich_vu) ?></strong>
+                      data-type="total-product"><?php echo format_price_vnd($totalPrice + $service_fee) ?></strong>
                   </li>
                 </ul>
                 <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
