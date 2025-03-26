@@ -624,3 +624,40 @@ function create_order_ki_gui()
     }
     exit;
 }
+
+add_action('wp_ajax_update_order_status', 'update_order_status');
+
+function update_order_status()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => '❌ Bạn chưa đăng nhập!'], 401);
+        exit;
+    }
+
+    global $wpdb;
+    $order_table = $wpdb->prefix . 'orders';
+    $user_id = get_current_user_id();
+
+    $order_ids = isset($_POST['order_ids']) ? array_map('intval', $_POST['order_ids']) : [];
+    $status = isset($_POST['status']) ? intval($_POST['status']) : 0;
+
+    if (empty($order_ids) || $status <= 0) {
+        wp_send_json_error(['message' => '❌ Dữ liệu không hợp lệ!'], 400);
+        exit;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($order_ids), '%d'));
+    $query = $wpdb->prepare(
+        "UPDATE $order_table SET status = %d WHERE id IN ($placeholders) AND user_id = %d",
+        array_merge([$status], $order_ids, [$user_id])
+    );
+
+    $result = $wpdb->query($query);
+
+    if ($result === false) {
+        wp_send_json_error(['message' => '❌ Cập nhật trạng thái đơn hàng không thành công!'], 500);
+        exit;
+    }
+
+    wp_send_json_success(['message' => '✅ Trạng thái đơn hàng đã được cập nhật thành công!']);
+}

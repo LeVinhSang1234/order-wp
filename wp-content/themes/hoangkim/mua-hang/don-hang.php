@@ -42,7 +42,6 @@ $query .= " AND type = 0 ORDER BY created_at ASC, created_at DESC ";
 
 $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 $exchange_rate = floatval(get_option('exchange_rate', 1.0));
-$phi_mua_hang = floatval(get_option('phi_mua_hang', 1.0));
 
 $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 ?>
@@ -78,11 +77,17 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 <button class="status-tab <?php echo $status_search == '9' ? 'active bg-warning btn-warning text-secondary' : ''; ?>" data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
             </div>
             <div class="mt-3">
-                Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
+                <div class="d-flex justify-content-between mb-2">
+                    <div>Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong></div>
+                    <button class="btn btn-primary" id="dat-coc-toan-bo">$ Đặt cọc toàn bộ</button>
+                </div>
                 <div class="table-responsive">
                     <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                         <thead>
                             <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" id="check-all-order">
+                                </th>
                                 <th class="text-center">STT</th>
                                 <th>Mã đơn hàng</th>
                                 <th class="text-center">Sản phẩm</th>
@@ -97,12 +102,9 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                             $stt = 1;
                             foreach ($orders as $order) {
                                 $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
-
                                 if (!is_array($cart_ids_array)) {
-                                    $cart_ids_array = []; // Đảm bảo biến này luôn là một mảng
+                                    $cart_ids_array = []; 
                                 }
-
-                                // Kiểm tra nếu có dữ liệu thì mới chạy query
                                 if (!empty($cart_ids_array)) {
                                     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
                                     $query = $wpdb->prepare(
@@ -113,20 +115,23 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 } else {
                                     $carts = [];
                                 }
-
                                 $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
                                 if (!$image_url) {
                                     $image_url = $order->link_hinh_anh;
                                 }
-                                $total = floatval($order->phi_mua_hang ?? 0);
+                                $total = 0;
                                 foreach ($carts as $cart) {
                                     $total += floatval($cart->price) * intval($cart->quantity);
                                 }
                                 $total = $total * $exchange_rate;
-                                $total += $total * $phi_mua_hang;
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
                             ?>
                                 <tr style="text-transform: initial">
+                                    <td class="text-center">
+                                    <?php if (intval($order->status) !== 8 && intval($order->status) !== 2) { ?>
+                                        <input type="checkbox">
+                                    <?php } ?>
+                                    </td>
                                     <td class="text-center"><?php echo $stt++; ?></td>
                                     <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></td>
                                     <td class="text-center">
@@ -134,6 +139,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                     </td>
                                     <td style="font-size: 12px">
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
+                                        <div class="d-flex justify-content-between">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total  * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
@@ -317,5 +323,52 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
             window.history.pushState({}, '', url.pathname + '?' + params.toString());
             window.location.reload();
         });
+
+        $('#check-all-order').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $('tbody input[type="checkbox"]').prop('checked', isChecked);
+        });
+
+        $('#dat-coc-toan-bo').on('click', function() {
+            const selectedOrders = $('tbody input[type="checkbox"]:checked');
+            if (selectedOrders.length === 0) {
+                alert('Hãy chọn đơn hàng để đặt cọc.');
+                return;
+            }
+
+            let totalDeposit = 0;
+            let orderList = [];
+            let orderIds = [];
+            selectedOrders.each(function() {
+                const row = $(this).closest('tr');
+                const depositAmount = parseFloat(row.find('td:nth-child(5) span[style="color: orange"]').text().replace(/[^\d]/g, '')) || 0;
+                totalDeposit += depositAmount;
+
+                const orderId = row.find('td:nth-child(3)').text().trim(); // Get order ID in the desired format
+                orderList.push(orderId);
+                orderIds.push(orderId.replace(/^MS\d+-/, '')); // Extract numeric order ID
+            });
+
+            const orderListString = orderList.join(', ');
+            if (confirm(`Hãy chắc chắn đặt cọc. Tổng số tiền đặt cọc là: ${totalDeposit.toLocaleString()} VNĐ\nDanh sách đơn hàng: ${orderListString}`)) {
+                $.ajax({
+                    url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'update_order_status',
+                        status: 2,
+                        order_ids: orderIds
+                    },
+                    success: function(response) {
+                        alert(response.data.message);
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert('Lỗi kết nối đến máy chủ.');
+                    }
+                });
+            }
+        });
+
     });
 </script>

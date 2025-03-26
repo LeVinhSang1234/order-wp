@@ -277,6 +277,8 @@ $current_user = wp_get_current_user();
     });
 
     $('.btn-order-all').on('click', function() {
+      if (!confirm("Bạn có chắc chắn muốn gửi yêu cầu đặt hàng cho tất cả sản phẩm?")) return;
+
       $('input[data-type="select-cart"]').prop("checked", true).trigger("change");
       let productsByShop = {};
 
