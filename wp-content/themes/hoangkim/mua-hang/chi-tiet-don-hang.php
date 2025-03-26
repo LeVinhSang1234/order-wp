@@ -156,7 +156,7 @@ $chats = $wpdb->get_results($query);
                     </div>
                     <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
                         Số tiền phải đặt cọc (80%):
-                        <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * 0.8) ?></strong>
+                        <strong><?php echo format_price_vnd((($totalPrice * $exchange_rate) - floatval($order->chiet_khau_dich_vu * $exchange_rate ?? 0)) * 0.8) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         <strong>Tổng tạm tính:</strong>
