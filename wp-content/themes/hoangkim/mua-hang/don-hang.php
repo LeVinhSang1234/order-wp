@@ -41,7 +41,6 @@ if (!empty($order_id)) {
 $query .= " AND type = 0 ORDER BY created_at ASC, created_at DESC ";
 
 $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
-$exchange_rate = floatval(get_option('exchange_rate', 1.0));
 
 $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 ?>
@@ -108,7 +107,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 if (!empty($cart_ids_array)) {
                                     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
                                     $query = $wpdb->prepare(
-                                        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+                                        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
                                         ...$cart_ids_array
                                     );
                                     $carts = $wpdb->get_results($query);
@@ -119,11 +118,15 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 if (!$image_url) {
                                     $image_url = $order->link_hinh_anh;
                                 }
+                                $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
+                                if (!$exchange_rate) {
+                                $exchange_rate = floatval(get_option('exchange_rate', 1.0));
+                                }
                                 $total = 0;
                                 foreach ($carts as $cart) {
-                                    $total += floatval($cart->price) * intval($cart->quantity);
+                                    $total += floatval($cart->price) * $exchange_rate  * intval($cart->quantity);
                                 }
-                                $total = $total * $exchange_rate;
+                                $total = $total;
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
                             ?>
                                 <tr style="text-transform: initial">
@@ -138,6 +141,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                         <img src="<?php echo $image_url ?>" />
                                     </td>
                                     <td style="font-size: 12px">
+                                        <div><?php echo $date->format('d/m/Y H:i') ?></div>
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
                                         <div class="d-flex justify-content-between">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total  * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
