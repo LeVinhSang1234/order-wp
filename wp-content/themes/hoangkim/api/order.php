@@ -23,7 +23,7 @@ function save_cart()
     foreach ($cart_items as $item) {
         $exists = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT id FROM $table_name WHERE user_id = %d AND shop_id = %s AND product_name = %s AND product_image = %s AND is_done = 0",
+                "SELECT id FROM $table_name WHERE user_id = %d AND shop_id = %s AND product_name = %s AND product_image = %s AND is_done = 0 AND color = %s AND size = %s",
                 $user_id,
                 sanitize_text_field($item['id']),
                 sanitize_text_field($item['name']),
