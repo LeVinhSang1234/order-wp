@@ -38,7 +38,7 @@ if (!empty($order_id)) {
     $params[] = '%' . $wpdb->esc_like($newString) . '%';
 }
 
-$query .= " AND type = 0 ORDER BY created_at ASC, created_at DESC ";
+$query .= " AND type = 0 ORDER BY created_at DESC ";
 
 $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 
