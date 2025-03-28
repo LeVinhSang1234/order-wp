@@ -152,7 +152,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                         <div class="d-flex justify-content-between">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total  * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
-                                        <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
+                                        <div class="d-flex justify-content-between">Tổng hoàn:<span><?php echo format_price_vnd($order->da_hoan) ?></span></div>
                                     </td>
                                     <td style="color: <?php
                                                         echo ($order->status === '8') ? "#ff0000" : (($order->status === '9') ? "#ffc107" : "green");
@@ -357,8 +357,8 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 orderIds.push(orderId.replace(/^MS\d+-/, '')); // Extract numeric order ID
             });
 
-            const orderListString = orderList.join(', ');
-            if (confirm(`Hãy chắc chắn đặt cọc. Tổng số tiền đặt cọc là: ${totalDeposit.toLocaleString()} VNĐ\nDanh sách đơn hàng: ${orderListString}`)) {
+            const orderCount = selectedOrders.length;
+            if (confirm(`Bạn có muốn đặt cọc ${orderCount} đơn số tiền là: ${totalDeposit.toLocaleString()} VNĐ?`)) {
                 $.ajax({
                     url: '<?php echo admin_url("admin-ajax.php"); ?>',
                     type: 'POST',

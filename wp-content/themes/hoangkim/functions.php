@@ -61,6 +61,7 @@ if (is_admin()) {
     require_once get_template_directory() . '/custom-ui/add-phone.php';
     require_once get_template_directory() . '/handles/after_setup_theme.php';
     require_once get_template_directory() . '/api/order.php';
+    require_once get_template_directory() . '/api/order_admin.php';
     require_once get_template_directory() . '/action/add-field-exchange.php';
     require_once get_template_directory() . '/action/phi-mua-hang.php';
     require_once get_template_directory() . '/handles/custom_ui_admin.php';
@@ -91,4 +92,9 @@ require_once get_template_directory() . '/api/exchange-rate.php';
 function format_price_vnd($price)
 {
     return number_format($price, 0, ',', '.') . ' VNĐ';
+}
+
+function format_weight($weight)
+{
+    return number_format($weight, 0, ',', '.') . ' KG';
 }

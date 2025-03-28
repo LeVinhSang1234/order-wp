@@ -7,94 +7,6 @@ function register_order_menu()
 }
 add_action("admin_menu", "register_order_menu");
 
-
-function update_order_ajax()
-{
-  global $wpdb;
-
-  // Kiểm tra nếu dữ liệu `updates` được gửi lên
-  if (!isset($_POST['updates'])) {
-    wp_send_json_error(["error" => "Dữ liệu không hợp lệ"]);
-    exit;
-  }
-
-  // Giải mã JSON từ request
-  $updates = json_decode(stripslashes($_POST['updates']), true);
-  if (!is_array($updates)) {
-    wp_send_json_error(["error" => "Dữ liệu cập nhật không hợp lệ"]);
-    exit;
-  }
-
-  // Danh sách các trường hợp lệ để cập nhật
-  $allowed_fields = [
-    'user_id',
-    'cart_ids',
-    'status',
-    'ho_ten',
-    'email',
-    'phone',
-    'address',
-    'van_don',
-    'thuong_hieu',
-    'so_kien_hang',
-    'da_thanh_toan',
-    'da_hoan',
-    'exchange_rate',
-    'phi_mua_hang',
-    'phi_ship_noi_dia',
-    'phi_kiem_dem',
-    'phi_gia_co',
-    'chiet_khau_dich_vu'
-  ];
-
-  // Lưu lại số bản ghi cập nhật thành công
-  $success_count = 0;
-  $errors = [];
-
-  foreach ($updates as $update) {
-    $order_id = intval($update['order_id']);
-    $field = sanitize_text_field($update['field']);
-    $value = isset($update['value']) ? sanitize_text_field($update['value']) : null;
-
-    // Kiểm tra nếu trường hợp lệ
-    if (!in_array($field, $allowed_fields)) {
-      $errors[] = "Field '$field' không hợp lệ.";
-      continue;
-    }
-
-    // Cập nhật cơ sở dữ liệu
-    $updated = $wpdb->update(
-      "{$wpdb->prefix}orders",
-      [$field => $value],
-      ['id' => $order_id],
-      ['%s'],
-      ['%d']
-    );
-
-    // Kiểm tra kết quả cập nhật
-    if ($updated !== false) {
-      $success_count++;
-    } else {
-      $errors[] = "Không thể cập nhật '$field' cho đơn hàng ID $order_id.";
-    }
-  }
-
-  // Trả kết quả JSON
-  if ($success_count > 0) {
-    wp_send_json_success([
-      "message" => "$success_count bản ghi đã được cập nhật thành công.",
-      "errors" => $errors
-    ]);
-  } else {
-    wp_send_json_error([
-      "message" => "Không có bản ghi nào được cập nhật.",
-      "errors" => $errors
-    ]);
-  }
-  exit;
-}
-
-add_action('wp_ajax_update_order', 'update_order_ajax');
 function render_order_detail()
 {
   global $wpdb;
@@ -109,7 +21,7 @@ function render_order_detail()
   $cart_ids_array = json_decode($order->cart_ids, true);
   $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
   $query = $wpdb->prepare(
-    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders) limit 1",
+    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
     ...$cart_ids_array
   );
   $carts = $wpdb->get_results($query);
@@ -123,7 +35,6 @@ function render_order_detail()
     'id' => 'Mã đơn hàng',
     'user_id' => 'ID Người dùng',
     'status' => 'Trạng thái',
-    'created_at' => 'Ngày tạo',
     'total_price' => 'Tổng tiền',
     'payment_method' => 'Phương thức thanh toán',
     'updated_at' => 'Ngày cập nhật',
@@ -144,19 +55,37 @@ function render_order_detail()
     'phi_gia_co' => 'Phí gia cố',
     'phi_ship_noi_dia' => 'Phí ship nội địa',
     'chiet_khau_dich_vu' => 'Chiết khấu dịch vụ',
-    "brand" => "Tên hàng hóa"
+    "brand" => "Tên hàng hóa",
+    'created_at' => 'Ngày tạo',
+    'tien_van_chuyen' => 'Tiền vận chuyển',
+    'kg_tinh_phi' => 'Tổng kg tính phí',
   ];
 
   $editable_fields = [
     'da_thanh_toan',
     'da_hoan',
     'phi_kiem_dem',
-    'so_kien_hang',
-    'phi_mua_hang',
     "phi_ship_noi_dia",
     "phi_gia_co",
     "exchange_rate",
-    "chiet_khau_dich_vu"
+    "chiet_khau_dich_vu",
+    "tien_van_chuyen",
+    "kg_tinh_phi",
+  ];
+
+  $hidden_fields = [
+    'so_kien_hang', 
+    'phi_mua_hang',
+    "ngay_dat_coc",
+    "da_mua_hang",
+    "ngay_nhap_kho_tq",        
+    "ngay_nhap_kho_tq",
+    "ngay_nhap_kho_vn",
+    "ngay_nhan_hang",
+    "ngay_ncc_phat_hang",
+    "user_id",
+    "cart_ids",
+    "type"
   ];
 
   $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem'];
@@ -171,6 +100,9 @@ function render_order_detail()
   echo "<div class='order-card'>";
 
   foreach ($order as $field => $value) {
+    if (in_array($field, $hidden_fields)) {
+        continue; // Skip hidden fields
+    }
     $label = isset($field_labels[$field]) ? $field_labels[$field] : ucfirst(str_replace('_', ' ', $field));
     $editable = in_array($field, $editable_fields) ? "contenteditable='true'" : "";
     $class = in_array($field, $editable_fields) ? "class='editable'" : "";
@@ -225,6 +157,17 @@ function render_order_detail()
   }
 
   echo "</tbody></table>";
+    echo "<div class='order-item'>
+    <strong>Trạng thái:</strong>
+    <select id='statusDropdown' data-id='{$order->id}'>
+      <option value='2' " . ($order->status == 2 ? "selected" : "") . ">Đang mua hàng</option>
+      <option value='3' " . ($order->status == 3 ? "selected" : "") . ">Đã mua hàng</option>
+      <option value='4' " . ($order->status == 4 ? "selected" : "") . ">NCC phát hàng</option>
+      <option value='5' " . ($order->status == 5 ? "selected" : "") . ">Nhập kho TQ</option>
+      <option value='6' " . ($order->status == 6 ? "selected" : "") . ">Nhập kho VN</option>
+      <option value='7' " . ($order->status == 7 ? "selected" : "") . ">Khách nhận hàng</option>
+    </select>
+  </div>";
   echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
   echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
   echo "</div>";
@@ -286,13 +229,44 @@ function render_order_detail()
           });
         });
 
-        console.log("Dữ liệu gửi đi:", updates);
+        $("input[data-type='quantity-cart']").each(function () {
+          updates.push({
+            cart_id: $(this).data("item"),
+            field: "quantity",
+            value: $(this).val().trim() || null
+          });
+        });
+
+        const statusFieldMap = {
+          2: "ngay_dat_coc",
+          3: "da_mua_hang",
+          4: "ngay_nhap_kho_tq",
+          5: "ngay_nhap_kho_tq",
+          6: "ngay_nhap_kho_vn",
+          7: "ngay_nhan_hang"
+        };
+
+        const selectedStatus = $("#statusDropdown").val();
+        const orderId = $("#statusDropdown").data("id");
+        updates.push({
+          order_id: orderId,
+          field: "status",
+          value: selectedStatus
+        });
+
+        if (statusFieldMap[selectedStatus]) {
+          updates.push({
+            order_id: orderId,
+            field: statusFieldMap[selectedStatus],
+            value: new Date().toISOString().slice(0, 19).replace('T', ' ')
+          });
+        }
 
         $.ajax({
           url: '<?php echo admin_url("admin-ajax.php"); ?>',
           type: "POST",
           data: {
-            action: "update_order_fields",
+            action: "update_order_admin",
             updates: JSON.stringify(updates)
           },
           beforeSend: function () {

@@ -109,3 +109,23 @@ table.table-list-chi-tiet td {
       flex-direction: column;
   }
 }
+
+.history-all ul {
+  padding: 0px;
+}
+
+.history-content ul li {
+  list-style: none;
+  display: inline-block;
+  line-height: 25px;
+  padding: 0 15px;
+  margin-bottom: 0px;
+}
+
+.history-content ul li p {
+  margin-bottom: 0px;
+}
+.ng-scope p, .ng-scope .form-group {
+  margin-bottom: 0px;
+}
+

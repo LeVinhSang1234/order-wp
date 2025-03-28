@@ -210,7 +210,15 @@ function update_orders_table()
     $columns_to_add = [
         'link_san_pham' => "VARCHAR(255) NULL",
         'link_hinh_anh' => "VARCHAR(255) NULL",
-        'mau_sac_kich_thuoc' => "VARCHAR(255) NULL"
+        'mau_sac_kich_thuoc' => "VARCHAR(255) NULL",
+        'ngay_dat_coc' => "DATETIME DEFAULT NULL",
+        'da_mua_hang' => "DATETIME DEFAULT NULL",
+        'ngay_nhap_kho_tq' => "DATETIME DEFAULT NULL",
+        'ngay_nhap_kho_vn' => "DATETIME DEFAULT NULL",
+        'ngay_nhan_hang' => "DATETIME DEFAULT NULL",
+        'ngay_ncc_phat_hang' => "DATETIME DEFAULT NULL",
+        'tien_van_chuyen' => "FLOAT(10,2) DEFAULT NULL",
+        'kg_tinh_phi' => "FLOAT(10,2) DEFAULT NULL",
     ];
 
     foreach ($columns_to_add as $column => $definition) {
@@ -261,6 +269,22 @@ function create_orders_support()
     $wpdb->query($sql);
 }
 
+function create_history_orders_transaction()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'history_orders_transaction';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        order_id VARCHAR(500) NULL,
+        loai TEXT DEFAULT NULL,
+        hinh_thuc TEXT DEFAULT NULL,
+        so_tien FLOAT(10,2) DEFAULT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
 
 function create_cart_table()
 {
@@ -337,6 +361,24 @@ function create_notification()
     $wpdb->query($sql);
 }
 
+function create_package_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'packages';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        order_id BIGINT(20) UNSIGNED NOT NULL,
+        ma_kien VARCHAR(255) NOT NULL, -- Mã kiện
+        can_nang FLOAT(10,2) DEFAULT 0.00, -- Cân nặng
+        the_tich FLOAT(10,2) DEFAULT 0.00, -- Thể tích
+        trang_thai TINYINT DEFAULT 0, -- Trạng thái
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) $charset_collate;";
+    $wpdb->query($sql);
+}
+
 function after_setup_theme()
 {
     create_muahang_page();
@@ -346,6 +388,8 @@ function after_setup_theme()
     create_chat_table();
     create_wallet_transaction();
     create_notification();
+    create_history_orders_transaction();
+    create_package_table();
 }
 
 add_action('after_setup_theme', 'after_setup_theme');

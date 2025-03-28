@@ -48,15 +48,12 @@ function render_order_page()
   echo '<thead>
           <tr>
               <th style="color: white">ID</th>
-              <th style="color: white">Người dùng</th>
               <th style="color: white">Trạng thái</th>
-              <th style="color: white">Họ tên</th>
               <th style="color: white">Email</th>
               <th style="color: white">Điện thoại</th>
               <th style="color: white">Địa chỉ</th>
               <th style="color: white">Vận đơn</th>
               <th style="color: white">Thương hiệu</th>
-              <th style="color: white">Số kiện hàng</th>
               <th style="color: white">Thanh toán</th>
               <th style="color: white">Ngày tạo</th>
               <td style="color: white">Xem Chi tiết</td>
@@ -67,16 +64,13 @@ function render_order_page()
     $detail_url = admin_url("admin.php?page=order_detail&id={$order->id}");
     echo "<tr data-id='{$order->id}'>
           <td><a href='{$detail_url}'>{$order->id}</a></td></td>
-          <td>{$order->user_id}</td>
-          <td contenteditable='true' class='editable' data-field='status'>{$order->status}</td>
-          <td contenteditable='true' class='editable' data-field='ho_ten'>{$order->ho_ten}</td>
-          <td contenteditable='true' class='editable' data-field='email'>{$order->email}</td>
-          <td contenteditable='true' class='editable' data-field='phone'>{$order->phone}</td>
-          <td contenteditable='true' class='editable' data-field='address'>{$order->address}</td>
-          <td contenteditable='true' class='editable' data-field='van_don'>{$order->van_don}</td>
-          <td contenteditable='true' class='editable' data-field='thuong_hieu'>{$order->thuong_hieu}</td>
-          <td contenteditable='true' class='editable' data-field='so_kien_hang'>{$order->so_kien_hang}</td>
-          <td contenteditable='true' class='editable' data-field='da_thanh_toan'>{$order->da_thanh_toan}</td>
+          <td contenteditable='false' class='editable' data-field='status'>{$order->status}</td>
+          <td contenteditable='false' class='editable' data-field='email'>{$order->email}</td>
+          <td contenteditable='false' class='editable' data-field='phone'>{$order->phone}</td>
+          <td contenteditable='false' class='editable' data-field='address'>{$order->address}</td>
+          <td contenteditable='false' class='editable' data-field='van_don'>{$order->van_don}</td>
+          <td contenteditable='false' class='editable' data-field='thuong_hieu'>{$order->thuong_hieu}</td>
+          <td contenteditable='false' class='editable' data-field='da_thanh_toan'>{$order->da_thanh_toan}</td>
           <td>{$order->created_at}</td>
           <td><a href='{$detail_url}'>(Xem Chi tiết)</a></td></td>
       </tr>";
