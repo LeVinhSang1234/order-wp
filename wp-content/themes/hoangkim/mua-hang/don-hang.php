@@ -164,7 +164,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                         <?php if ($order->status !== '8') { ?>
                                             <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
                                         <?php } ?>
-                                        <button id="btn-dat-lai-don" style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button>
+                                        <button id="btn-dat-lai-don" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -381,10 +381,14 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
     });
 
     $(document).on('click', '#btn-dat-lai-don', function() {
-    const orderId = $(this).closest('tr').find('td:nth-child(3)').text().trim(); // Lấy ID đơn hàng từ cột thứ 3
+    const orderId = $(this).data('item'); 
     if (!orderId) {
         alert('Không tìm thấy ID đơn hàng.');
         return;
+    }
+
+    if (!confirm('Bạn có chắc chắn muốn đặt lại đơn hàng này?')) {
+        return; 
     }
 
     $.ajax({
