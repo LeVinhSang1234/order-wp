@@ -59,8 +59,8 @@ $chats = $wpdb->get_results($query);
 
             <div class="content-list-data gap-4">
                 <div class="flex-1">
-                    <div class="d-flex mt-4 fs-14 ">
-                        <!-- <div class="flex-1">
+                    <!-- <div class="d-flex mt-4 fs-14 ">
+                        <div class="flex-1">
                             <strong>
                                 <i class="fa-solid fa-location-dot"></i>
                                 Địa chỉ nhận hàng
@@ -85,51 +85,53 @@ $chats = $wpdb->get_results($query);
                                     <input <?php echo $isDisabled ?> <?php echo ($order->is_bao_hiem ? 'checked' : '') ?> type="checkbox" id="is_bao_hiem" data-orderid="16820"> Bảo hiểm hàng hóa
                                 </li>
                             </ul>
-                        </div> -->
-                    </div>
-                    <table class="w-100 mt-4 table-list-chi-tiet">
-                        <thead>
-                            <tr>
-                                <th>Sản phẩm</th>
-                                <th>Cửa hàng</th>
-                                <th>Số lượng</th>
-                                <th style="width: 120px;">Đơn giá</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($carts as $cart) {
-                                $totalPrice += ($cart->price * $cart->quantity);
-                            ?>
+                        </div>
+                    </div> -->
+                    <div class="table-responsive">
+                        <table class="w-100 mt-4 table-list-order" style="min-width: 600px;">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <img width="40px" src="<?php echo $cart->product_image ?>" />
-                                            <div>
-                                                <a href="<?php echo $cart->product_url ?>">
-                                                    <?php
-                                                    $url_without_https = str_replace("https://", "", $cart->product_url);
-                                                    $parts = explode("/", $url_without_https);
-                                                    echo $parts[0];
-                                                    ?>
-                                                </a>
-                                                <div><?php echo $cart->size ?> <br><?php echo $cart->color ?></div>
-                                            </div>
-
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="<?php echo $cart->shop_url ?>"><?php echo $cart->shop_id ?></a>
-                                    </td>
-                                    <td>
-                                        <input <?php echo $order->status > 1 ? "disabled" : '' ?> data-type="quantity-cart" data-item="<?php echo $cart->id ?>" value="<?php echo $cart->quantity ?>" />
-                                    </td>
-                                    <td>
-                                        <?php echo $cart->price ?? 0 ?>¥
-                                    </td>
+                                    <th>Sản phẩm</th>
+                                    <th>Cửa hàng</th>
+                                    <th>Số lượng</th>
+                                    <th style="width: 120px;">Đơn giá</th>
                                 </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($carts as $cart) {
+                                    $totalPrice += ($cart->price * $cart->quantity);
+                                ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img width="40px" src="<?php echo $cart->product_image ?>" />
+                                                <div>
+                                                    <a href="<?php echo $cart->product_url ?>">
+                                                        <?php
+                                                        $url_without_https = str_replace("https://", "", $cart->product_url);
+                                                        $parts = explode("/", $url_without_https);
+                                                        echo $parts[0];
+                                                        ?>
+                                                    </a>
+                                                    <div><?php echo $cart->size ?> <br><?php echo $cart->color ?></div>
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo $cart->shop_url ?>"><?php echo $cart->shop_id ?></a>
+                                        </td>
+                                        <td>
+                                            <input <?php echo $order->status > 1 ? "disabled" : '' ?> data-type="quantity-cart" data-item="<?php echo $cart->id ?>" value="<?php echo $cart->quantity ?>" />
+                                        </td>
+                                        <td>
+                                            <?php echo $cart->price ?? 0 ?>¥
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-5 mt-4 fs-13">
                     <div class="divider d-flex justify-content-between align-items-center">
