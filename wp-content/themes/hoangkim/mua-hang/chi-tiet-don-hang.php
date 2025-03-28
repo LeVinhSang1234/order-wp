@@ -60,7 +60,7 @@ $chats = $wpdb->get_results($query);
             <div class="content-list-data gap-4">
                 <div class="flex-1">
                     <div class="d-flex mt-4 fs-14 ">
-                        <div class="flex-1">
+                        <!-- <div class="flex-1">
                             <strong>
                                 <i class="fa-solid fa-location-dot"></i>
                                 Địa chỉ nhận hàng
@@ -85,7 +85,7 @@ $chats = $wpdb->get_results($query);
                                     <input <?php echo $isDisabled ?> <?php echo ($order->is_bao_hiem ? 'checked' : '') ?> type="checkbox" id="is_bao_hiem" data-orderid="16820"> Bảo hiểm hàng hóa
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
                     <table class="w-100 mt-4 table-list-chi-tiet">
                         <thead>
@@ -93,7 +93,7 @@ $chats = $wpdb->get_results($query);
                                 <th>Sản phẩm</th>
                                 <th>Cửa hàng</th>
                                 <th>Số lượng</th>
-                                <th style="width: 120px;">Giá tiền</th>
+                                <th style="width: 120px;">Đơn giá</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -105,16 +105,16 @@ $chats = $wpdb->get_results($query);
                                         <div class="d-flex align-items-center gap-2">
                                             <img width="40px" src="<?php echo $cart->product_image ?>" />
                                             <div>
-                                            <a href="<?php echo $cart->product_url ?>">
-                                                <?php
-                                                $url_without_https = str_replace("https://", "", $cart->product_url);
-                                                $parts = explode("/", $url_without_https);
-                                                echo $parts[0];
-                                                ?>
-                                            </a>
-                                            <div><?php echo $cart->size ?> <br><?php echo$cart->color ?></div>
+                                                <a href="<?php echo $cart->product_url ?>">
+                                                    <?php
+                                                    $url_without_https = str_replace("https://", "", $cart->product_url);
+                                                    $parts = explode("/", $url_without_https);
+                                                    echo $parts[0];
+                                                    ?>
+                                                </a>
+                                                <div><?php echo $cart->size ?> <br><?php echo $cart->color ?></div>
                                             </div>
-                                            
+
                                         </div>
                                     </td>
                                     <td>
@@ -124,7 +124,7 @@ $chats = $wpdb->get_results($query);
                                         <input <?php echo $order->status > 1 ? "disabled" : '' ?> data-type="quantity-cart" data-item="<?php echo $cart->id ?>" value="<?php echo $cart->quantity ?>" />
                                     </td>
                                     <td>
-                                        <?php echo format_price_vnd($exchange_rate * $cart->price) ?>
+                                        <?php echo $cart->price ?? 0 ?>¥
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -134,15 +134,17 @@ $chats = $wpdb->get_results($query);
                 <div class="col-md-5 mt-4 fs-13">
                     <div class="divider d-flex justify-content-between align-items-center">
                         Tỷ giá tiền tệ:
-                        <strong><?php echo format_price_vnd($exchange_rate ?? 0) ?></strong>
+                        <strong class="badge bg-secondary">
+                            <?php echo format_price_vnd($exchange_rate ?? 0) ?>/¥
+                        </strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (1) Tiền hàng:
-                        <strong><?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?></strong>
+                        <strong><?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?> (<?php echo $totalPrice ?? 0 ?>¥)</strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (2) Phí ship nội địa TQ:
-                        <strong><?php echo format_price_vnd($order->phi_ship_noi_dia ?? 0) ?></strong>
+                        <strong><?php echo format_price_vnd($order->phi_ship_noi_dia * $exchange_rate ?? 0) ?> (<?php echo $order->phi_ship_noi_dia ?? 0 ?>¥)</strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (3) Phí kiểm đếm:
@@ -150,24 +152,24 @@ $chats = $wpdb->get_results($query);
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (4) Phí gia cố:
-                        <strong><?php echo format_price_vnd($order->phi_gia_co ?? 0) ?></strong>
+                        <strong><?php echo format_price_vnd($order->phi_gia_co * $exchange_rate ?? 0) ?> (<?php echo $order->phi_gia_co ?? 0 ?>¥)</strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
                         (5) Phí dịch vụ:
-                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?></strong>
+                        <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?> (<?php echo $order->chiet_khau_dich_vu ?? 0 ?>¥)</strong>
                     </div>
                     <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
                         Số tiền phải đặt cọc (80%):
                         <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * 0.8) ?></strong>
                     </div>
                     <div class="divider d-flex justify-content-between align-items-center">
-                        <strong>Tổng tạm tính:</strong>
+                        <strong>Tổng tạm tính (1+2+3+4+5):</strong>
                         <strong>
                             <?php
                             $total = $totalPrice * $exchange_rate;
-                            $total += $order->phi_ship_noi_dia;
+                            $total += $order->phi_ship_noi_dia * $exchange_rate;
                             $total += $order->phi_kiem_dem;
-                            $total += $order->phi_gia_co;
+                            $total += $order->phi_gia_co * $exchange_rate;
                             $total += $order->chiet_khau_dich_vu * $exchange_rate;
                             echo format_price_vnd($total);
                             ?>

@@ -84,25 +84,24 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                         <thead>
                             <tr>
-                                <th class="text-center">
+                                <th class="text-center" style="width: 40px;">
                                     <input type="checkbox" id="check-all-order">
                                 </th>
-                                <th class="text-center">STT</th>
-                                <th>Mã đơn hàng</th>
+                                <th style="width: 100px;" class="text-center">STT</th>
+                                <th style="width: 140px;">Mã đơn hàng</th>
                                 <th class="text-center">Sản phẩm</th>
                                 <th>Tổng Tiền (VNĐ)</th>
-                                <th>Thời gian</th>
-                                <th>Trạng thái</th>
-                                <th>Thao Tác</th>
+                                <th style="width: 140px;">Trạng thái</th>
+                                <th class="text-center" style="width: 130px;">Thao Tác</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $stt = 1;
                             foreach ($orders as $order) {
                                 $cart_ids_array = !empty($order->cart_ids) ? json_decode($order->cart_ids, true) : [];
                                 if (!is_array($cart_ids_array)) {
-                                    $cart_ids_array = []; 
+                                    $cart_ids_array = [];
                                 }
                                 if (!empty($cart_ids_array)) {
                                     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
@@ -114,13 +113,18 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 } else {
                                     $carts = [];
                                 }
-                                $image_url = isset($carts[0]->product_image) ? $carts[0]->product_image : '';
-                                if (!$image_url) {
-                                    $image_url = $order->link_hinh_anh;
+                                $image_urls = [];
+                                foreach ($carts as $cart) {
+                                    if (!empty($cart->product_image)) {
+                                        $image_urls[] = $cart->product_image; // Thêm liên kết hình ảnh vào mảng
+                                    }
+                                }
+                                if (empty($image_urls)) {
+                                    $image_urls[] = $order->link_hinh_anh;
                                 }
                                 $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
                                 if (!$exchange_rate) {
-                                $exchange_rate = floatval(get_option('exchange_rate', 1.0));
+                                    $exchange_rate = floatval(get_option('exchange_rate', 1.0));
                                 }
                                 $total = 0;
                                 foreach ($carts as $cart) {
@@ -131,40 +135,36 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                             ?>
                                 <tr style="text-transform: initial">
                                     <td class="text-center">
-                                    <?php if (intval($order->status) !== 8 && intval($order->status) !== 2) { ?>
-                                        <input type="checkbox">
-                                    <?php } ?>
+                                        <?php if (intval($order->status) !== 8 && intval($order->status) !== 2) { ?>
+                                            <input type="checkbox">
+                                        <?php } ?>
                                     </td>
                                     <td class="text-center"><?php echo $stt++; ?></td>
                                     <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></td>
-                                    <td class="text-center">
-                                        <img src="<?php echo $image_url ?>" />
+                                    <td class="text-center flex-wrap">
+                                        <?php foreach ($image_urls as $image_url) {
+                                            echo '<img style="margin-right: 8px;" src="' . esc_url($image_url) . '" alt="Product Image" />';
+                                        } ?>
                                     </td>
                                     <td style="font-size: 12px">
-                                        <div><?php echo $date->format('d/m/Y H:i') ?></div>
+                                        <div class="d-flex justify-content-between">Tạo ngày:<strong><?php echo $date->format('d/m/Y H:i') ?></strong></div>
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
                                         <div class="d-flex justify-content-between">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total  * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tổng hoàn:<span>0 đ</span></div>
                                     </td>
-                                    <td>
-                                        Tạo ngày <?php echo $date->format('d/m/Y H:i') ?>
-                                    </td>
-                                    <td style="color: <?php 
-                                        echo ($order->status === '8') ? "#ff0000" : 
-                                             (($order->status === '9') ? "#ffc107" : "green"); 
-                                    ?>; font-weight: 600">
+                                    <td style="color: <?php
+                                                        echo ($order->status === '8') ? "#ff0000" : (($order->status === '9') ? "#ffc107" : "green");
+                                                        ?>; font-weight: 600">
                                         <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
                                         <?php if ($order->status !== '8') { ?>
                                             <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
                                         <?php } ?>
-                                        <?php if (intval($order->status) == 8) { ?>
-                                            <div><button style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button></div>
-                                        <?php } ?>
+                                        <button id="btn-dat-lai-don" style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -189,30 +189,34 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
 </div>
 
 <style>
-.status-tabs {
-    margin: 10px 0;
-    width: 100%;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-}
-.status-tab {
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 5px;
-    padding: 4px 16px;
-}
-.status-tab:hover {
-    background: #f5f5f5;
-}
-.status-tab.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-}
+    .status-tabs {
+        margin: 10px 0;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .status-tab {
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 5px;
+        padding: 4px 16px;
+        font-size: 14px;
+    }
+
+    .status-tab:hover {
+        background: #f5f5f5;
+    }
+
+    .status-tab.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
 </style>
 
 <script>
@@ -375,4 +379,33 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
         });
 
     });
+
+    $(document).on('click', '#btn-dat-lai-don', function() {
+    const orderId = $(this).closest('tr').find('td:nth-child(3)').text().trim(); // Lấy ID đơn hàng từ cột thứ 3
+    if (!orderId) {
+        alert('Không tìm thấy ID đơn hàng.');
+        return;
+    }
+
+    $.ajax({
+        url: '<?php echo admin_url("admin-ajax.php"); ?>',
+        type: 'POST',
+        data: {
+            action: 'recreate_order',
+            order_id: orderId
+        },
+        success: function(response) {
+            if (response.success) {
+                alert('Đơn hàng mới đã được tạo thành công!');
+                window.location.reload();
+            } else {
+                alert(response.data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+            }
+        },
+        error: function() {
+            alert('Lỗi kết nối đến máy chủ.');
+        }
+    });
+});
+    
 </script>

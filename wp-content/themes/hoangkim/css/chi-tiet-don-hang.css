@@ -11,6 +11,7 @@
   align-items: center;
   gap: 16px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .chi-tiet-don-hang .order-status {
@@ -101,4 +102,10 @@ table.table-list-chi-tiet td {
 
 .admin-system {
   text-align: right;
+}
+
+@media (max-width: 768px) {
+  .content-list-data {
+      flex-direction: column;
+  }
 }

@@ -277,6 +277,10 @@ $current_user = wp_get_current_user();
     });
 
     $('.btn-order-all').on('click', function() {
+      if ($('input[data-type="select-cart"]').length === 0) {
+        alert("Không có đơn hàng nào trong giỏ hàng.");
+        return;
+      }
       if (!confirm("Bạn có chắc chắn muốn gửi yêu cầu đặt hàng cho tất cả sản phẩm?")) return;
 
       $('input[data-type="select-cart"]').prop("checked", true).trigger("change");

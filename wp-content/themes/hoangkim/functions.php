@@ -51,100 +51,6 @@ function insert_notification($loai, $noi_dung, $du_lieu)
     return $wpdb->insert_id; // Trả về ID của bản ghi vừa tạo
 }
 
-add_action('wp_ajax_submit_all_cart', 'submit_all_cart_handler');
-add_action('wp_ajax_nopriv_submit_all_cart', 'submit_all_cart_handler');
-
-
-function submit_all_cart_handler()
-{
-    global $wpdb;
-    $table_cart = $wpdb->prefix . 'cart';
-    $table_orders = $wpdb->prefix . 'orders';
-
-    $user_id = get_current_user_id();
-    $data = json_decode(file_get_contents("php://input"), true);
-    $ho_ten  = $data['ho_ten'] ?? '';
-    $address = $data['address'] ?? '';
-    $email   = $data['email'] ?? '';
-    $phone   = $data['phone'] ?? '';
-    $shop_id = $data['shop_id'] ?? '';
-    $products_input = $data['products'] ?? [];
-
-    if (empty($products_input)) {
-        wp_send_json_error(['message' => 'Không có sản phẩm nào được chọn!']);
-        return;
-    }
-
-    $cart_ids = [];
-    $total_price = 0;
-
-    foreach ($products_input as $input_product) {
-        $product_id = $input_product['id'];
-        $quantity = intval($input_product['quantity']);
-
-        $product_data = $wpdb->get_row(
-            $wpdb->prepare("SELECT * FROM $table_cart WHERE id = %d AND user_id = %d AND is_done = 0", $product_id, $user_id),
-            ARRAY_A
-        );
-        if (!$product_data) {
-            continue;
-        }
-        // Cập nhật quantity vào product
-        $product_data['quantity'] = $quantity;
-        // Cập nhật database
-        $wpdb->update(
-            $table_cart,
-            ['is_done' => 1, 'quantity' => $quantity],
-            ['id' => $product_id, 'user_id' => $user_id],
-            ['%d', '%d'],
-            ['%d', '%d']
-        );
-        // Tính tổng tiền
-        $cart_ids[] = (string) $product_id;
-        $total_price += floatval($product_data['price']) * $quantity;
-    }
-    // Tính phí dịch vụ dựa trên tổng giá
-    if ($total_price < 5000000) {
-        $service_fee = $total_price * 0.03; // 3%
-    } elseif ($total_price >= 5000000 && $total_price <= 50000000) {
-        $service_fee = $total_price * 0.02; // 2%
-    } else {
-        $service_fee = $total_price * 0.015; // 1.5%
-    }
-
-    // Chuyển cart_ids thành JSON để lưu vào đơn hàng
-    $cart_ids_json = json_encode($cart_ids);
-
-    // Tạo đơn hàng mới
-    $order_data = [
-        'user_id'    => $user_id,
-        'cart_ids'   => $cart_ids_json,
-        'note'       => 'Giao hàng nhanh',
-        'ho_ten'     => sanitize_text_field($ho_ten),
-        'address'    => sanitize_text_field($address),
-        'email'      => sanitize_email($email),
-        'phone'      => sanitize_text_field($phone),
-        'chiet_khau_dich_vu' => $service_fee,
-        'created_at' => current_time('mysql')
-    ];
-
-    $wpdb->insert($table_orders, $order_data);
-    $order_id = $wpdb->insert_id;
-
-    if (!$order_id) {
-        wp_send_json_error(['message' => 'Lỗi khi tạo đơn hàng!']);
-        return;
-    }
-
-    wp_send_json_success([
-        'message'     => 'Đơn hàng đã được tạo thành công!',
-        'order_id'    => $order_id,
-        'cart_ids'    => $cart_ids,
-        'total_price' => $total_price,
-        'service_fee' => $service_fee,
-    ]);
-}
-
 if (is_admin()) {
     function load_custom_admin_css()
     {
@@ -184,5 +90,5 @@ require_once get_template_directory() . '/api/exchange-rate.php';
 
 function format_price_vnd($price)
 {
-    return number_format($price, 0, ',', '.') . ' ₫';
+    return number_format($price, 0, ',', '.') . ' VNĐ';
 }
