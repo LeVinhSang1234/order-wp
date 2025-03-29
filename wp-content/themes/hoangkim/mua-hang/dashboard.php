@@ -6,7 +6,7 @@ $total_orders = $wpdb->get_var($wpdb->prepare(
     $user_id
 ));
 $total_khieu_nai = $wpdb->get_var($wpdb->prepare(
-    "SELECT COUNT(*) FROM {$wpdb->prefix}orders WHERE user_id = %d AND status = 10",
+    "SELECT COUNT(*) FROM {$wpdb->prefix}orders WHERE user_id = %d AND status = 9",
     $user_id
 ));
 $total_cart = $wpdb->get_var($wpdb->prepare(
@@ -38,6 +38,7 @@ if (!empty($type)) {
 }
 $query .= " ORDER BY is_read ASC, created_at DESC";
 $notifications = $wpdb->get_results($wpdb->prepare($query, ...$params));
+$tien = trim(display_user_wallet());
 
 $wpdb->update(
     "{$wpdb->prefix}notification",
@@ -52,7 +53,7 @@ $wpdb->update(
     <div class="row">
         <div class="col-lg-3 col-md-6 pb-2">
             <div class="box-dashboard box-dashboard-green">
-                <h4>0 đ</h4>
+                <h4><?php echo format_price_vnd(intval($tien ?? 0)) ?></h4>
                 <div class="title">Số dư</div>
                 <a href="/vi-dien-tu" class="view-detail">Xem chi tiết</a>
             </div>
