@@ -33,6 +33,7 @@ if (!empty($ma_phieu_thu)) {
 
 $query .= " ORDER BY created_at DESC";
 $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
+$tien = trim(display_user_wallet())
 ?>
 
 <div class="dashboard">
@@ -41,7 +42,7 @@ $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
             <h4 class="text-uppercase">Ví điện tử</h4>
             <div class="notification-dashboard" style="height: 150px">
                 <div class="d-flex align-items-center justify-content-between">
-                    <div>Số dư trong ví: <strong style="color: #ff0000">0</strong> VNĐ</div>
+                    <div>Số dư trong ví: <strong style="color: #ff0000"><?php echo format_price_vnd(intval($tien ?? 0)) ?></strong></div>
                     <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                         tiền</a>
                 </div>
