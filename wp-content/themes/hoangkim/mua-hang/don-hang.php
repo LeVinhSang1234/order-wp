@@ -135,7 +135,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                             ?>
                                 <tr style="text-transform: initial">
                                     <td class="text-center">
-                                        <?php if (intval($order->status) !== 8 && intval($order->status) !== 2 && intval($order->da_coc) !== 1) { ?>
+                                        <?php if (intval($order->status) !== 8 && intval($order->status) !== 2) { ?>
                                             <input type="checkbox">
                                         <?php } ?>
                                     </td>
@@ -368,7 +368,6 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     type: 'POST',
                     data: {
                         action: 'update_order_status',
-                        da_coc: 1,
                         order_ids: orderIds,
                         deposits: deposits // Pass deposit amounts
                     },

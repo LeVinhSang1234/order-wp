@@ -643,7 +643,6 @@ function update_order_status()
 
     $order_ids = isset($_POST['order_ids']) ? array_map('intval', $_POST['order_ids']) : [];
     $deposits = isset($_POST['deposits']) ? array_map('floatval', $_POST['deposits']) : [];
-    $da_coc = isset($_POST['da_coc']) ? intval($_POST['da_coc']) : 0;
 
     if (empty($order_ids) || count($order_ids) !== count($deposits)) {
         wp_send_json_error(['message' => '❌ Dữ liệu không hợp lệ!'], 400);
@@ -656,7 +655,7 @@ function update_order_status()
         $result = $wpdb->update(
             $order_table,
             [
-                'da_coc' => $da_coc,
+                'status' => 2,
                 'da_thanh_toan' => $deposit
             ],
             [
