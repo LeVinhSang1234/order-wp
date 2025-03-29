@@ -69,6 +69,18 @@ function update_order_admin()
       continue;
     }
 
+    // Skip updating specific fields if they already have a value
+    if (in_array($field, ['ngay_dat_coc', 'da_mua_hang', 'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang'])) {
+      $existing_value = $wpdb->get_var($wpdb->prepare(
+        "SELECT $field FROM {$wpdb->prefix}orders WHERE id = %d",
+        $order_id
+      ));
+      if (!empty($existing_value)) {
+        $errors[] = "Trường '$field' đã có giá trị và không thể cập nhật.";
+        continue;
+      }
+    }
+
     // Update the orders table
     $updated = $wpdb->update(
       "{$wpdb->prefix}orders",

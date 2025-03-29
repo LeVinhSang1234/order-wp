@@ -638,6 +638,7 @@ function update_order_status()
 
     global $wpdb;
     $order_table = $wpdb->prefix . 'orders';
+    $history_table = $wpdb->prefix . 'history_orders_transaction';
     $user_id = get_current_user_id();
 
     $order_ids = isset($_POST['order_ids']) ? array_map('intval', $_POST['order_ids']) : [];
@@ -670,6 +671,18 @@ function update_order_status()
             wp_send_json_error(['message' => '❌ Cập nhật trạng thái đơn hàng không thành công!'], 500);
             exit;
         }
+
+        // Insert record into history_orders_transaction
+        $wpdb->insert(
+            $history_table,
+            [
+                'order_id' => $order_id,
+                'loai' => 'Đặt cọc',
+                'hinh_thuc' => 'Chuyển khoản',
+                'so_tien' => $deposit,
+            ],
+            ['%d', '%s', '%s', '%f',]
+        );
     }
 
     wp_send_json_success(['message' => '✅ Trạng thái và tiền thanh toán đã được cập nhật thành công!']);
