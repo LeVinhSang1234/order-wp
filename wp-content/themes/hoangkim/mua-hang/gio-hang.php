@@ -91,7 +91,7 @@ $current_user = wp_get_current_user();
                       </td>
                       <td data-type="price" data-item="<?php echo $product['price'] * $rate ?>"
                         data-id="<?php echo $product['id'] ?>">
-                        <?php echo format_price_vnd($product['price'] * $rate) ?>
+                        <?php echo format_price_vnd($product['price'] * $rate) ?> / <?php echo $product['price']  ?>¥
                       </td>
                       <td>
                         <input data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>"
