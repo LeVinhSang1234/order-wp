@@ -95,7 +95,7 @@ if ($result) {
               data-phi-dich-vu="<?php echo esc_attr($phi_dich_vu); ?>"
               data-image-url="<?php echo esc_url($image_url); ?>"
               data-created-at="<?php echo esc_attr($formatted_date); ?>">
-              <?php echo "HK_" . sprintf('%02d', esc_html($order_item->id)) . " - Tổng: " . number_format($total, 2) . " - Ngày: " . $formatted_date; ?>
+              <?php echo "MS" .  str_pad($user_id, 2, '0', STR_PAD_LEFT). "-" . sprintf('%02d', esc_html($order_item->id)) . " - Tổng: " . number_format($total, 2) . " - Ngày: " . $formatted_date; ?>
             </option>
             <?php endforeach; ?>
           </select>
