@@ -231,9 +231,14 @@ $current_user = wp_get_current_user();
       const shopId = $(this).data('shop');
       const productId = $(this).data('item');
       const isSelect = $('input[data-shop="' + shopId + '"][data-item="' + productId + '"][data-type="select-cart"]').is(":checked");
-      const quantity = parseInt($(this).val()) || 1;
 
-      $(this).val(quantity);
+      let quantity = $(this).val();
+      if ($(this).data('type') === "product-quantity") {
+        quantity = parseInt(quantity) || 1;
+        $(this).val(quantity);
+      } else {
+        quantity = $(`input[data-type="product-quantity"][data-item="${productId}"]`).val();
+      }
 
       fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
           method: "POST",
@@ -242,12 +247,12 @@ $current_user = wp_get_current_user();
           },
           body: JSON.stringify({
             cart_id: productId,
-            quantity,
+            quantity: parseInt(quantity, 10),
             is_select: Number(isSelect)
           })
         })
         .finally(() => {
-          window.location.reload()
+          window.location.reload();
         });
     });
 

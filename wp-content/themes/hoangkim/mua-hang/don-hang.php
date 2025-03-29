@@ -92,6 +92,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 <th class="text-center">Sản phẩm</th>
                                 <th>Tổng Tiền (VNĐ)</th>
                                 <th style="width: 140px;">Trạng thái</th>
+                                <th style="width: 140px;">Tạo ngày</th>
                                 <th class="text-center" style="width: 130px;">Thao Tác</th>
                             </tr>
                         </thead>
@@ -132,6 +133,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 }
                                 $total = $total;
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
+                                $date->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh')); // Set timezone to UTC+7
                             ?>
                                 <tr style="text-transform: initial">
                                     <td class="text-center">
@@ -147,7 +149,6 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                         } ?>
                                     </td>
                                     <td style="font-size: 12px">
-                                        <div class="d-flex justify-content-between">Tạo ngày:<strong><?php echo $date->format('d/m/Y H:i') ?></strong></div>
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
                                         <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
@@ -159,6 +160,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                                         ?>; font-weight: 600">
                                         <?php echo isset($status_str[$order->status]) ? $status_str[$order->status] : $status_str[1] ?>
                                     </td>
+                                    <td style="font-size: 12px"><?php echo $date->format('d/m/Y H:i') ?></td>
                                     <td class="text-center">
                                         <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
                                         <?php if ($order->status !== '8') { ?>
