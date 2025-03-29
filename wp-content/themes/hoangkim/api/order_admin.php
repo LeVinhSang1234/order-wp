@@ -26,7 +26,9 @@ function update_order_admin()
     'van_don', 'thuong_hieu', 'so_kien_hang', 'da_thanh_toan', 'da_hoan', 
     'exchange_rate', 'phi_mua_hang', 'phi_ship_noi_dia', 'phi_kiem_dem', 
     'phi_gia_co', 'chiet_khau_dich_vu', 'ngay_dat_coc', 'da_mua_hang', 
-    'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang', "kg_tinh_phi"
+    'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang', "kg_tinh_phi",
+    'is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc',
+    "tien_van_chuyen"
   ];
 
   $success_count = 0;
@@ -36,6 +38,11 @@ function update_order_admin()
     $order_id = intval($update['order_id']);
     $field = sanitize_text_field($update['field']);
     $value = isset($update['value']) ? sanitize_text_field($update['value']) : null;
+
+    // Ensure checkbox values are either 0 or 1
+    if (in_array($field, ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc'])) {
+      $value = $value == 1 ? 1 : 0;
+    }
 
     // Check if the update is for the cart table
     if (in_array($field, $allowed_cart_fields)) {

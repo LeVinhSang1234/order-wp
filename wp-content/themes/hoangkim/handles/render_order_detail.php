@@ -52,13 +52,14 @@ function render_order_detail()
     'address' => 'Địa chỉ',
     'van_don' => 'Vận đơn',
     'exchange_rate' => 'Tỷ giá',
-    'phi_gia_co' => 'Phí gia cố',
-    'phi_ship_noi_dia' => 'Phí ship nội địa',
+    'phi_gia_co' => 'Phí gia cố(¥)',
+    'phi_ship_noi_dia' => 'Phí ship nội địa(¥)',
     'chiet_khau_dich_vu' => 'Chiết khấu dịch vụ',
     "brand" => "Tên hàng hóa",
     'created_at' => 'Ngày tạo',
     'tien_van_chuyen' => 'Tiền vận chuyển',
     'kg_tinh_phi' => 'Tổng kg tính phí',
+    "da_coc" => "Đã đặt cọc",
   ];
 
   $editable_fields = [
@@ -71,6 +72,7 @@ function render_order_detail()
     "chiet_khau_dich_vu",
     "tien_van_chuyen",
     "kg_tinh_phi",
+    "da_coc",
   ];
 
   $hidden_fields = [
@@ -88,7 +90,7 @@ function render_order_detail()
     "type"
   ];
 
-  $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem'];
+  $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc'];
 
   $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
   if (!$exchange_rate) {
@@ -110,7 +112,7 @@ function render_order_detail()
       $checked = $value == 1 ? "checked" : "";
       echo "<div class='order-item'>
               <strong>{$label}:</strong>
-              <div><input disabled type='checkbox' data-id='{$order->id}' data-field='{$field}' {$checked}></div>
+              <div><input type='checkbox' data-id='{$order->id}' data-field='{$field}' {$checked}></div>
             </div>";
     } else {
       // Nếu là ô có thể chỉnh sửa
@@ -234,6 +236,14 @@ function render_order_detail()
             cart_id: $(this).data("item"),
             field: "quantity",
             value: $(this).val().trim() || null
+          });
+        });
+
+        $("input[type='checkbox']").each(function () {
+          updates.push({
+            order_id: $(this).data("id"),
+            field: $(this).data("field"),
+            value: $(this).is(":checked") ? 1 : 0
           });
         });
 
