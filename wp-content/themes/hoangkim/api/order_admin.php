@@ -101,3 +101,90 @@ function update_order_admin()
 }
 
 add_action('wp_ajax_update_order_admin', 'update_order_admin');
+
+function delete_package()
+{
+  global $wpdb;
+
+  $package_id = intval($_POST['package_id']);
+
+  $deleted = $wpdb->delete(
+    "{$wpdb->prefix}packages",
+    ['id' => $package_id],
+    ['%d']
+  );
+
+  if ($deleted !== false) {
+    wp_send_json_success(["message" => "Xóa thành công."]);
+  } else {
+    wp_send_json_error(["message" => "Xóa thất bại."]);
+  }
+  exit;
+}
+add_action('wp_ajax_delete_package', 'delete_package');
+
+function update_packages()
+{
+  global $wpdb;
+
+  if (empty($_POST['packages'])) {
+    wp_send_json_error(["message" => "Dữ liệu không hợp lệ."]);
+    exit;
+  }
+
+  $packages = json_decode(stripslashes($_POST['packages']), true);
+  if (!is_array($packages)) {
+    wp_send_json_error(["message" => "Dữ liệu kiện hàng không hợp lệ."]);
+    exit;
+  }
+
+  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id'];
+  $success_count = 0;
+  $errors = [];
+
+  foreach ($packages as $package) {
+    $package_id = isset($package['package_id']) ? intval($package['package_id']) : null;
+    $order_id = intval($package['order_id']); // Ensure order_id is always used
+    $data = ['order_id' => $order_id]; // Include order_id in the data array
+
+    foreach ($package as $field => $value) {
+      if (in_array($field, $allowed_fields)) {
+        $data[$field] = sanitize_text_field($value);
+      }
+    }
+
+    if ($package_id) {
+      $updated = $wpdb->update(
+        "{$wpdb->prefix}packages",
+        $data,
+        ['id' => $package_id],
+        array_fill(0, count($data), '%s'),
+        ['%d']
+      );
+      if ($updated !== false) {
+        $success_count++;
+      } else {
+        $errors[] = "Không thể cập nhật kiện hàng ID $package_id.";
+      }
+    } else {
+      $inserted = $wpdb->insert(
+        "{$wpdb->prefix}packages",
+        $data,
+        array_fill(0, count($data), '%s')
+      );
+      if ($inserted !== false) {
+        $success_count++;
+      } else {
+        $errors[] = "Không thể thêm kiện hàng mới.";
+      }
+    }
+  }
+
+  if ($success_count > 0) {
+    wp_send_json_success(["message" => "$success_count kiện hàng đã được cập nhật thành công.", "errors" => $errors]);
+  } else {
+    wp_send_json_error(["message" => "Không có kiện hàng nào được cập nhật.", "errors" => $errors]);
+  }
+  exit;
+}
+add_action('wp_ajax_update_packages', 'update_packages');

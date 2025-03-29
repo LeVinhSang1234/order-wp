@@ -96,5 +96,10 @@ function format_price_vnd($price)
 
 function format_weight($weight)
 {
-    return number_format($weight, 0, ',', '.') . ' KG';
+    return number_format($weight, 0, ',', '.') . ' kg';
+}
+
+function format_khoi($khoi)
+{
+    return number_format($khoi, 0, ',', '.') . ' m³';
 }

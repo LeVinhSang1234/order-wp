@@ -380,6 +380,26 @@ function create_package_table()
     $wpdb->query($sql);
 }
 
+function update_package_table()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'packages';
+
+    $columns_to_add = [
+        'trang_thai_kien' => "TEXT NULL",
+    ];
+
+    foreach ($columns_to_add as $column => $definition) {
+        $exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column'");
+        if (empty($exists)) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column $definition");
+        }
+    }
+}
+
+update_package_table();
+
+
 function after_setup_theme()
 {
     create_muahang_page();

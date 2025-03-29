@@ -41,6 +41,8 @@ $ngay_nhap_kho_vn =  $order->ngay_nhap_kho_vn ? DateTime::createFromFormat('Y-m-
 $ngay_nhan_hang = $order->ngay_nhan_hang ? DateTime::createFromFormat('Y-m-d H:i:s', $order->ngay_nhan_hang)->format('d/m/Y H:i') : "...";
 $query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}history_orders_transaction WHERE order_id = %s", $order_id);
 $history_transactions = $wpdb->get_results($query);
+$query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}packages WHERE order_id = %d", $order_id);
+$packages = $wpdb->get_results($query);
 ?>
 
 <div class="dashboard chi-tiet-don-hang">
@@ -122,10 +124,25 @@ $history_transactions = $wpdb->get_results($query);
                           <th>Thể tích</th>
                           <th>Trạng thái</th>
                           <th>Thời gian</th>
-                          <th>Tùy chọn</th>
                         </tr>
                       </thead>
                       <tbody>
+                        <?php if (empty($packages)) { ?>
+                        <tr>
+                          <td colspan="7" class="text-center">Không có dữ liệu</td>
+                        </tr>
+                        <?php } else { ?>
+                        <?php foreach ($packages as $index => $package) { ?>
+                        <tr>
+                          <td><?php echo $index + 1; ?></td>
+                          <td><?php echo $package->ma_kien; ?></td>
+                          <td><?php echo format_weight($package->can_nang?? 0); ?></td>
+                          <td><?php echo format_khoi($package->the_tich?? 0); ?></td>
+                          <td><?php echo $package->trang_thai_kien; ?></td>
+                          <td><?php echo DateTime::createFromFormat('Y-m-d H:i:s', $package->created_at)->format('d/m/Y H:i'); ?></td>
+                        </tr>
+                        <?php } ?>
+                        <?php } ?>
                         <tr>
                           <td colspan="3">Tổng kg tính phí:
                           <?php echo format_weight($order->kg_tinh_phi ?? 0) ?>

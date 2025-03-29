@@ -26,6 +26,13 @@ function render_order_detail()
   );
   $carts = $wpdb->get_results($query);
 
+    $packages = $wpdb->get_results(
+      $wpdb->prepare(
+        "SELECT * FROM {$wpdb->prefix}packages WHERE order_id = %d",
+        $order_id
+      )
+    );
+
   if (!$order) {
     echo '<div class="error"><p>Đơn hàng không tồn tại!</p></div>';
     return;
@@ -159,7 +166,38 @@ function render_order_detail()
   }
 
   echo "</tbody></table>";
-    echo "<div class='order-item'>
+
+  // Add new table for additional fields
+  echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%; margin-top: 20px;' id='packagesTable'>
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã kiện</th>
+                    <th>Cân nặng</th>
+                    <th>Thể tích</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                    <th>Tùy chọn</th>
+                </tr>
+            </thead>
+            <tbody>";
+
+  foreach ($packages as $index => $package) {
+      echo "<tr data-id='{$package->id}'>
+                <td>" . ($index + 1) . "</td> <!-- Render serial number dynamically -->
+                <td contenteditable='true' class='editable-package' data-field='ma_kien'>{$package->ma_kien}</td>
+                <td contenteditable='true' class='editable-package' data-field='can_nang'>{$package->can_nang}</td>
+                <td contenteditable='true' class='editable-package' data-field='the_tich'>{$package->the_tich}</td>
+                <td contenteditable='true' class='editable-package' data-field='trang_thai_kien'>{$package->trang_thai_kien}</td>
+                <td>{$package->created_at}</td>
+                <td><button class='button-secondary delete-package' data-id='{$package->id}'>Xóa</button></td>
+            </tr>";
+  }
+
+  echo "</tbody></table>";
+  echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
+
+  echo "<div class='order-item'>
     <strong>Trạng thái:</strong>
     <select id='statusDropdown' data-id='{$order->id}'>
       <option value='2' " . ($order->status == 2 ? "selected" : "") . ">Đang mua hàng</option>
@@ -223,6 +261,7 @@ function render_order_detail()
       $("#updateOrder").click(function () {
         let updates = [];
 
+        // Collect order updates
         $(".editable[contenteditable='true']").each(function () {
           updates.push({
             order_id: $(this).data("id"),
@@ -272,6 +311,27 @@ function render_order_detail()
           });
         }
 
+        // Collect package updates
+        let packageUpdates = [];
+        $("#packagesTable tbody tr").each(function () {
+          const packageId = $(this).data("id") || null;
+          const orderId = <?php echo $order_id; ?>; // Pass the current order_id
+          let packageData = { order_id: orderId };
+
+          $(this).find(".editable-package").each(function () {
+            const field = $(this).data("field");
+            const value = $(this).is("select") ? $(this).val() : $(this).text().trim(); // Handle dropdowns
+            packageData[field] = value;
+          });
+
+          if (packageId) {
+            packageData.package_id = packageId;
+          }
+
+          packageUpdates.push(packageData);
+        });
+
+        // Send AJAX request for order updates
         $.ajax({
           url: '<?php echo admin_url("admin-ajax.php"); ?>',
           type: "POST",
@@ -280,21 +340,88 @@ function render_order_detail()
             updates: JSON.stringify(updates)
           },
           beforeSend: function () {
-            console.log("Đang gửi yêu cầu...");
+            console.log("Đang gửi yêu cầu cập nhật đơn hàng...");
           },
           success: function (response) {
-            console.log("Phản hồi từ server:", response);
+            console.log("Phản hồi từ server (đơn hàng):", response);
             if (response.success) {
-              alert("Cập nhật thành công!");
+              // Send AJAX request for package updates
+              $.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: "POST",
+                data: {
+                  action: "update_packages",
+                  packages: JSON.stringify(packageUpdates)
+                },
+                beforeSend: function () {
+                  console.log("Đang gửi yêu cầu cập nhật kiện hàng...");
+                },
+                success: function (response) {
+                  console.log("Phản hồi từ server (kiện hàng):", response);
+                  if (response.success) {
+                    alert("Cập nhật thành công!");
+                  } else {
+                    alert("Cập nhật kiện hàng thất bại! Lỗi: " + response.data.message);
+                  }
+                },
+                error: function () {
+                  alert("Có lỗi xảy ra khi cập nhật kiện hàng.");
+                }
+              });
             } else {
-              alert("Cập nhật thất bại! Lỗi: " + response.data.message);
+              alert("Cập nhật đơn hàng thất bại! Lỗi: " + response.data.message);
             }
           },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.error("Lỗi AJAX:", textStatus, errorThrown);
-            alert("Có lỗi xảy ra khi gửi yêu cầu.");
+          error: function () {
+            alert("Có lỗi xảy ra khi cập nhật đơn hàng.");
           }
         });
+      });
+
+      // Add new row to the packages table
+      $("#addPackageRow").click(function () {
+        const newRow = `
+          <tr>
+            <td>#</td>
+            <td contenteditable="true" class="editable-package" data-field="ma_kien"></td>
+            <td contenteditable="true" class="editable-package" data-field="can_nang"></td>
+            <td contenteditable="true" class="editable-package" data-field="the_tich"></td>
+            <td contenteditable="true" class="editable-package" data-field="trang_thai_kien"></td>
+            <td>--</td>
+            <td><button class="button-secondary delete-package">Xóa</button></td>
+          </tr>`;
+        $("#packagesTable tbody").append(newRow);
+      });
+
+      // Handle deleting a package row
+      $(document).on("click", ".delete-package", function () {
+        const row = $(this).closest("tr");
+        const packageId = $(this).data("id");
+
+        if (packageId) {
+          // Send AJAX request to delete the package
+          $.ajax({
+            url: '<?php echo admin_url("admin-ajax.php"); ?>',
+            type: "POST",
+            data: {
+              action: "delete_package",
+              package_id: packageId
+            },
+            success: function (response) {
+              if (response.success) {
+                row.remove();
+                alert("Xóa thành công!");
+              } else {
+                alert("Xóa thất bại! Lỗi: " + response.data.message);
+              }
+            },
+            error: function () {
+              alert("Có lỗi xảy ra khi xóa.");
+            }
+          });
+        } else {
+          row.remove(); // Remove unsaved row
+        }
       });
     });
   </script>
