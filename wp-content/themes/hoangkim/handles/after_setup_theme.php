@@ -219,6 +219,7 @@ function update_orders_table()
         'ngay_ncc_phat_hang' => "DATETIME DEFAULT NULL",
         'tien_van_chuyen' => "FLOAT(10,2) DEFAULT NULL",
         'kg_tinh_phi' => "FLOAT(10,2) DEFAULT NULL",
+        "da_coc" => "TINYINT DEFAULT 0",
     ];
 
     foreach ($columns_to_add as $column => $definition) {

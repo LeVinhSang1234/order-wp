@@ -641,27 +641,38 @@ function update_order_status()
     $user_id = get_current_user_id();
 
     $order_ids = isset($_POST['order_ids']) ? array_map('intval', $_POST['order_ids']) : [];
-    $status = isset($_POST['status']) ? intval($_POST['status']) : 0;
+    $deposits = isset($_POST['deposits']) ? array_map('floatval', $_POST['deposits']) : [];
+    $da_coc = isset($_POST['da_coc']) ? intval($_POST['da_coc']) : 0;
 
-    if (empty($order_ids) || $status <= 0) {
+    if (empty($order_ids) || count($order_ids) !== count($deposits)) {
         wp_send_json_error(['message' => '❌ Dữ liệu không hợp lệ!'], 400);
         exit;
     }
 
-    $placeholders = implode(',', array_fill(0, count($order_ids), '%d'));
-    $query = $wpdb->prepare(
-        "UPDATE $order_table SET status = %d WHERE id IN ($placeholders) AND user_id = %d",
-        array_merge([$status], $order_ids, [$user_id])
-    );
+    foreach ($order_ids as $index => $order_id) {
+        $deposit = $deposits[$index];
 
-    $result = $wpdb->query($query);
+        $result = $wpdb->update(
+            $order_table,
+            [
+                'da_coc' => $da_coc,
+                'da_thanh_toan' => $deposit
+            ],
+            [
+                'id' => $order_id,
+                'user_id' => $user_id
+            ],
+            ['%d', '%f'],
+            ['%d', '%d']
+        );
 
-    if ($result === false) {
-        wp_send_json_error(['message' => '❌ Cập nhật trạng thái đơn hàng không thành công!'], 500);
-        exit;
+        if ($result === false) {
+            wp_send_json_error(['message' => '❌ Cập nhật trạng thái đơn hàng không thành công!'], 500);
+            exit;
+        }
     }
 
-    wp_send_json_success(['message' => '✅ Trạng thái đơn hàng đã được cập nhật thành công!']);
+    wp_send_json_success(['message' => '✅ Trạng thái và tiền thanh toán đã được cập nhật thành công!']);
 }
 
 add_action('wp_ajax_submit_all_cart', 'submit_all_cart_handler');

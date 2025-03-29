@@ -149,7 +149,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                     <td style="font-size: 12px">
                                         <div class="d-flex justify-content-between">Tạo ngày:<strong><?php echo $date->format('d/m/Y H:i') ?></strong></div>
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
-                                        <div class="d-flex justify-content-between">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total  * 0.8) ?></span></div>
+                                        <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
                                         <div class="d-flex justify-content-between">Tổng hoàn:<span><?php echo format_price_vnd($order->da_hoan) ?></span></div>
@@ -347,25 +347,30 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
             let totalDeposit = 0;
             let orderList = [];
             let orderIds = [];
+            let deposits = [];
             selectedOrders.each(function() {
                 const row = $(this).closest('tr');
-                const depositAmount = parseFloat(row.find('td:nth-child(5) span[style="color: orange"]').text().replace(/[^\d]/g, '')) || 0;
+                const depositAmount = parseFloat(row.find('[data-coc]').data('coc')) || 0; // Fetch deposit from data-coc
                 totalDeposit += depositAmount;
 
                 const orderId = row.find('td:nth-child(3)').text().trim(); // Get order ID in the desired format
                 orderList.push(orderId);
                 orderIds.push(orderId.replace(/^MS\d+-/, '')); // Extract numeric order ID
+                deposits.push(depositAmount); // Collect deposit amounts
             });
 
             const orderCount = selectedOrders.length;
             if (confirm(`Bạn có muốn đặt cọc ${orderCount} đơn số tiền là: ${totalDeposit.toLocaleString()} VNĐ?`)) {
+                console.log(deposits);
+                
                 $.ajax({
                     url: '<?php echo admin_url("admin-ajax.php"); ?>',
                     type: 'POST',
                     data: {
                         action: 'update_order_status',
-                        status: 2,
-                        order_ids: orderIds
+                        da_coc: 1,
+                        order_ids: orderIds,
+                        deposits: deposits // Pass deposit amounts
                     },
                     success: function(response) {
                         alert(response.data.message);
