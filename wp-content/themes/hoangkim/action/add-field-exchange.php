@@ -41,6 +41,41 @@ function erc_display_exchange_rate_field()
     echo '<input type="number" name="exchange_rate" value="' . esc_attr($exchange_rate) . '" step="0.01" min="0" />';
 }
 
+// Đăng ký setting và field giá tiền theo cân nặng vào trang General Settings
+function erc_add_price_per_kg_setting()
+{
+    // Đăng ký setting mới
+    register_setting(
+        'general', // Nhóm settings (General Settings)
+        'price_per_kg', // Tên option lưu giá tiền theo cân nặng
+        array(
+            'type' => 'float',
+            'description' => 'Giá tiền theo cân nặng (VNĐ/kg)',
+            'sanitize_callback' => 'floatval', // Hàm lọc dữ liệu đầu vào
+            'default' => 0.0, // Giá trị mặc định
+        )
+    );
+
+    // Thêm field vào phần General Settings
+    add_settings_field(
+        'price_per_kg_field', // ID của field
+        'Giá tiền theo cân nặng (VNĐ/kg)', // Tiêu đề field
+        'erc_display_price_per_kg_field', // Hàm hiển thị field
+        'general', // Trang settings (General Settings)
+        'default', // Section chứa field
+        array('label_for' => 'price_per_kg') // Tham số bổ sung
+    );
+}
+add_action('admin_init', 'erc_add_price_per_kg_setting');
+
+// Hàm hiển thị trường nhập liệu giá tiền theo cân nặng
+function erc_display_price_per_kg_field()
+{
+    // Lấy giá trị đã lưu từ option
+    $price_per_kg = get_option('price_per_kg', 0.0);
+    echo '<input type="number" name="price_per_kg" value="' . esc_attr($price_per_kg) . '" step="0.01" min="0" />';
+}
+
 // Thêm plugin vào trong Admin Settings
 function erc_plugin_menu()
 {
@@ -72,7 +107,6 @@ function erc_plugin_page()
     </div>
 <?php
 }
-
 
 // Đăng ký API GET endpoint
 function erc_register_exchange_rate_api()

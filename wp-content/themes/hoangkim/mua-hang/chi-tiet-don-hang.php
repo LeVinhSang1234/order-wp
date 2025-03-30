@@ -43,6 +43,9 @@ $query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}history_orders_transaction
 $history_transactions = $wpdb->get_results($query);
 $query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}packages WHERE order_id = %d", $order_id);
 $packages = $wpdb->get_results($query);
+$total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
+    return $carry + ($package->can_nang ?? 0);
+}, 0);
 ?>
 
 <div class="dashboard chi-tiet-don-hang">
@@ -118,7 +121,7 @@ $packages = $wpdb->get_results($query);
                     <table class="w-100 mt-2 table-list-order">
                       <thead>
                         <tr>
-                          <th>#</th>
+                          <th>STT</th>
                           <th>Mã kiện</th>
                           <th>Cân nặng</th>
                           <th>Thể tích</th>
@@ -145,7 +148,7 @@ $packages = $wpdb->get_results($query);
                         <?php } ?>
                         <tr>
                           <td colspan="3">Tổng kg tính phí:
-                          <?php echo format_weight($order->kg_tinh_phi ?? 0) ?>
+                          <?php echo format_weight($total_kg_tinh_phi) ?>
                           </td>
                           <td colspan="3">Tổng tiền vận chuyển (tính riêng khi xuất hàng):
                           <?php echo format_price_vnd($order->tien_van_chuyen ?? 0) ?>

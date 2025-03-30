@@ -64,8 +64,6 @@ function render_order_detail()
     'chiet_khau_dich_vu' => 'Chiết khấu dịch vụ',
     "brand" => "Tên hàng hóa",
     'created_at' => 'Ngày tạo',
-    'tien_van_chuyen' => 'Tiền vận chuyển',
-    'kg_tinh_phi' => 'Tổng kg tính phí',
     "da_coc" => "Đã đặt cọc",
   ];
 
@@ -92,6 +90,8 @@ function render_order_detail()
     "ngay_nhap_kho_vn",
     "ngay_nhan_hang",
     "ngay_ncc_phat_hang",
+    "tien_van_chuyen",
+    'kg_tinh_phi',
     "user_id",
     "cart_ids",
     "type"
