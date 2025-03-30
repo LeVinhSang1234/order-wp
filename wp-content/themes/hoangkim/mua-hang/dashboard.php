@@ -47,6 +47,24 @@ $wpdb->update(
     array('%d'),
     array('%d', '%d')
 );
+
+// Fetch transaction history related to balance changes
+$wallet_transactions = $wpdb->get_results($wpdb->prepare(
+    "SELECT *, 'wallet' AS source FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d",
+    $user_id
+));
+
+$order_transactions = $wpdb->get_results($wpdb->prepare(
+    "SELECT *, 'order' AS source FROM {$wpdb->prefix}history_orders_transaction WHERE user_id = %d",
+    $user_id
+));
+
+// Merge and sort transactions by date
+$transactions = array_merge($wallet_transactions, $order_transactions);
+usort($transactions, function ($a, $b) {
+    return strtotime($b->created_at) - strtotime($a->created_at);
+});
+
 ?>
 
 <div class="dashboard">
@@ -131,6 +149,38 @@ $wpdb->update(
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="mt-5">
+        <h4 class="text-uppercase">Lịch sử biến động số dư</h4>
+        <div class="table-responsive">
+            <table class="w-100 mt-2" style="min-width: 1200px;">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Loại giao dịch</th>
+                        <th>Số tiền</th>
+                        <th>Ngày giao dịch</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($transactions as $key => $transaction) { ?>
+                        <tr>
+                            <td><?php echo $key + 1; ?></td>
+                            <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Cọc đơn hàng'; ?></td>
+                            <td style="color: <?php echo $transaction->source === 'wallet' ? 'green' : 'red'; ?>;">
+                                <?php echo $transaction->source === 'wallet' ? '+' : '-'; ?>
+                                <?php echo format_price_vnd($transaction->so_tien); ?>
+                            </td>
+                            <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
+                            <td>
+                                <?php echo $transaction->source === 'wallet' ? $transaction->ghi_chu : $transaction->hinh_thuc; ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

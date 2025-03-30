@@ -689,8 +689,9 @@ function update_order_status()
                 'loai' => 'Đặt cọc',
                 'hinh_thuc' => 'Chuyển khoản',
                 'so_tien' => $deposit,
+                "user_id" => $user_id,
             ],
-            ['%d', '%s', '%s', '%f']
+            ['%d', '%s', '%s', '%f', '%d']
         );
     }
 

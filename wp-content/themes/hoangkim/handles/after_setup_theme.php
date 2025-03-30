@@ -287,6 +287,25 @@ function create_history_orders_transaction()
     $wpdb->query($sql);
 }
 
+function update_history_orders_transaction()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'history_orders_transaction';
+
+    $columns_to_add = [
+        'user_id' => " BIGINT(20) UNSIGNED NOT NULL",
+    ];
+
+    foreach ($columns_to_add as $column => $definition) {
+        $exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column'");
+        if (empty($exists)) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column $definition");
+        }
+    }
+}
+
+update_history_orders_transaction();
+
 function create_cart_table()
 {
     global $wpdb;
