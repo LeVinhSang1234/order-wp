@@ -364,18 +364,27 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
             const orderCount = selectedOrders.length;
             if (confirm(`Bạn có muốn đặt cọc ${orderCount} đơn số tiền là: ${totalDeposit.toLocaleString()} VNĐ?`)) {
                 console.log(deposits);
+
+                const userWallet = parseFloat('<?php echo get_user_meta($user_id, "user_wallet", true); ?>') || 0;
+                console.log("log=>>>>>>",userWallet, totalDeposit);
                 
+                if (userWallet < totalDeposit) {
+                    alert('Số dư trong ví không đủ để đặt cọc.');
+                    return;
+                }
+
+                const newWalletBalance = userWallet - totalDeposit;
                 $.ajax({
                     url: '<?php echo admin_url("admin-ajax.php"); ?>',
                     type: 'POST',
                     data: {
                         action: 'update_order_status',
                         order_ids: orderIds,
-                        deposits: deposits // Pass deposit amounts
+                        deposits: deposits, // Pass deposit amounts
+                        total_deposit: totalDeposit // Pass total deposit
                     },
                     success: function(response) {
-                        alert(response.data.message);
-                        window.location.reload();
+                            alert(response.data.message || 'Thanh toán thành công!');
                     },
                     error: function() {
                         alert('Lỗi kết nối đến máy chủ.');

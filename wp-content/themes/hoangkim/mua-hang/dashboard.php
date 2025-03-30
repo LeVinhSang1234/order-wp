@@ -40,17 +40,6 @@ $query .= " ORDER BY is_read ASC, created_at DESC";
 $notifications = $wpdb->get_results($wpdb->prepare($query, ...$params));
 
 $tien = trim(display_user_wallet());
-
-// Calculate the total amount paid for all orders
-$total_paid = $wpdb->get_var($wpdb->prepare(
-    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 0",
-    $user_id
-));
-$total_paid = is_null($total_paid) ? 0 : floatval($total_paid);
-
-// Subtract the total paid amount from the wallet balance
-$tien -= $total_paid;
-
 $wpdb->update(
     "{$wpdb->prefix}notification",
     array('is_read' => 1),

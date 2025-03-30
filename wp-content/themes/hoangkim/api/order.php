@@ -643,11 +643,21 @@ function update_order_status()
 
     $order_ids = isset($_POST['order_ids']) ? array_map('intval', $_POST['order_ids']) : [];
     $deposits = isset($_POST['deposits']) ? array_map('floatval', $_POST['deposits']) : [];
+    $total_deposit = isset($_POST['total_deposit']) ? floatval($_POST['total_deposit']) : 0;
 
     if (empty($order_ids) || count($order_ids) !== count($deposits)) {
         wp_send_json_error(['message' => '❌ Dữ liệu không hợp lệ!'], 400);
         exit;
     }
+
+    // Deduct total deposit from user's wallet
+    $user_wallet = floatval(get_user_meta($user_id, 'user_wallet', true));
+    if ($user_wallet < $total_deposit) {
+        wp_send_json_error(['message' => '❌ Số dư ví không đủ để đặt cọc!'], 400);
+        exit;
+    }
+    $new_wallet_balance = $user_wallet - $total_deposit;
+    update_user_meta($user_id, 'user_wallet', $new_wallet_balance);
 
     foreach ($order_ids as $index => $order_id) {
         $deposit = $deposits[$index];
@@ -680,11 +690,11 @@ function update_order_status()
                 'hinh_thuc' => 'Chuyển khoản',
                 'so_tien' => $deposit,
             ],
-            ['%d', '%s', '%s', '%f',]
+            ['%d', '%s', '%s', '%f']
         );
     }
 
-    wp_send_json_success(['message' => '✅ Trạng thái và tiền thanh toán đã được cập nhật thành công!']);
+    wp_send_json_success(['message' => '✅ Trạng thái và tiền thanh toán đã được cập nhật thành công! Số dư ví còn lại: ' . number_format($new_wallet_balance) . ' VNĐ']);
 }
 
 add_action('wp_ajax_submit_all_cart', 'submit_all_cart_handler');
