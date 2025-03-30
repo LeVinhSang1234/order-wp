@@ -106,7 +106,7 @@ foreach ($orders as $order) {
                            ($order->phi_ship_noi_dia * $exchange_rate) +
                            $order->phi_kiem_dem +
                            ($order->phi_gia_co * $exchange_rate) +
-                           ($order->chiet_khau_dich_vu * $exchange_rate);
+                           ($order->chiet_khau_dich_vu);
 }
 
 $can_thanh_toan = $total_order_amount -  $tong_chi_tieu;

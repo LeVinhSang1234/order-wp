@@ -78,7 +78,9 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
             <div class="mt-3">
                 <div class="d-flex justify-content-between mb-2">
                     <div>Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong></div>
-                    <button class="btn btn-primary" id="dat-coc-toan-bo">$ Đặt cọc toàn bộ</button>
+                    <?php if (empty($status_search) || intval($status_search) <= 1) { ?>
+                        <button class="btn btn-primary" id="dat-coc-toan-bo">$ Đặt cọc toàn bộ</button>
+                    <?php } ?>
                 </div>
                 <div class="table-responsive">
                     <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
@@ -90,7 +92,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 <th style="width: 100px;" class="text-center">STT</th>
                                 <th style="width: 140px;">Mã đơn hàng</th>
                                 <th class="text-center">Sản phẩm</th>
-                                <th>Tổng Tiền (VNĐ)</th>
+                                <th style="width: 340px;">Tổng Tiền (VNĐ)</th>
                                 <th style="width: 140px;">Trạng thái</th>
                                 <th style="width: 140px;">Tạo ngày</th>
                                 <th class="text-center" style="width: 130px;">Thao Tác</th>
@@ -137,18 +139,26 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                             ?>
                                 <tr style="text-transform: initial">
                                     <td class="text-center">
-                                        <?php if (intval($order->status) !== 8 && intval($order->status) !== 2) { ?>
+                                        <?php if (intval($order->status) < 2) { ?>
                                             <input type="checkbox">
                                         <?php } ?>
                                     </td>
                                     <td class="text-center"><?php echo $stt++; ?></td>
                                     <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></td>
                                     <td class="text-center flex-wrap">
-                                        <?php foreach ($image_urls as $image_url) {
+                                        <?php 
+                                        $max_images = 8;
+                                        $displayed_images = array_slice($image_urls, 0, $max_images);
+                                        foreach ($displayed_images as $image_url) {
                                             echo '<img style="margin-right: 8px;" src="' . esc_url($image_url) . '" alt="Product Image" />';
-                                        } ?>
+                                        }
+                                        if (count($image_urls) > $max_images) {
+                                            $remaining_count = count($image_urls) - $max_images;
+                                            echo '<span style="margin-left: 8px; font-weight: bold;">+' . $remaining_count . '</span>';
+                                        }
+                                        ?>
                                     </td>
-                                    <td style="font-size: 12px">
+                                    <td style="font-size: 12px; width: 340px;">
                                         <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
                                         <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span></div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>

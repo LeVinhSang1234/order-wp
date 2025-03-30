@@ -109,7 +109,7 @@ $packages = $wpdb->get_results($query);
                 <button class="accordion-button text-uppercase p-3 fw-bold" type="button" data-bs-toggle="collapse"
                   data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
                   aria-controls="panelsStayOpen-collapseOne">
-                  <span class="fa fa-cube" style="margin-right:8px;"></span> Danh sách kiện hàng
+                  <span class="fa fa-cube" style="margin-right:8px;"></span> Danh sách kiện hàng (<?php echo count($packages); ?>)
                 </button>
               </h2>
               <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
@@ -316,23 +316,22 @@ $packages = $wpdb->get_results($query);
               (<?php echo $totalPrice ?? 0 ?>¥)</strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (2) Phí ship nội địa TQ:
+            (2) Phí dịch vụ:
+            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu ?? 0) ?></strong>
+          </div>
+          <div class="divider d-flex justify-content-between align-items-center">
+            (3) Phí ship nội địa TQ:
             <strong><?php echo format_price_vnd($order->phi_ship_noi_dia * $exchange_rate ?? 0) ?>
               (<?php echo $order->phi_ship_noi_dia ?? 0 ?>¥)</strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (3) Phí kiểm đếm:
+            (4) Phí kiểm đếm:
             <strong><?php echo format_price_vnd($order->phi_kiem_dem ?? 0) ?></strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (4) Phí gia cố:
+            (5) Phí gia cố:
             <strong><?php echo format_price_vnd($order->phi_gia_co * $exchange_rate ?? 0) ?>
               (<?php echo $order->phi_gia_co ?? 0 ?>¥)</strong>
-          </div>
-          <div class="divider d-flex justify-content-between align-items-center">
-            (5) Phí dịch vụ:
-            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?>
-              (<?php echo $order->chiet_khau_dich_vu ?? 0 ?>¥)</strong>
           </div>
           <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
             Số tiền phải đặt cọc (80%):
@@ -346,7 +345,7 @@ $packages = $wpdb->get_results($query);
                 $total += $order->phi_ship_noi_dia * $exchange_rate;
                 $total += $order->phi_kiem_dem;
                 $total += $order->phi_gia_co * $exchange_rate;
-                $total += $order->chiet_khau_dich_vu * $exchange_rate;
+                $total += $order->chiet_khau_dich_vu;
                 echo format_price_vnd($total);
                 ?>
             </strong>
