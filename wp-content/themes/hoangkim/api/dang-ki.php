@@ -6,6 +6,7 @@ function custom_user_registration()
         $email = sanitize_email($_POST['username']);
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
+        $address = sanitize_text_field($_POST['address']);
         if ($password !== $confirm_password) {
             return 'Mật khẩu không khớp';
         }
@@ -23,8 +24,13 @@ function custom_user_registration()
         );
 
         $user_id = wp_insert_user($userdata);
-        if (!is_wp_error($user_id) && $phone) {
-            update_user_meta($user_id, 'user_phone', $phone);
+        if (!is_wp_error($user_id)) {
+            if ($phone) {
+                update_user_meta($user_id, 'user_phone', $phone);
+            }
+            if ($address) {
+                update_user_meta($user_id, 'user_address', $address);
+            }
         } else {
             $error_message = $user_id->get_error_message();
             return 'Lỗi khi tạo người dùng: ' . $error_message;

@@ -1,7 +1,15 @@
 <?php
-function mytheme_banner_shortcode()
+function mytheme_banner_shortcode($atts)
 {
-    return '<div class="banner">' .
+    $atts = shortcode_atts(
+        array(
+            'background_url' => '', // Default value for background URL
+        ),
+        $atts,
+        'banner-header'
+    );
+
+    return '<div class="banner" style="background-image: url(' . esc_url($atts['background_url']) . ');">' .
         '<div class="container">' .
         '<div class="banner-download-wrap">' .
         '<div class="banner-download banner-download__find-product">' .

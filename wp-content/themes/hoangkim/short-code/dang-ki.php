@@ -4,9 +4,11 @@ function mytheme_dang_ki_shortcode()
     global $message;
     $email = '';
     $phone = '';
+    $address = ''; // Thêm biến địa chỉ
     if (isset($_POST['login']) && $_POST['login'] === 'Đăng ký') {
         $phone = sanitize_text_field($_POST['phone']);
         $email = sanitize_email($_POST['username']);
+        $address = sanitize_text_field($_POST['address']); // Lấy giá trị địa chỉ
     }
 
     $content = $message ? "<div class='text-error'>" . $message . "</div>" : "";
@@ -33,6 +35,10 @@ function mytheme_dang_ki_shortcode()
                 <div class="form-group">
                     <i class="fa fa-lock fa-stack-2x"></i>
                     <input name="phone" value="' . $phone . '" class="form-control" placeholder="Số điện thoại">
+                </div>
+                <div class="form-group">
+                    <i class="fa fa-home"></i>
+                    <input name="address" value="' . $address . '" class="form-control" placeholder="Địa chỉ"> <!-- Thêm trường nhập địa chỉ -->
                 </div>
                 <div class="checkbox">
                     <a class="pull-right" href="todo">Quên mật khẩu?</a>
