@@ -38,7 +38,18 @@ if (!empty($type)) {
 }
 $query .= " ORDER BY is_read ASC, created_at DESC";
 $notifications = $wpdb->get_results($wpdb->prepare($query, ...$params));
+
 $tien = trim(display_user_wallet());
+
+// Calculate the total amount paid for all orders
+$total_paid = $wpdb->get_var($wpdb->prepare(
+    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND type = 0",
+    $user_id
+));
+$total_paid = is_null($total_paid) ? 0 : floatval($total_paid);
+
+// Subtract the total paid amount from the wallet balance
+$tien -= $total_paid;
 
 $wpdb->update(
     "{$wpdb->prefix}notification",
@@ -55,7 +66,7 @@ $wpdb->update(
             <div class="box-dashboard box-dashboard-green">
                 <h4><?php echo format_price_vnd(intval($tien ?? 0)) ?></h4>
                 <div class="title">Số dư</div>
-                <a href="/vi-dien-tu" class="view-detail">Xem chi tiết</a>
+                <a href="/wallet" class="view-detail">Xem chi tiết</a>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 pb-2">
