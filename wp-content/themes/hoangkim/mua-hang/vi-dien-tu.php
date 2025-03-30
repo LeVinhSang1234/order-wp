@@ -34,158 +34,272 @@ if (!empty($ma_phieu_thu)) {
 $query .= " ORDER BY created_at DESC";
 $wallets = $wpdb->get_results($wpdb->prepare($query, ...$params));
 $tien = trim(display_user_wallet());
+
+// Fetch transaction history related to balance changes
+$wallet_transactions = $wpdb->get_results($wpdb->prepare(
+    "SELECT *, 'wallet' AS source FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d AND da_xu_ly = 1",
+    $user_id
+));
+
+$order_transactions = $wpdb->get_results($wpdb->prepare(
+    "SELECT *, 'order' AS source FROM {$wpdb->prefix}history_orders_transaction WHERE user_id = %d",
+    $user_id
+));
+
+// Merge and sort transactions by date
+$transactions = array_merge($wallet_transactions, $order_transactions);
+usort($transactions, function ($a, $b) {
+    return strtotime($b->created_at) - strtotime($a->created_at);
+});
+
+$time_from_history = isset($_GET['time_from_history']) ? sanitize_text_field($_GET['time_from_history']) : '';
+$time_to_history = isset($_GET['time_to_history']) ? sanitize_text_field($_GET['time_to_history']) : '';
+
+if (!empty($time_from_history) || !empty($time_to_history)) {
+    $transactions = array_filter($transactions, function ($transaction) use ($time_from_history, $time_to_history) {
+        $transaction_date = strtotime($transaction->created_at);
+        $from_date = !empty($time_from_history) ? strtotime($time_from_history) : null;
+        $to_date = !empty($time_to_history) ? strtotime($time_to_history) : null;
+
+        if ($from_date && $transaction_date < $from_date) {
+            return false;
+        }
+        if ($to_date && $transaction_date > $to_date) {
+            return false;
+        }
+        return true;
+    });
+}
+
+$tong_nap = $wpdb->get_var($wpdb->prepare(
+    "SELECT SUM(so_tien) FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d AND da_xu_ly = 1",
+    $user_id
+));
+
+$tong_chi_tieu = $wpdb->get_var($wpdb->prepare(
+    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND status NOT IN (7, 8)",
+    $user_id
+));
+
+$tong_dang_coc = $wpdb->get_var($wpdb->prepare(
+    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND status = 2",
+    $user_id
+));
+
+// Calculate total order amount excluding status = 7
+$query = "SELECT * FROM {$wpdb->prefix}orders WHERE user_id = %d AND status != 7";
+$orders = $wpdb->get_results($wpdb->prepare($query, $user_id));
+
+$total_order_amount = 0;
+foreach ($orders as $order) {
+    $cart_ids = json_decode($order->cart_ids, true) ?: [];
+    $cart_query = $wpdb->prepare(
+        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN (" . implode(',', array_fill(0, count($cart_ids), '%d')) . ")",
+        ...$cart_ids
+    );
+    $carts = $wpdb->get_results($cart_query);
+
+    $exchange_rate = $order->exchange_rate ?: floatval(get_option('exchange_rate', 1.0));
+    $total_price = array_reduce($carts, fn($sum, $cart) => $sum + $cart->price * $cart->quantity, 0);
+
+    $total_order_amount += ($total_price * $exchange_rate) +
+                           ($order->phi_ship_noi_dia * $exchange_rate) +
+                           $order->phi_kiem_dem +
+                           ($order->phi_gia_co * $exchange_rate) +
+                           ($order->chiet_khau_dich_vu * $exchange_rate);
+}
+
+$can_thanh_toan = $total_order_amount -  $tong_chi_tieu;
 ?>
 
 <div class="dashboard">
-    <div class="d-flex flex-column flex-md-row w-100 gap-2">
-        <div class="mt-3 flex-3 align-items-stretch">
-            <h4 class="text-uppercase">Ví điện tử</h4>
-            <div class="notification-dashboard" style="height: 150px">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>Số dư trong ví: <strong style="color: #ff0000"><?php echo format_price_vnd(intval($tien ?? 0)) ?></strong></div>
-                    <a target="__blank" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
-                        tiền</a>
-                </div>
-                <div>Mã nạp tiền: <strong style="color: #ff0000">HK-MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong>
-                </div>
-                <div style="font-size: 12px" class="mt-2">
-                    Tổng tiền hàng đã về chờ tất toán : <strong style="color: #ff0000">0</strong> đ
-                </div>
-                <div style="font-size: 12px">Tổng tiền hàng chưa về : <strong style="color: #ff0000">0</strong> đ</div>
-            </div>
+  <div class="d-flex flex-column flex-md-row w-100 gap-2">
+    <div class="mt-3 flex-3 align-items-stretch">
+      <h4 class="text-uppercase">Ví điện tử</h4>
+      <div class="notification-dashboard" style="height: 150px">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>Số dư trong ví: <strong
+              style="color: #ff0000"><?php echo format_price_vnd(intval($tien ?? 0)) ?></strong></div>
+          <a target="__bla;
+nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
+            tiền</a>
         </div>
-        <div class="mt-3 flex-1">
-            <h4 class="text-uppercase">Tài chính</h4>
-            <div class="notification-dashboard" style="height: 150px">
-                <div class="mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền nạp : <span><strong
-                            style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng chi tiêu :
-                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền đơn
-                    hàng : <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tiền đang cọc :
-                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Cần thanh toán :
-                    <span><strong style="color: #ff0000">0</strong> đ</span></div>
-                <div class="border-dotted"></div>
-            </div>
+        <div>Mã nạp tiền: <strong
+            style="color: #ff0000">HK-MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong>
         </div>
+        <!-- <div style="font-size: 12px" class="mt-2">
+          Tổng tiền hàng đã về chờ tất toán : <strong style="color: #ff0000">0</strong> đ
+        </div>
+        <div style="font-size: 12px">Tổng tiền hàng chưa về : <strong style="color: #ff0000">0</strong> đ</div> -->
+      </div>
     </div>
     <div class="mt-3 flex-1">
-        <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
-        <div class="notification-dashboard">
-            <div class="d-flex flex-column flex-md-row gap-4">
-                <img style="max-height: 350px; width: auto; object-fit: contain;"
-                    src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
-                <div>
-                    <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
-                    <div>Số tài khoản: <strong>868199533333</strong></div>
-                    <div>Chủ tài khoản: <strong>Lê Kim Trường</strong></div>
-                    <div>Nội dung chuyển khoản: <strong
-                            style="color: green">MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong></div>
-                </div>
-            </div>
+      <h4 class="text-uppercase">Tài chính</h4>
+      <div class="notification-dashboard" style="height: 150px">
+        <div class="mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền nạp : <span><strong
+              style="color: green"><?php echo format_price_vnd(intval($tong_nap ?? 0)); ?></strong></span></div>
+        <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng chi tiêu :
+          <span><strong
+              style="color: #ff0000"><?php echo format_price_vnd(intval($tong_chi_tieu ?? 0)); ?></strong></span>
         </div>
+        <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tổng tiền đơn
+          hàng : <span><strong
+              style="color: #ff0000"><?php echo format_price_vnd(intval($total_order_amount ?? 0)); ?></strong></span>
+        </div>
+        <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Tiền đang cọc :
+          <span><strong
+              style="color: #ff0000"><?php echo format_price_vnd(intval($tong_dang_coc ?? 0)); ?></strong></span>
+        </div>
+        <div class="border-dotted mb-1 d-flex justify-content-between" style="font-size: 12px">Cần thanh toán :
+          <span><strong style="color: #ff0000"><?php echo format_price_vnd(intval($can_thanh_toan ?? 0)); ?></strong></span>
+        </div>
+        <div class="border-dotted"></div>
+      </div>
     </div>
-    <div class="mt-3 text-uppercase flex-1">
-        <h4>Lịch sử giao dịch</h4>
-        <div class="notification-dashboard">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <input id="ma_phieu_thu" class="w-filter-full" placeholder="Mã phiếu thu" />
-                <?php
-                $id = "time_from";
-                $placeholder = "Từ ngày";
+  </div>
+  <div class="mt-3 flex-1">
+    <h4 class="text-uppercase">Nạp tiền vào ví điện tử</h4>
+    <div class="notification-dashboard">
+      <div class="d-flex flex-column flex-md-row gap-4">
+        <img style="max-height: 350px; width: auto; object-fit: contain;"
+          src="<?php echo get_template_directory_uri() . '/images/bank.png' ?>" />
+        <div>
+          <h6>MB NGÂN HÀNG QUÂN ĐỘI</h6>
+          <div>Số tài khoản: <strong>868199533333</strong></div>
+          <div>Chủ tài khoản: <strong>Lê Kim Trường</strong></div>
+          <div>Nội dung chuyển khoản: <strong
+              style="color: green">MS<?php echo sprintf('%02d', get_current_user_id()); ?></strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-5">
+    <h4 class="text-uppercase">Lịch sử biến động số dư</h4>
+    <div class="notification-dashboard">
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <?php
+                $id = "time_from_history";
+                $placeholder = "Từ";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <?php
-                $id = "time_to";
-                $placeholder = "Đến ngày";
+        <?php
+                $id = "time_to_history";
+                $placeholder = "Đến";
                 include get_template_directory() . '/mua-hang/input-date-picker.php';
                 ?>
-                <!-- <select class="w-filter-full" name="status" id="status">
-                    <option value="">Trạng thái</option>
-                    <option value="">Đã duyệt</option>
-                    <option value="CHỜ DUYỆT">Chờ duyệt</option>
-                </select> -->
-                <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
-            <div class="mt-3">
-                Số đơn hàng: <strong>0</strong>
-                <div class="table-responsive">
-                    <table class="w-100 mt-2" style="min-width: 1000px;">
-                        <thead>
-                            <tr>
-                                <th>Mã phiếu thu</th>
-                                <th>Thông tin đơn hàng</th>
-                                <th>Thông tin tài chính</th>
-                                <th>Trạng thái đơn hàng</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($wallets as $wallet) { ?>
-                                <tr>
-                                    <td><?php echo ($wallet->ma_phieu_thu) ?></td>
-                                    <td>--</td>
-                                    <td><?php echo format_price_vnd($wallet->so_tien) ?></td>
-                                    <td><?php echo ($wallet-> da_xu_ly === "0" ? 'Chờ duyệt' : 'Đã duyệt') ?></td>
-                                    <td>Nạp tiền vào hệ thống</td>
-                                </tr>
+        <button id="find-2" class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+      <div class="table-responsive scrollable-table mt-3">
+        <table class="w-100 mt-2" style="min-width: 1200px;">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Loại giao dịch</th>
+              <th>Mã đơn hàng</th>
+              <th>Số tiền</th>
+              <th>Ngày giao dịch</th>
+              <th>Ghi chú</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($transactions as $key => $transaction) { ?>
+            <tr>
+              <td><?php echo $key + 1; ?></td>
+              <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Cọc đơn hàng'; ?></td>
+              <td>
+                <?php if ($transaction->source === 'order') { ?>
+                MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($transaction->order_id, 2, '0', STR_PAD_LEFT); ?>
+                <?php } ?>
+              </td>
+              <td style="color: <?php echo $transaction->source === 'wallet' ? 'green' : 'red'; ?>;">
+                <?php echo $transaction->source === 'wallet' ? '+' : '-'; ?>
+                <?php echo format_price_vnd($transaction->so_tien); ?>
+              </td>
+              <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
+              <td>
+                <?php echo $transaction->source === 'wallet' ? $transaction->ghi_chu : $transaction->hinh_thuc; ?>
+              </td>
+            </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
 
 <script>
-    $(document).ready(function () {
-        const params = new URLSearchParams(window.location.search);
+$(document).ready(function() {
+  const params = new URLSearchParams(window.location.search);
 
-        if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
-        if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
-        if (params.has('status')) $('#status').val(params.get('status'));
-        if (params.has('ma_phieu_thu')) $('#ma_phieu_thu').val(params.get('ma_phieu_thu'));
+  if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
+  if (params.has('time_to')) $('#time_to').val(params.get('time_to').replace(/\//g, '-'));
+  if (params.has('status')) $('#status').val(params.get('status'));
+  if (params.has('ma_phieu_thu')) $('#ma_phieu_thu').val(params.get('ma_phieu_thu'));
 
-        $('.btn-find').on('click', function (event) {
-            event.stopPropagation();
+  $('.btn-find').on('click', function(event) {
+    event.stopPropagation();
 
-            const formatDate = (dateStr) => {
-                if (!dateStr) return '';
-                const date = new Date(dateStr);
-                if (isNaN(date)) return '';
-                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
-            };
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date)) return '';
+      return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date
+        .getDate()).padStart(2, '0');
+    };
 
-            const time_from = formatDate($('#time_from').val());
-            const time_to = formatDate($('#time_to').val());
-            const ma_phieu_thu = $('#ma_phieu_thu').val();
-            const type = $('#status').val();
-
-
-            let url = new URL(window.location.href);
-            let params = url.searchParams;
-
-            if (time_from) params.set('time_from', time_from);
-            else params.delete('time_from');
-
-            if (time_to) params.set('time_to', time_to);
-            else params.delete('time_to');
-
-            if (type) params.set('status', type.toUpperCase());
-            else params.delete('status');
-
-            if (ma_phieu_thu) params.set('ma_phieu_thu', ma_phieu_thu);
-            else params.delete('ma_phieu_thu');
-
-            window.history.pushState({}, '', url.pathname + '?' + params.toString());
-            window.location.reload();
-        });
-    })
+    const time_from = formatDate($('#time_from').val());
+    const time_to = formatDate($('#time_to').val());
+    const ma_phieu_thu = $('#ma_phieu_thu').val();
+    const type = $('#status').val();
 
 
+    let url = new URL(window.location.href);
+    let params = url.searchParams;
+
+    if (time_from) params.set('time_from', time_from);
+    else params.delete('time_from');
+
+    if (time_to) params.set('time_to', time_to);
+    else params.delete('time_to');
+
+    if (type) params.set('status', type.toUpperCase());
+    else params.delete('status');
+
+    if (ma_phieu_thu) params.set('ma_phieu_thu', ma_phieu_thu);
+    else params.delete('ma_phieu_thu');
+
+    window.history.pushState({}, '', url.pathname + '?' + params.toString());
+    window.location.reload();
+  });
+
+  $('#find-2').on('click', function(event) {
+    event.stopPropagation();
+
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date)) return '';
+      return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date
+        .getDate()).padStart(2, '0');
+    };
+
+    const time_from_history = formatDate($('#time_from_history').val());
+    const time_to_history = formatDate($('#time_to_history').val());
+
+    let url = new URL(window.location.href);
+    let params = url.searchParams;
+
+    if (time_from_history) params.set('time_from_history', time_from_history);
+    else params.delete('time_from_history');
+
+    if (time_to_history) params.set('time_to_history', time_to_history);
+    else params.delete('time_to_history');
+
+    window.history.pushState({}, '', url.pathname + '?' + params.toString());
+    window.location.reload();
+  });
+})
 </script>

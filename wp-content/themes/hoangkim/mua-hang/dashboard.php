@@ -48,42 +48,6 @@ $wpdb->update(
     array('%d', '%d')
 );
 
-// Fetch transaction history related to balance changes
-$wallet_transactions = $wpdb->get_results($wpdb->prepare(
-    "SELECT *, 'wallet' AS source FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d AND da_xu_ly = 1",
-    $user_id
-));
-
-$order_transactions = $wpdb->get_results($wpdb->prepare(
-    "SELECT *, 'order' AS source FROM {$wpdb->prefix}history_orders_transaction WHERE user_id = %d",
-    $user_id
-));
-
-// Merge and sort transactions by date
-$transactions = array_merge($wallet_transactions, $order_transactions);
-usort($transactions, function ($a, $b) {
-    return strtotime($b->created_at) - strtotime($a->created_at);
-});
-
-$time_from_history = isset($_GET['time_from_history']) ? sanitize_text_field($_GET['time_from_history']) : '';
-$time_to_history = isset($_GET['time_to_history']) ? sanitize_text_field($_GET['time_to_history']) : '';
-
-if (!empty($time_from_history) || !empty($time_to_history)) {
-    $transactions = array_filter($transactions, function ($transaction) use ($time_from_history, $time_to_history) {
-        $transaction_date = strtotime($transaction->created_at);
-        $from_date = !empty($time_from_history) ? strtotime($time_from_history) : null;
-        $to_date = !empty($time_to_history) ? strtotime($time_to_history) : null;
-
-        if ($from_date && $transaction_date < $from_date) {
-            return false;
-        }
-        if ($to_date && $transaction_date > $to_date) {
-            return false;
-        }
-        return true;
-    });
-}
-
 ?>
 
 <style>
@@ -176,60 +140,6 @@ if (!empty($time_from_history) || !empty($time_to_history)) {
       </div>
     </div>
   </div>
-  <div class="mt-5">
-    <h4 class="text-uppercase">Lịch sử biến động số dư</h4>
-    <div class="notification-dashboard">
-      <div class="d-flex align-items-center flex-wrap gap-2">
-        <?php
-                $id = "time_from_history";
-                $placeholder = "Từ";
-                include get_template_directory() . '/mua-hang/input-date-picker.php';
-                ?>
-        <?php
-                $id = "time_to_history";
-                $placeholder = "Đến";
-                include get_template_directory() . '/mua-hang/input-date-picker.php';
-                ?>
-        <button id="find-2" class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </div>
-      <div class="table-responsive scrollable-table mt-3">
-        <table class="w-100 mt-2" style="min-width: 1200px;">
-          <thead>
-            <tr>
-              <th>STT</th>
-              <th>Loại giao dịch</th>
-              <th>Mã đơn hàng</th>
-              <th>Số tiền</th>
-              <th>Ngày giao dịch</th>
-              <th>Ghi chú</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($transactions as $key => $transaction) { ?>
-            <tr>
-              <td><?php echo $key + 1; ?></td>
-              <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Cọc đơn hàng'; ?></td>
-              <td>
-                <?php if ($transaction->source === 'order') { ?>
-                MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($transaction->order_id, 2, '0', STR_PAD_LEFT); ?>
-                <?php } ?>
-              </td>
-              <td style="color: <?php echo $transaction->source === 'wallet' ? 'green' : 'red'; ?>;">
-                <?php echo $transaction->source === 'wallet' ? '+' : '-'; ?>
-                <?php echo format_price_vnd($transaction->so_tien); ?>
-              </td>
-              <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
-              <td>
-                <?php echo $transaction->source === 'wallet' ? $transaction->ghi_chu : $transaction->hinh_thuc; ?>
-              </td>
-            </tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script>
@@ -274,32 +184,6 @@ $(document).ready(function() {
 
     if (type) params.set('type', type);
     else params.delete('type');
-
-    window.history.pushState({}, '', url.pathname + '?' + params.toString());
-    window.location.reload();
-  });
-
-  $('#find-2').on('click', function(event) {
-    event.stopPropagation();
-
-    const formatDate = (dateStr) => {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      if (isNaN(date)) return '';
-      return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
-    };
-
-    const time_from_history = formatDate($('#time_from_history').val());
-    const time_to_history = formatDate($('#time_to_history').val());
-
-    let url = new URL(window.location.href);
-    let params = url.searchParams;
-
-    if (time_from_history) params.set('time_from_history', time_from_history);
-    else params.delete('time_from_history');
-
-    if (time_to_history) params.set('time_to_history', time_to_history);
-    else params.delete('time_to_history');
 
     window.history.pushState({}, '', url.pathname + '?' + params.toString());
     window.location.reload();
