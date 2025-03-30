@@ -67,6 +67,13 @@ usort($transactions, function ($a, $b) {
 
 ?>
 
+<style>
+    .scrollable-table {
+        max-height: 1000px; /* Adjust height as needed */
+        overflow-y: auto;
+    }
+</style>
+
 <div class="dashboard">
     <div class="row">
         <div class="col-lg-3 col-md-6 pb-2">
@@ -124,7 +131,7 @@ usort($transactions, function ($a, $b) {
             </div>
             <div class="mt-3">
                 Số thông báo: <strong><?php echo count($notifications) ?></strong>
-                <div class="table-responsive">
+                <div class="table-responsive scrollable-table">
                     <table class="w-100 mt-2" style="min-width: 1000px;">
                         <thead>
                             <tr>
@@ -135,12 +142,10 @@ usort($transactions, function ($a, $b) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($notifications as $key => $notification) {
-                                $date = DateTime::createFromFormat('Y-m-d H:i:s', $notification->created_at);
-                                ?>
+                            <?php foreach ($notifications as $key => $notification) { ?>
                                 <tr class="<?php echo ($notification->is_read === '0' ? "no-read" : '') ?>">
                                     <td class="text-center"><?php echo $key + 1 ?></td>
-                                    <td><?php echo $date->format('d/m/Y H:i') ?></td>
+                                    <td><?php echo date('d/m/Y H:i', strtotime($notification->created_at)); ?></td>
                                     <td><?php echo $notification->loai ?></td>
                                     <td><?php echo $notification->noi_dung ?></td>
                                 </tr>
@@ -153,12 +158,13 @@ usort($transactions, function ($a, $b) {
     </div>
     <div class="mt-5">
         <h4 class="text-uppercase">Lịch sử biến động số dư</h4>
-        <div class="table-responsive">
+        <div class="table-responsive scrollable-table">
             <table class="w-100 mt-2" style="min-width: 1200px;">
                 <thead>
                     <tr>
                         <th>STT</th>
                         <th>Loại giao dịch</th>
+                        <th>Mã đơn hàng</th>
                         <th>Số tiền</th>
                         <th>Ngày giao dịch</th>
                         <th>Ghi chú</th>
@@ -169,6 +175,11 @@ usort($transactions, function ($a, $b) {
                         <tr>
                             <td><?php echo $key + 1; ?></td>
                             <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Cọc đơn hàng'; ?></td>
+                            <td>
+                                <?php if ($transaction->source === 'order') { ?>
+                                    MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($transaction->order_id, 2, '0', STR_PAD_LEFT); ?>
+                                <?php } ?>
+                            </td>
                             <td style="color: <?php echo $transaction->source === 'wallet' ? 'green' : 'red'; ?>;">
                                 <?php echo $transaction->source === 'wallet' ? '+' : '-'; ?>
                                 <?php echo format_price_vnd($transaction->so_tien); ?>
