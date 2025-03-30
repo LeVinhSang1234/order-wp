@@ -406,6 +406,7 @@ function update_package_table()
 
     $columns_to_add = [
         'trang_thai_kien' => "TEXT NULL",
+        'tien_the_tich' => "DECIMAL(15,2) NOT NULL",
     ];
 
     foreach ($columns_to_add as $column => $definition) {

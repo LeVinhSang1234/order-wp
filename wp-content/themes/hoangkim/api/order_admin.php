@@ -26,9 +26,8 @@ function update_order_admin()
     'van_don', 'thuong_hieu', 'so_kien_hang', 'da_thanh_toan', 'da_hoan', 
     'exchange_rate', 'phi_mua_hang', 'phi_ship_noi_dia', 'phi_kiem_dem', 
     'phi_gia_co', 'chiet_khau_dich_vu', 'ngay_dat_coc', 'da_mua_hang', 
-    'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang', "kg_tinh_phi",
+    'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang',
     'is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc',
-    "tien_van_chuyen"
   ];
 
   $success_count = 0;
@@ -190,6 +189,25 @@ function update_packages()
         $errors[] = "Không thể thêm kiện hàng mới.";
       }
     }
+
+    // Calculate total weight and update `tien_van_chuyen` in the orders table
+    $total_weight = $wpdb->get_var($wpdb->prepare(
+      "SELECT SUM(can_nang) FROM {$wpdb->prefix}packages WHERE order_id = %d",
+      $order_id
+    ));
+    if ($total_weight < 0.5) {
+      $total_weight = 0.5;
+    }
+    $price_per_kg = get_option('price_per_kg', 0.0);
+    $shipping_cost = $total_weight * $price_per_kg;
+
+    $wpdb->update(
+      "{$wpdb->prefix}orders",
+      ['tien_van_chuyen' => $shipping_cost],
+      ['id' => $order_id],
+      ['%f'],
+      ['%d']
+    );
   }
 
   if ($success_count > 0) {

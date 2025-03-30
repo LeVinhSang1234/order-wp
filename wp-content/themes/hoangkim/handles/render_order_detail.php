@@ -175,6 +175,7 @@ function render_order_detail()
                     <th>Mã kiện</th>
                     <th>Cân nặng</th>
                     <th>Thể tích</th>
+                    <th>Tiền Thể tích</th>
                     <th>Trạng thái</th>
                     <th>Thời gian</th>
                     <th>Tùy chọn</th>
@@ -188,6 +189,7 @@ function render_order_detail()
                 <td contenteditable='true' class='editable-package' data-field='ma_kien'>{$package->ma_kien}</td>
                 <td contenteditable='true' class='editable-package' data-field='can_nang'>{$package->can_nang}</td>
                 <td contenteditable='true' class='editable-package' data-field='the_tich'>{$package->the_tich}</td>
+                <td contenteditable='true' class='editable-package' data-field='the_tich'>{$package->tien_the_tich}</td>
                 <td contenteditable='true' class='editable-package' data-field='trang_thai_kien'>{$package->trang_thai_kien}</td>
                 <td>{$package->created_at}</td>
                 <td><button class='button-secondary delete-package' data-id='{$package->id}'>Xóa</button></td>
