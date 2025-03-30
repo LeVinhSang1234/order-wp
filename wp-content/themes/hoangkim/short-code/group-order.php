@@ -6,7 +6,7 @@ function mytheme_group_order_shortcode()
                 <div class="col-12 col-md-6 col-lg-6 mb-4">
                     <div class="service-item">
                         <div class="img-wrap">
-                            <img src="/wp-content/uploads/2025/02/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/02/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
+                            <img src="/wp-content/uploads/2025/03/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/03/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
                         </div>
                         <div class="info">
                             <a href="todo">
@@ -26,7 +26,7 @@ function mytheme_group_order_shortcode()
                 <div class="col-12 col-md-6 col-lg-6 mb-4">
                     <div class="service-item">
                         <div class="img-wrap">
-                            <img src="/wp-content/uploads/2025/02/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/02/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
+                            <img src="/wp-content/uploads/2025/03/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/03/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
                         </div>
                         <div class="info">
                             <a href="todo">
@@ -47,7 +47,7 @@ function mytheme_group_order_shortcode()
                 <div class="col-12 col-md-6 col-lg-6 mb-4">
                     <div class="service-item">
                         <div class="img-wrap">
-                            <img src="/wp-content/uploads/2025/02/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/02/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
+                            <img src="/wp-content/uploads/2025/03/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/03/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
                         </div>
                         <div class="info">
                             <a href="todo">
@@ -68,7 +68,7 @@ function mytheme_group_order_shortcode()
                 <div class="col-12 col-md-6 col-lg-6 mb-4">
                     <div class="service-item">
                         <div class="img-wrap">
-                            <img src="/wp-content/uploads/2025/02/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/02/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
+                            <img src="/wp-content/uploads/2025/03/icon-order.jpg" alt="" data-lazy-src="/wp-content/uploads/2025/03/icon-order.jpg" data-ll-status="loaded" class="entered lazyloaded">
                         </div>
                         <div class="info">
                             <a href="todo">

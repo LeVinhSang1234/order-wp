@@ -31,7 +31,7 @@
         </div>
         <div class="logo-wrap logo-right">
             <div class="hotline-header">
-                <img src="<?php echo site_url() . '/wp-content/uploads/2025/02/hotline-icon.jpg' ?>" />
+                <img src="<?php echo site_url() . '/wp-content/uploads/2025/03/hotline-icon.jpg' ?>" />
                 <div>
                     <strong>Hotline hỗ trợ</strong>
                     <a class="fw-600" href="tel:<?php echo get_option('custom_phone') ?>">

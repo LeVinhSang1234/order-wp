@@ -52,8 +52,8 @@ function mytheme_dang_ki_shortcode()
             <div class="box_extension box_left">
                 <p class="sbtitle">Công cụ đặt hàng</p>
                 <div class="addon text-center">
-                    <a rel="nofollow" href="todo" target="_blank"><img src="/wp-content/uploads/2025/02/chrome.png"></a>
-                    <a rel="nofollow" href="todo" target="_blank"><img src="/wp-content/uploads/2025/02/coccoc.png"></a>
+                    <a rel="nofollow" href="todo" target="_blank"><img src="/wp-content/uploads/2025/03/chrome.png"></a>
+                    <a rel="nofollow" href="todo" target="_blank"><img src="/wp-content/uploads/2025/03/coccoc.png"></a>
                 </div>
             </div>
         </div>
