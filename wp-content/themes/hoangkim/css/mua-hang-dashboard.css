@@ -61,7 +61,7 @@
   padding: 15px;
 }
 
-.btn-find {
+.btn-find, .btn-find-history {
   background-color: #ff0000;
   border: none;
   outline: none;
