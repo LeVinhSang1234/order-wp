@@ -50,7 +50,7 @@ $wpdb->update(
 
 // Fetch transaction history related to balance changes
 $wallet_transactions = $wpdb->get_results($wpdb->prepare(
-    "SELECT *, 'wallet' AS source FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d",
+    "SELECT *, 'wallet' AS source FROM {$wpdb->prefix}wallet_transaction WHERE user_id = %d AND da_xu_ly = 1",
     $user_id
 ));
 
