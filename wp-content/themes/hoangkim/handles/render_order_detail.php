@@ -165,7 +165,8 @@ function render_order_detail()
       $class = in_array($field, $editable_fields) ? "class='editable'" : "";
       echo "<div class='order-item'>
               <strong>{$label}:</strong>
-              <div {$editable} {$class} data-id='{$order->id}' data-field='{$field}'>{$value}</div>
+              <div {$editable} {$class} data-id='{$order->id}' data-field='{$field}'" . 
+                   ($field === 'status' ? " style='{$status_color}'" : "") . ">{$value}</div>
             </div>";
     }
   }
@@ -316,6 +317,13 @@ echo "</div>";
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
 <script>
+// Utility function to get the current timestamp in 'YYYY-MM-DD HH:MM:SS' format with UTC+7 offset
+function getCurrentTimestampUTC7() {
+    const now = new Date();
+    now.setHours(now.getHours() + 7); // Add 7 hours for UTC+7
+    return now.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 jQuery(document).ready(function($) {
     $("#updateOrder").click(function() {
         let updates = [];
@@ -366,7 +374,7 @@ jQuery(document).ready(function($) {
             updates.push({
                 order_id: orderId,
                 field: statusFieldMap[selectedStatus],
-                value: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                value: getCurrentTimestampUTC7()
             });
         }
 
@@ -406,7 +414,8 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 console.log("Phản hồi từ server (đơn hàng):", response);
-                if (response.success) {
+                if (response.success && packageUpdates.length > 0) {
+                    // If there are package updates, send them as well  
                     // Send AJAX request for package updates
                     $.ajax({
                         url: '<?php echo admin_url("admin-ajax.php"); ?>',
