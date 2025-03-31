@@ -78,34 +78,6 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
 
       <div class="content-list-data gap-4">
         <div class="flex-1">
-          <!-- <div class="d-flex mt-4 fs-14 ">
-                        <div class="flex-1">
-                            <strong>
-                                <i class="fa-solid fa-location-dot"></i>
-                                Địa chỉ nhận hàng
-                            </strong>
-                            <div class="mt-2 fs-13">Người nhận: <strong><?php echo $order->ho_ten; ?></strong> / <?php echo $phone; ?></div>
-                            <div class="mt-1 fs-13"><?php echo $order->address; ?></div>
-                            <textarea <?php echo $order->status > 1 ? "disabled" : '' ?> id="order-note" class="mt-1 fs-13" placeholder="Ghi chú đơn hàng"><?php echo $order->note; ?></textarea>
-                        </div>
-                        <div class="flex-1">
-                            <strong>
-                                <i class="fa-solid fa-location-dot"></i>
-                                Dịch vụ sử dụng
-                            </strong>
-                            <ul class="ls-inline">
-                                <li>
-                                    <input <?php echo $isDisabled ?> <?php echo ($order->is_kiem_dem_hang ? 'checked' : '') ?> type="checkbox" id="is_kiem_dem_hang" data-orderid="16820"> Kiểm hàng
-                                </li>
-                                <li>
-                                    <input <?php echo $isDisabled ?> <?php echo ($order->is_gia_co ? 'checked' : '') ?> type="checkbox" id="is_gia_co" data-orderid="16820"> Đóng kiện gỗ
-                                </li>
-                                <li>
-                                    <input <?php echo $isDisabled ?> <?php echo ($order->is_bao_hiem ? 'checked' : '') ?> type="checkbox" id="is_bao_hiem" data-orderid="16820"> Bảo hiểm hàng hóa
-                                </li>
-                            </ul>
-                        </div>
-                    </div> -->
           <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
             <div class="accordion-item">
               <h2 class="accordion-header">
@@ -320,7 +292,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
             (2) Phí dịch vụ:
-            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu ?? 0) ?></strong>
+            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?></strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
             (3) Phí ship nội địa TQ:
@@ -348,7 +320,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                 $total += $order->phi_ship_noi_dia * $exchange_rate;
                 $total += $order->phi_kiem_dem;
                 $total += $order->phi_gia_co * $exchange_rate;
-                $total += $order->chiet_khau_dich_vu;
+                $total += $order->chiet_khau_dich_vu * $exchange_rate;
                 echo format_price_vnd($total);
                 ?>
             </strong>
