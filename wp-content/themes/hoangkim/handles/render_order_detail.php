@@ -104,9 +104,42 @@ function render_order_detail()
     $exchange_rate = floatval(get_option('exchange_rate', 1.0));
   }
 
+  $status_color = '';
+  switch (intval($order->status)) {
+    case 1:
+        $status_color = 'color: black;'; // Chờ báo giá
+        break;
+    case 2:
+        $status_color = 'color: orange;'; // Đang mua hàng
+        break;
+    case 3:
+        $status_color = 'color: green;';  // Đã mua hàng
+        break;
+    case 4:
+        $status_color = 'color: blue;';   // NCC phát hàng
+        break;
+    case 5:
+        $status_color = 'color: purple;'; // Nhập kho TQ
+        break;
+    case 6:
+        $status_color = 'color: pink;';   // Nhập kho VN
+        break;
+    case 7:
+        $status_color = 'color: lightgreen;'; // Khách nhận hàng
+        break;
+    case 8:
+        $status_color = 'color: red;';    // Đơn hàng hủy
+        break;
+    case 9:
+        $status_color = 'color: gray;';   // Đơn khiếu nại
+        break;
+  }
+
   echo "<div class='wrap'><h2>Chi tiết đơn hàng #{$order->id}</h2>";
 
   echo "<div class='order-card'>";
+
+  $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 
   foreach ($order as $field => $value) {
     if (in_array($field, $hidden_fields)) {
@@ -115,6 +148,11 @@ function render_order_detail()
     $label = isset($field_labels[$field]) ? $field_labels[$field] : ucfirst(str_replace('_', ' ', $field));
     $editable = in_array($field, $editable_fields) ? "contenteditable='true'" : "";
     $class = in_array($field, $editable_fields) ? "class='editable'" : "";
+
+    if ($field === 'status') {
+        $value = isset($status_str[$value]) ? $status_str[$value] : $value;
+    }
+
     if (in_array($field, $checkbox_fields)) {
       $checked = $value == 1 ? "checked" : "";
       echo "<div class='order-item'>
@@ -220,6 +258,7 @@ echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
 echo "<div class='order-item'>
     <strong>Trạng thái:</strong>
     <select id='statusDropdown' data-id='{$order->id}'>
+     <option value='1' " . ($order->status == 1 ? " selected" : "" ) . ">Chờ báo giá</option>
         <option value='2' " . ($order->status == 2 ? " selected" : "" ) . ">Đang mua hàng</option>
       <option value='3' " . ($order->status == 3 ? "selected" : "") . ">Đã mua hàng</option>
         <option value='4' " . ($order->status == 4 ? " selected" : "" ) . ">NCC phát hàng</option>
@@ -453,3 +492,4 @@ jQuery(document).ready(function($) {
 </script>
 <?php
 }
+?>

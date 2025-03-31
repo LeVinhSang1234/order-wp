@@ -42,6 +42,7 @@ function render_order_page()
 {
   global $wpdb;
   $orders = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}orders ORDER BY created_at DESC");
+  $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC phát hàng", "Nhập kho TQ", "Nhập kho VN", "Khách nhận hàng", "Đơn hàng hủy", "Đơn khiếu nại"];
 
   echo '<div class="wrap"><h2>Danh sách đơn hàng</h2>';
   echo '<table class="wp-list-table widefat fixed striped">';
@@ -62,9 +63,40 @@ function render_order_page()
 
   foreach ($orders as $order) {
     $detail_url = admin_url("admin.php?page=order_detail&id={$order->id}");
+    $status_display = $status_str[intval($order->status)];
+    $status_color = '';
+    switch (intval($order->status)) {
+        case 1:
+            $status_color = 'color: black;'; // Chờ báo giá
+            break;
+        case 2:
+            $status_color = 'color: orange;'; // Đang mua hàng
+            break;
+        case 3:
+            $status_color = 'color: green;';  // Đã mua hàng
+            break;
+        case 4:
+            $status_color = 'color: blue;';   // NCC phát hàng
+            break;
+        case 5:
+            $status_color = 'color: purple;'; // Nhập kho TQ
+            break;
+        case 6:
+            $status_color = 'color: pink;';   // Nhập kho VN
+            break;
+        case 7:
+            $status_color = 'color: lightgreen;'; // Khách nhận hàng
+            break;
+        case 8:
+            $status_color = 'color: red;';    // Đơn hàng hủy
+            break;
+        case 9:
+            $status_color = 'color: gray;';   // Đơn khiếu nại
+            break;
+    }
     echo "<tr data-id='{$order->id}'>
-          <td><a href='{$detail_url}'>{$order->id}</a></td></td>
-          <td contenteditable='false' class='editable' data-field='status'>{$order->status}</td>
+          <td><a href='{$detail_url}'>{$order->id}</a></td>
+          <td contenteditable='false' class='editable' data-field='status' style='{$status_color} font-weight: bold'>{$status_display}</td>
           <td contenteditable='false' class='editable' data-field='email'>{$order->email}</td>
           <td contenteditable='false' class='editable' data-field='phone'>{$order->phone}</td>
           <td contenteditable='false' class='editable' data-field='address'>{$order->address}</td>
@@ -72,7 +104,7 @@ function render_order_page()
           <td contenteditable='false' class='editable' data-field='thuong_hieu'>{$order->thuong_hieu}</td>
           <td contenteditable='false' class='editable' data-field='da_thanh_toan'>{$order->da_thanh_toan}</td>
           <td>{$order->created_at}</td>
-          <td><a href='{$detail_url}'>(Xem Chi tiết)</a></td></td>
+          <td><a href='{$detail_url}'>(Xem Chi tiết)</a></td>
       </tr>";
   }
 
