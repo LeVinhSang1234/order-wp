@@ -84,7 +84,8 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                 <button class="accordion-button text-uppercase p-3 fw-bold" type="button" data-bs-toggle="collapse"
                   data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
                   aria-controls="panelsStayOpen-collapseOne">
-                  <span class="fa fa-cube" style="margin-right:8px;"></span> Danh sách kiện hàng (<?php echo count($packages); ?>)
+                  <span class="fa fa-cube" style="margin-right:8px;"></span> Danh sách kiện hàng
+                  (<?php echo count($packages); ?>)
                 </button>
               </h2>
               <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
@@ -114,16 +115,18 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                           <td><?php echo format_weight($package->can_nang?? 0); ?></td>
                           <td><?php echo format_khoi($package->the_tich?? 0); ?></td>
                           <td><?php echo $package->trang_thai_kien; ?></td>
-                          <td><?php echo DateTime::createFromFormat('Y-m-d H:i:s', $package->created_at)->format('d/m/Y H:i'); ?></td>
+                          <td>
+                            <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $package->created_at)->format('d/m/Y H:i'); ?>
+                          </td>
                         </tr>
                         <?php } ?>
                         <?php } ?>
                         <tr>
                           <td colspan="3">Tổng kg tính phí:
-                          <?php echo format_weight($total_kg_tinh_phi) ?>
+                            <?php echo format_weight($total_kg_tinh_phi) ?>
                           </td>
                           <td colspan="3">Tổng tiền vận chuyển (tính riêng khi xuất hàng):
-                          <?php echo format_price_vnd($order->tien_van_chuyen ?? 0) ?>
+                            <?php echo format_price_vnd($order->tien_van_chuyen ?? 0) ?>
                           </td>
                         </tr>
                       </tbody>
@@ -211,7 +214,9 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                         <?php } else { ?>
                         <?php foreach ($history_transactions as $transaction) { ?>
                         <tr>
-                          <td><?php echo DateTime::createFromFormat('Y-m-d H:i:s', $transaction->created_at)->format('d/m/Y H:i'); ?></td>
+                          <td>
+                            <?php echo DateTime::createFromFormat('Y-m-d H:i:s', $transaction->created_at)->format('d/m/Y H:i'); ?>
+                          </td>
                           <td><?php echo $transaction->loai; ?></td>
                           <td><?php echo $transaction->hinh_thuc; ?></td>
                           <td><?php echo format_price_vnd($transaction->so_tien); ?></td>
@@ -237,8 +242,8 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
               </thead>
               <tbody>
                 <?php foreach ($carts as $cart) {
-                                    $totalPrice += ($cart->price * $cart->quantity);
-                                ?>
+                  $totalPrice += ($cart->price * $cart->quantity);
+                ?>
                 <tr>
                   <td>
                     <div class="d-flex align-items-center gap-2">
@@ -246,10 +251,10 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                       <div>
                         <a href="<?php echo $cart->product_url ?>">
                           <?php
-                                                        $url_without_https = str_replace("https://", "", $cart->product_url);
-                                                        $parts = explode("/", $url_without_https);
-                                                        echo $parts[0];
-                                                        ?>
+                            $url_without_https = str_replace("https://", "", $cart->product_url);
+                            $parts = explode("/", $url_without_https);
+                            echo $parts[0];
+                          ?>
                         </a>
                         <div><?php echo $cart->size ?> <br><?php echo $cart->color ?></div>
                       </div>
@@ -264,7 +269,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                     <?php echo $cart->price ?? 0 ?>¥
                   </td>
                   <td>
-                  <?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?>
+                    <?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?>
                   </td>
                 </tr>
                 <?php } ?>

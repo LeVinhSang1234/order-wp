@@ -135,7 +135,6 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 }
                                 $total = $total;
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
-                                $date->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh')); // Set timezone to UTC+7
                             ?>
                                 <tr style="text-transform: initial">
                                     <td class="text-center">
