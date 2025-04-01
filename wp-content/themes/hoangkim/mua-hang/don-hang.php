@@ -442,6 +442,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     },
                     success: function(response) {
                         alert(response.data.message || 'Thanh toán thành công!');
+                        window.location.reload();
                     },
                     error: function() {
                         alert('Lỗi kết nối đến máy chủ.');

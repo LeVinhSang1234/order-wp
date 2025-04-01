@@ -77,7 +77,7 @@ $tong_nap = $wpdb->get_var($wpdb->prepare(
 ));
 
 $tong_chi_tieu = $wpdb->get_var($wpdb->prepare(
-    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND status NOT IN (7, 8)",
+    "SELECT SUM(da_thanh_toan) FROM {$wpdb->prefix}orders WHERE user_id = %d AND  status != 7",
     $user_id
 ));
 
