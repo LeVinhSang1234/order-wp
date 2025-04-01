@@ -54,7 +54,6 @@ function save_cart()
                     'web'           => sanitize_text_field($item['web']),
                     'quantity'      => intval($item['quantity']),
                     'price'         => floatval(str_replace('?', '0', $item['price'])),
-                    'added_at'      => current_time('mysql'),
                     'size'      => sanitize_text_field($item['size']),
                     'color'      => sanitize_text_field($item['color']),
                 ],
@@ -406,7 +405,7 @@ function create_order_via_ajax()
 
     global $wpdb;
     $cart_ids = $wpdb->get_col($wpdb->prepare(
-        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_select = 1 AND is_done = 0",
+        "SELECT id FROM {$wpdb->prefix}cart WHERE shop_id = %d AND user_id = %d AND is_done = 0",
         $shop_id,
         $user_id
     ));
@@ -770,7 +769,6 @@ function submit_all_cart_handler()
         'email'      => sanitize_email($email),
         'phone'      => sanitize_text_field($phone),
         'chiet_khau_dich_vu' => $service_fee,
-        'created_at' => current_time('mysql')
     ];
 
     $wpdb->insert($table_orders, $order_data);

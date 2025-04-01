@@ -13,7 +13,6 @@ if (isset($_POST['submit_don_ngoai_san'])) {
   $so_luong = intval($_POST['so_luong']);
   $gia_tien = floatval($_POST['gia_tien']);
   $yeu_cau_khac = sanitize_text_field($_POST['yeu_cau_khac']);
-  $created_at = current_time('mysql');
 
   $wpdb->insert(
     $table_name,
@@ -26,9 +25,8 @@ if (isset($_POST['submit_don_ngoai_san'])) {
       'so_kien_hang'       => $so_luong,
       'phi_mua_hang'       => $gia_tien,
       'note'               => $yeu_cau_khac,
-      'created_at'         => $created_at
     ],
-    ['%d', '%s', '%d', '%s', '%s', '%f', '%f', '%s', '%s']
+    ['%d', '%s', '%d', '%s', '%s', '%f', '%f', '%s']
   );
 
   if ($wpdb->insert_id) {

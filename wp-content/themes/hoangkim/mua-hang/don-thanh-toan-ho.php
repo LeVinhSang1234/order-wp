@@ -29,9 +29,8 @@ if (isset($_POST['submit_don_thanh_toan_ho']) && is_user_logged_in()) {
         'phi_dich_vu' => $service_fee,
         'ghi_chu' => $note,
         'tong_tien' => $total_amount, // Lưu tổng tiền vào DB
-        'created_at' => current_time('mysql') // Lấy thời gian hiện tại
     ],
-    ['%d', '%d', '%f', '%s', '%f', '%s']
+    ['%d', '%d', '%f', '%s', '%f']
 );
 
 if ($result) {

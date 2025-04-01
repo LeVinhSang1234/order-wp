@@ -3,7 +3,7 @@ global $wpdb;
 $table_name = $wpdb->prefix . 'cart';
 $user_id = get_current_user_id();
 $cart_items = $wpdb->get_results(
-  $wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d AND is_done = 0 ORDER BY added_at DESC", $user_id),
+  $wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d AND is_done = 0 ORDER BY added_at ASC", $user_id),
   ARRAY_A
 );
 $grouped_cart = [];
@@ -27,7 +27,7 @@ $current_user = wp_get_current_user();
     <div class="notification-dashboard">
       <div class="mt-3">
         <?php if (count($cart_items) <= 0) { ?>
-          <div class="text-uppercase" style="font-size: 13px">Bạn chưa có sản phẩm nào trong giỏ hàng</div>
+        <div class="text-uppercase" style="font-size: 13px">Bạn chưa có sản phẩm nào trong giỏ hàng</div>
         <?php } ?>
         <?php foreach ($grouped_cart as $shop_id => $products) {
           $shop_url = $products[0]['shop_url'];
@@ -40,70 +40,61 @@ $current_user = wp_get_current_user();
             }
           }
         ?>
-          <div class="group-cart">
-            <div class="cart-header">
-              <a class="d-flex align-items-center gap-1" target="_blank" href=" <?php echo $shop_url ?>">
-                <input <?php echo ($allSelected ? "checked" : "") ?> data-type="select-carts" type="checkbox"
-                  data-item="<?php echo $shop_id ?>" />
-                <?php echo $shop_id ?>
-              </a>
-              <div class="d-flex align-items-center cart-option gap-3">
-                <div class="d-flex align-items-center gap-1">
-                  <input data-shop="<?php echo $shop_id ?>" data-type="gia-co-dong-go" type="checkbox" />
-                  <span>Gia cố, đóng gỗ</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <input data-shop="<?php echo $shop_id ?>" data-type="kiem-dem-hang" type="checkbox" />
-                  <span>Kiểm đếm hàng</span>
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                  <input data-shop="<?php echo $shop_id ?>" data-type="bao-hiem" type="checkbox" />
-                  <span>Bảo hiểm hàng hoá</span>
-                </div>
+        <div class="group-cart">
+          <div class="cart-header">
+            <a class="d-flex align-items-center gap-1" target="_blank" href=" <?php echo $shop_url ?>">
+              <input <?php echo ($allSelected ? "checked" : "") ?> data-type="select-carts" type="checkbox"
+                data-item="<?php echo $shop_id ?>" />
+              <?php echo $shop_id ?>
+            </a>
+            <div class="d-flex align-items-center cart-option gap-3">
+              <div class="d-flex align-items-center gap-1">
+                <input data-shop="<?php echo $shop_id ?>" data-type="gia-co-dong-go" type="checkbox" />
+                <span>Gia cố, đóng gỗ</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input data-shop="<?php echo $shop_id ?>" data-type="kiem-dem-hang" type="checkbox" />
+                <span>Kiểm đếm hàng</span>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input data-shop="<?php echo $shop_id ?>" data-type="bao-hiem" type="checkbox" />
+                <span>Bảo hiểm hàng hoá</span>
               </div>
             </div>
-            <div data-shop="<?php echo $shop_id ?>"
-              class="table-wrap d-flex gap-3 mb-3 align-items-baseline table-responsive">
-              <table data-shop="<?php echo $shop_id ?>" class="table-cart flex-2 mt-1" style="min-width: 1000px;">
-                <thead>
-                  <th class="text-center" style="width: 50px"></th>
-                  <th class="text-center" style="width: 100px">Hình ảnh</th>
-                  <th class="text-center" style="width: 250px">Size - Màu sắc</th>
-                  <th>Ghi chú</th>
-                  <th>Đơn giá tạm tính</th>
-                  <th>Số lượng</th>
-                  <th class="text-center" style="width: 80px">Xóa</th>
-                </thead>
-                <tbody>
-                  <?php foreach ($products as $product) {
+          </div>
+          <div data-shop="<?php echo $shop_id ?>"
+            class="table-wrap d-flex gap-3 mb-3 align-items-baseline table-responsive">
+            <table data-shop="<?php echo $shop_id ?>" class="table-cart flex-2 mt-1" style="min-width: 1000px;">
+              <thead>
+                <th class="text-center" style="width: 100px">Hình ảnh</th>
+                <th class="text-center" style="width: 250px">Size - Màu sắc</th>
+                <th>Đơn giá tạm tính</th>
+                <th>Số lượng</th>
+                <th class="text-center" style="width: 80px">Xóa</th>
+              </thead>
+              <tbody>
+                <?php foreach ($products as $product) {
                     $totalPrice += $product['quantity'] * $product['price'];
                   ?>
-                    <tr>
-                      <td class="text-center">
-                        <input <?php echo ($product['is_select'] ? "checked" : "") ?>
-                          data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>"
-                          data-type="select-cart" type="checkbox" />
-                      </td>
-                      <td class="text-center"><img src="<?php echo $product['product_image'] ?>" /></td>
-                      <td class="text-center"><?php echo $product['size'] ?> <br><?php echo $product['color'] ?></td>
-                      <td>
-                        <textarea readonly class="w-100"><?php echo $product['product_note'] ?></textarea>
-                      </td>
-                      <td data-type="price" data-item="<?php echo $product['price'] * $rate ?>"
-                        data-id="<?php echo $product['id'] ?>">
-                        <?php echo format_price_vnd($product['price'] * $rate) ?> / <?php echo $product['price']  ?>¥
-                      </td>
-                      <td>
-                        <input data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>"
-                          data-type="product-quantity" value="<?php echo $product['quantity'] ?>" />
-                      </td>
-                      <td class="text-center">
-                        <div class="icon-remove" data-item="<?php echo $product['id'] ?>">
-                          <i class="fa-regular fa-trash-can"></i>
-                        </div>
-                      </td>
-                    </tr>
-                  <?php }
+                <tr>
+                  </td>
+                  <td class="text-center"><img src="<?php echo $product['product_image'] ?>" /></td>
+                  <td class="text-center"><?php echo $product['size'] ?> <br><?php echo $product['color'] ?></td>
+                  <td data-type="price" data-item="<?php echo $product['price'] * $rate ?>"
+                    data-id="<?php echo $product['id'] ?>">
+                    <?php echo format_price_vnd($product['price'] * $rate) ?> / <?php echo $product['price']  ?>¥
+                  </td>
+                  <td>
+                    <input data-item="<?php echo $product['id'] ?>" data-shop="<?php echo $shop_id ?>"
+                      data-type="product-quantity" value="<?php echo $product['quantity'] ?>" />
+                  </td>
+                  <td class="text-center">
+                    <div class="icon-remove" data-item="<?php echo $product['id'] ?>">
+                      <i class="fa-regular fa-trash-can"></i>
+                    </div>
+                  </td>
+                </tr>
+                <?php }
                   $totalPrice = $totalPrice * $rate;
                   $percent_service_fee = 0;
                   if ($totalPrice < 5000000) {
@@ -117,45 +108,45 @@ $current_user = wp_get_current_user();
                     $percent_service_fee = 1.5;
                   }
                   ?>
-                </tbody>
-              </table>
-              <div class="flex-1 total-order">
-                <ul>
-                  <li>
-                    Tiền hàng<strong data-type="total-money-product"><?php echo format_price_vnd($totalPrice) ?></strong>
-                  </li>
-                  <li>
-                    Phí dịch vụ (<?php echo $percent_service_fee; ?>%)<strong data-type="phi-dich-vu">
-                      <?php echo format_price_vnd($service_fee) ?>
-                    </strong>
-                  </li>
-                  <li>
-                    Phí bảo hiểm <strong>--</strong>
-                  </li>
-                  <li>
-                    Phí kiểm đếm <strong>--</strong>
-                  </li>
-                  <li>
-                    Phí đóng kiện gỗ <strong>--</strong>
-                  </li>
-                  <li class="text-uppercase">
-                    TỔNG TIỀN TẠM TÍNH<strong
-                      data-type="total-product"><?php echo format_price_vnd($totalPrice + $service_fee) ?></strong>
-                  </li>
-                </ul>
-                <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
-                <textarea data-shop="<?php echo $shop_id ?>" data-type="note-product" style="font-size: 13px;"
-                  class="w-100" placeholder="Ghi chú đơn hàng này"></textarea>
-                <div class="w-100 d-flex justify-content-end">
-                  <button data-shop="<?php echo $shop_id ?>" class="mt-2 btn-order flex justify-content-center"
-                    style="width: 200px;" data-item="<?php echo $product['id'] ?>">
-                    <i class="fa-solid fa-cart-plus"></i>
-                    Yêu cầu báo giá
-                  </button>
-                </div>
+              </tbody>
+            </table>
+            <div class="flex-1 total-order">
+              <ul>
+                <li>
+                  Tiền hàng<strong data-type="total-money-product"><?php echo format_price_vnd($totalPrice) ?></strong>
+                </li>
+                <li>
+                  Phí dịch vụ (<?php echo $percent_service_fee; ?>%)<strong data-type="phi-dich-vu">
+                    <?php echo format_price_vnd($service_fee) ?>
+                  </strong>
+                </li>
+                <li>
+                  Phí bảo hiểm <strong>--</strong>
+                </li>
+                <li>
+                  Phí kiểm đếm <strong>--</strong>
+                </li>
+                <li>
+                  Phí đóng kiện gỗ <strong>--</strong>
+                </li>
+                <li class="text-uppercase">
+                  TỔNG TIỀN TẠM TÍNH<strong
+                    data-type="total-product"><?php echo format_price_vnd($totalPrice + $service_fee) ?></strong>
+                </li>
+              </ul>
+              <div class="mt-2 mb-1" style="font-size: 12px">Ghi chú đơn hàng</div>
+              <textarea data-shop="<?php echo $shop_id ?>" data-type="note-product" style="font-size: 13px;"
+                class="w-100" placeholder="Ghi chú đơn hàng này"></textarea>
+              <div class="w-100 d-flex justify-content-end">
+                <button data-shop="<?php echo $shop_id ?>" class="mt-2 btn-order flex justify-content-center"
+                  style="width: 200px;" data-item="<?php echo $product['id'] ?>">
+                  <i class="fa-solid fa-cart-plus"></i>
+                  Yêu cầu báo giá
+                </button>
               </div>
             </div>
           </div>
+        </div>
         <?php } ?>
       </div>
     </div>
@@ -200,137 +191,132 @@ $current_user = wp_get_current_user();
   </div>
 </div>
 <script>
-  $(document).ready(function() {
-    function formatCurrencyVND(amount) {
-      return amount ? new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND"
-      }).format(amount) : '--';
+$(document).ready(function() {
+  function formatCurrencyVND(amount) {
+    return amount ? new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND"
+    }).format(amount) : '--';
+  }
+
+  //remove cart item
+  $('.table-cart').on('click', '.icon-remove', function() {
+    if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
+    fetch(`${origin}/wp-admin/admin-ajax.php?action=remove_cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: $(this).data('item')
+        }),
+        credentials: "include",
+      })
+      .finally(() => window.location.reload());
+  });
+
+  // khi thay doi so luong san pham thi cap nhat lai so luong trong cart
+  $('input[data-type="product-quantity"]').on("change", function() {
+    const shopId = $(this).data('shop');
+    const productId = $(this).data('item');
+    let quantity = $(this).val();
+    if ($(this).data('type') === "product-quantity") {
+      quantity = parseInt(quantity) || 1;
+      $(this).val(quantity);
+    } else {
+      quantity = $(`input[data-type="product-quantity"][data-item="${productId}"]`).val();
     }
 
-    $('.table-cart').on('click', '.icon-remove', function() {
-      if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
-      fetch(`${origin}/wp-admin/admin-ajax.php?action=remove_cart`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            id: $(this).data('item')
-          }),
-          credentials: "include",
+    fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          cart_id: productId,
+          quantity: parseInt(quantity, 10),
+          is_select: 0
         })
-        .finally(() => window.location.reload());
-    });
-
-    $('input[data-type="select-carts"]').on("click", function() {
-      $(`input[data-shop="${$(this).data('item')}"]`).click();
-    });
-
-    $('input[data-type="select-cart"], input[data-type="product-quantity"]').on("change", function() {
-      const shopId = $(this).data('shop');
-      const productId = $(this).data('item');
-      const isSelect = $('input[data-shop="' + shopId + '"][data-item="' + productId + '"][data-type="select-cart"]').is(":checked");
-
-      let quantity = $(this).val();
-      if ($(this).data('type') === "product-quantity") {
-        quantity = parseInt(quantity) || 1;
-        $(this).val(quantity);
-      } else {
-        quantity = $(`input[data-type="product-quantity"][data-item="${productId}"]`).val();
-      }
-
-      fetch(`${origin}/wp-admin/admin-ajax.php?action=update_cart_item`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            cart_id: productId,
-            quantity: parseInt(quantity, 10),
-            is_select: Number(isSelect)
-          })
-        })
-        .finally(() => {
-          window.location.reload();
-        });
-    });
-
-    $('button.btn-order').on('click', function() {
-      const shopId = $(this).data('shop');
-      if (!$(`input[data-type="select-cart"][data-shop="${shopId}"]:checked`).length) return alert(
-        "Vui lòng chọn sản phẩm sẽ mua!");
-
-      const data = {
-        action: 'create_order',
-        nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
-        shop_id: shopId,
-        ho_ten: $('.popup-info input[data-type="ho_ten"]').val(),
-        address: $('.popup-info input[data-type="address"]').val(),
-        email: $('.popup-info input[data-type="email"]').val(),
-        phone: $('.popup-info input[data-type="phone"]').val(),
-        note: $('.textarea[data-type="note-product"]').val(),
-        is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
-        is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
-        is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked"))
-      };
-
-      $.post('<?php echo admin_url("admin-ajax.php"); ?>', data, function(response) {
-        alert(response.data.message);
+      })
+      .finally(() => {
         window.location.reload();
-      }).fail(() => alert('Lỗi kết nối đến máy chủ.'));
-    });
+      });
+  });
 
-    $('.btn-order-all').on('click', function() {
-      if ($('input[data-type="select-cart"]').length === 0) {
-        alert("Không có đơn hàng nào trong giỏ hàng.");
-        return;
-      }
-      if (!confirm("Bạn có chắc chắn muốn gửi yêu cầu đặt hàng cho tất cả sản phẩm?")) return;
+  // bao gia cho 1 don hang
+  $('button.btn-order').on('click', function() {
+    if (!confirm("Bạn có chắc chắn muốn gửi yêu cầu đặt hàng sản phẩm?")) return;
+    const shopId = $(this).data('shop');
+    const data = {
+      action: 'create_order',
+      nonce: '<?php echo wp_create_nonce('create_order_nonce'); ?>',
+      shop_id: shopId,
+      ho_ten: $('.popup-info input[data-type="ho_ten"]').val(),
+      address: $('.popup-info input[data-type="address"]').val(),
+      email: $('.popup-info input[data-type="email"]').val(),
+      phone: $('.popup-info input[data-type="phone"]').val(),
+      note: $('.textarea[data-type="note-product"]').val(),
+      is_gia_co: Number($(`input[data-shop="${shopId}"][data-type="gia-co-dong-go"]`).is(":checked")),
+      is_kiem_dem_hang: Number($(`input[data-shop="${shopId}"][data-type="kiem-dem-hang"]`).is(":checked")),
+      is_bao_hiem: Number($(`input[data-shop="${shopId}"][data-type="bao-hiem"]`).is(":checked"))
+    };
 
-      $('input[data-type="select-cart"]').prop("checked", true).trigger("change");
-      let productsByShop = {};
+    $.post('<?php echo admin_url("admin-ajax.php"); ?>', data, function(response) {
+      alert(response.data.message);
+      window.location.reload();
+    }).fail(() => alert('Lỗi kết nối đến máy chủ.'));
+  });
 
-      $('input[data-type="select-cart"]:checked').each(function() {
+  // bao gia cho nhieu don hang
+  $('.btn-order-all').on('click', function() {
+    if ($('input[data-type="select-carts"]').length === 0) {
+      alert("Không có đơn hàng nào trong giỏ hàng.");
+      return;
+    }
+    if (!confirm("Bạn có chắc chắn muốn gửi yêu cầu đặt hàng cho tất cả sản phẩm?")) return;
+
+    let productsByShop = {};
+
+    $('input[data-type="product-quantity"]').each(function() {
         const shopId = $(this).data('shop');
-        const productId = $(this).attr('data-item');
-        const quantity = $(`input[data-type="product-quantity"][data-item="${productId}"]`).val();
+        const productId = $(this).data('item');
+        const quantity = $(this).val();
 
         if (!productsByShop[shopId]) {
-          productsByShop[shopId] = [];
+            productsByShop[shopId] = [];
         }
 
         productsByShop[shopId].push({
-          id: productId,
-          quantity: parseInt(quantity, 10) || 1
+            id: productId,
+            quantity: parseInt(quantity, 10) || 1
         });
-      });
+    });
 
-      for (const shopId in productsByShop) {
+    for (const shopId in productsByShop) {
         fetch(`${origin}/wp-admin/admin-ajax.php?action=submit_all_cart`, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              ho_ten: $(`input[data-type="ho_ten"]`).val(),
-              address: $(`input[data-type="address"]`).val(),
-              email: $(`input[data-type="email"]`).val(),
-              phone: $(`input[data-type="phone"]`).val(),
-              shop_id: shopId,
-              products: productsByShop[shopId]
+                ho_ten: $(`input[data-type="ho_ten"]`).val(),
+                address: $(`input[data-type="address"]`).val(),
+                email: $(`input[data-type="email"]`).val(),
+                phone: $(`input[data-type="phone"]`).val(),
+                shop_id: shopId,
+                products: productsByShop[shopId]
             })
-          })
-          .then(response => response.json())
-          .then(data => {
+        })
+        .then(response => response.json())
+        .then(data => {
             if (data.success) {
-              alert("Đã gửi yêu cầu đặt hàng thành công!");
-              location.reload();
+                alert("Đã gửi yêu cầu đặt hàng thành công!");
+                location.reload();
             } else {
-              alert("Có lỗi xảy ra, vui lòng thử lại.");
+                alert("Có lỗi xảy ra, vui lòng thử lại.");
             }
-          });
-      }
-    });
-  })
+        });
+    }
+  });
+})
 </script>

@@ -269,7 +269,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                     <?php echo $cart->price ?? 0 ?>¥
                   </td>
                   <td>
-                    <?php echo format_price_vnd($totalPrice * $exchange_rate ?? 0) ?>
+                    <?php echo format_price_vnd(($cart->price * $cart->quantity * $exchange_rate) ?? 0) ?>
                   </td>
                 </tr>
                 <?php } ?>

@@ -209,9 +209,8 @@ function render_add_order_page()
         'address' => sanitize_text_field($_POST['address']),
         'so_kien_hang' => intval($_POST['so_kien_hang']),
         'da_thanh_toan' => floatval($_POST['da_thanh_toan']),
-        'created_at' => current_time('mysql')
       ],
-      ['%d', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%f', '%s']
+      ['%d', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%f']
     );
 
     echo '<div class="updated"><p>Đơn hàng đã được thêm thành công!</p></div>';
