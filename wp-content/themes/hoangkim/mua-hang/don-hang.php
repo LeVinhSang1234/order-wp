@@ -64,20 +64,32 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
             <div class="status-tabs d-flex flex-wrap gap-2 mt-2">
-                <button class="status-tab <?php echo empty($status_search) ? 'active' : ''; ?>" data-status="">Tất cả</button>
-                <button class="status-tab <?php echo $status_search == '1' ? 'active' : ''; ?>" data-status="1">Chờ báo giá (<?php echo $totals[1] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '2' ? 'active' : ''; ?>" data-status="2">Đang mua hàng (<?php echo $totals[2] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '3' ? 'active' : ''; ?>" data-status="3">Đã mua hàng (<?php echo $totals[3] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '4' ? 'active' : ''; ?>" data-status="4">NCC phát hàng (<?php echo $totals[4] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '5' ? 'active' : ''; ?>" data-status="5">Nhập kho TQ (<?php echo $totals[5] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '6' ? 'active' : ''; ?>" data-status="6">Nhập kho VN (<?php echo $totals[6] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '7' ? 'active' : ''; ?>" data-status="7">Khách nhận hàng (<?php echo $totals[7] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '8' ? 'active bg-danger btn-danger' : ''; ?>" data-status="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</button>
-                <button class="status-tab <?php echo $status_search == '9' ? 'active bg-warning btn-warning text-secondary' : ''; ?>" data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
+                <button class="status-tab <?php echo empty($status_search) ? 'active' : ''; ?>" data-status="">Tất
+                    cả</button>
+                <button class="status-tab <?php echo $status_search == '1' ? 'active' : ''; ?>" data-status="1">Chờ báo
+                    giá (<?php echo $totals[1] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '2' ? 'active' : ''; ?>" data-status="2">Đang mua
+                    hàng (<?php echo $totals[2] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '3' ? 'active' : ''; ?>" data-status="3">Đã mua
+                    hàng (<?php echo $totals[3] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '4' ? 'active' : ''; ?>" data-status="4">NCC phát
+                    hàng (<?php echo $totals[4] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '5' ? 'active' : ''; ?>" data-status="5">Nhập kho
+                    TQ (<?php echo $totals[5] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '6' ? 'active' : ''; ?>" data-status="6">Nhập kho
+                    VN (<?php echo $totals[6] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '7' ? 'active' : ''; ?>" data-status="7">Khách
+                    nhận hàng (<?php echo $totals[7] ?>)</button>
+                <button class="status-tab <?php echo $status_search == '8' ? 'active bg-danger btn-danger' : ''; ?>"
+                    data-status="8">Đơn hàng hủy (<?php echo $totals[8] ?>)</button>
+                <button
+                    class="status-tab <?php echo $status_search == '9' ? 'active bg-warning btn-warning text-secondary' : ''; ?>"
+                    data-status="9">Đơn khiếu nại (<?php echo $totals[9] ?>)</button>
             </div>
             <div class="mt-3">
                 <div class="d-flex justify-content-between mb-2">
-                    <div>Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong></div>
+                    <div>Số đơn hàng: <strong><?php echo str_pad(count($orders), 2, "0", STR_PAD_LEFT); ?></strong>
+                    </div>
                     <?php if (empty($status_search) || intval($status_search) <= 1) { ?>
                         <button class="btn btn-primary" id="dat-coc-toan-bo">$ Đặt cọc toàn bộ</button>
                     <?php } ?>
@@ -86,7 +98,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     <table class="w-100 mt-2 table-list-order" style="min-width: 1000px;">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width: 40px;">
+                                <th class="text-center check-box" style="width: 40px;">
                                     <input type="checkbox" id="check-all-order">
                                 </th>
                                 <th style="width: 100px;" class="text-center">STT</th>
@@ -137,15 +149,16 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at);
                             ?>
                                 <tr style="text-transform: initial">
-                                    <td class="text-center">
+                                    <td class="text-center check-box">
                                         <?php if (intval($order->status) < 2) { ?>
                                             <input type="checkbox">
                                         <?php } ?>
                                     </td>
                                     <td class="text-center"><?php echo $stt++; ?></td>
-                                    <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?></td>
+                                    <td>MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($order->id, 2, '0', STR_PAD_LEFT); ?>
+                                    </td>
                                     <td class="text-center flex-wrap">
-                                        <?php 
+                                        <?php
                                         $max_images = 8;
                                         $displayed_images = array_slice($image_urls, 0, $max_images);
                                         foreach ($displayed_images as $image_url) {
@@ -158,11 +171,20 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                         ?>
                                     </td>
                                     <td style="font-size: 12px; width: 340px;">
-                                        <div class="d-flex justify-content-between">Tổng tiền hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
-                                        <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">Tiền phải cọc:<span style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span></div>
-                                        <div class="d-flex justify-content-between">Tiền thanh toán:<span style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span></div>
-                                        <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span></div>
-                                        <div class="d-flex justify-content-between">Tổng hoàn:<span><?php echo format_price_vnd($order->da_hoan) ?></span></div>
+                                        <div class="d-flex justify-content-between">Tổng tiền
+                                            hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
+                                        <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">
+                                            Tiền phải cọc:<span
+                                                style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">Tiền thanh toán:<span
+                                                style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span
+                                                style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">Tổng
+                                            hoàn:<span><?php echo format_price_vnd($order->da_hoan) ?></span></div>
                                     </td>
                                     <td style="color: <?php
                                                         echo ($order->status === '8') ? "#ff0000" : (($order->status === '9') ? "#ffc107" : "green");
@@ -171,11 +193,17 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                     </td>
                                     <td style="font-size: 12px"><?php echo $date->format('d/m/Y H:i') ?></td>
                                     <td class="text-center">
-                                        <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi tiết</a></div>
+                                        <div><a href="<?php echo site_url() . '/chi-tiet-don-hang?id=' . $order->id ?>"
+                                                style="min-width: 120px; font-size: 13px" class="btn btn-primary mb-2">Chi
+                                                tiết</a></div>
                                         <?php if ($order->status !== '8') { ?>
-                                            <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu nại</button></div>
+                                            <div><button button-type="khieu-nai" data-item="<?php echo $order->id ?>"
+                                                    style="min-width: 120px; font-size: 13px" class="btn btn-danger mb-2">Khiếu
+                                                    nại</button></div>
                                         <?php } ?>
-                                        <button id="btn-dat-lai-don" data-item="<?php echo $order->id ?>" style="min-width: 120px; font-size: 13px; background-color: #28b779" class="btn">Đặt lại đơn</button>
+                                        <button id="btn-dat-lai-don" data-item="<?php echo $order->id ?>"
+                                            style="min-width: 120px; font-size: 13px; background-color: #28b779"
+                                            class="btn">Đặt lại đơn</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -191,7 +219,8 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
         <h3 class="text-center">Khiếu nại</h3>
         <div class="content-data">
             <div class="mt-3 address-info">
-                <textarea id="text-khieu-nai" style="min-height: 100px; resize: none" class="w-100 fs-13" placeholder="Vui lòng nhập lý do khiếu nại"></textarea>
+                <textarea id="text-khieu-nai" style="min-height: 100px; resize: none" class="w-100 fs-13"
+                    placeholder="Vui lòng nhập lý do khiếu nại"></textarea>
                 <div id="error-ly-do" style="display: none;" class="text-error mt-0">Vui lòng nhập lý do</div>
             </div>
         </div>
@@ -267,6 +296,18 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
     })
 
     $(document).ready(function() {
+        function toggleDepositOptions() {
+            const status = $('.status-tab.active').data('status'); // Lấy trạng thái hiện tại
+            if (status === "") { // Nếu trạng thái là "Tất cả"
+                $('th.check-box, td.check-box').hide(); // Ẩn tiêu đề và các ô checkbox
+                $('#dat-coc-toan-bo').hide(); // Ẩn nút "Đặt cọc toàn bộ"
+            } else {
+                $('th.check-box, td.check-box').show(); // Hiện tiêu đề và các ô checkbox
+                $('#dat-coc-toan-bo').show(); // Hiện nút "Đặt cọc toàn bộ"
+            }
+        }
+
+        toggleDepositOptions();
         const params = new URLSearchParams(window.location.search);
         if (params.has('order_id')) $('#order_id').val(params.get('order_id'));
         if (params.has('time_from')) $('#time_from').val(params.get('time_from').replace(/\//g, '-'));
@@ -278,13 +319,14 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
         $('.status-tab').on('click', function() {
             $('.status-tab').removeClass('active');
             $(this).addClass('active');
-
+            toggleDepositOptions();
             // Trigger search automatically when tab is clicked
             const formatDate = (dateStr) => {
                 if (!dateStr) return '';
                 const date = new Date(dateStr);
                 if (isNaN(date)) return '';
-                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' +
+                    String(date.getDate()).padStart(2, '0');
             };
 
             const time_from = formatDate($('#time_from').val());
@@ -317,7 +359,8 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                 if (!dateStr) return '';
                 const date = new Date(dateStr);
                 if (isNaN(date)) return '';
-                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' + String(date.getDate()).padStart(2, '0');
+                return date.getFullYear() + '/' + String(date.getMonth() + 1).padStart(2, '0') + '/' +
+                    String(date.getDate()).padStart(2, '0');
             };
 
             const time_from = formatDate($('#time_from').val());
@@ -361,22 +404,27 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
             let deposits = [];
             selectedOrders.each(function() {
                 const row = $(this).closest('tr');
-                const depositAmount = parseFloat(row.find('[data-coc]').data('coc')) || 0; // Fetch deposit from data-coc
+                const depositAmount = parseFloat(row.find('[data-coc]').data('coc')) ||
+                    0; // Fetch deposit from data-coc
                 totalDeposit += depositAmount;
 
-                const orderId = row.find('td:nth-child(3)').text().trim(); // Get order ID in the desired format
+                const orderId = row.find('td:nth-child(3)').text()
+                    .trim(); // Get order ID in the desired format
                 orderList.push(orderId);
                 orderIds.push(orderId.replace(/^MS\d+-/, '')); // Extract numeric order ID
                 deposits.push(depositAmount); // Collect deposit amounts
             });
 
             const orderCount = selectedOrders.length;
-            if (confirm(`Bạn có muốn đặt cọc ${orderCount} đơn số tiền là: ${totalDeposit.toLocaleString()} VNĐ?`)) {
+            if (confirm(
+                    `Bạn có muốn đặt cọc ${orderCount} đơn số tiền là: ${totalDeposit.toLocaleString()} VNĐ?`
+                )) {
                 console.log(deposits);
 
-                const userWallet = parseFloat('<?php echo get_user_meta($user_id, "user_wallet", true); ?>') || 0;
-                console.log("log=>>>>>>",userWallet, totalDeposit);
-                
+                const userWallet = parseFloat(
+                    '<?php echo get_user_meta($user_id, "user_wallet", true); ?>') || 0;
+                console.log("log=>>>>>>", userWallet, totalDeposit);
+
                 if (userWallet < totalDeposit) {
                     alert('Số dư trong ví không đủ để đặt cọc.');
                     return;
@@ -393,7 +441,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                         total_deposit: totalDeposit // Pass total deposit
                     },
                     success: function(response) {
-                            alert(response.data.message || 'Thanh toán thành công!');
+                        alert(response.data.message || 'Thanh toán thành công!');
                     },
                     error: function() {
                         alert('Lỗi kết nối đến máy chủ.');
@@ -405,35 +453,34 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
     });
 
     $(document).on('click', '#btn-dat-lai-don', function() {
-    const orderId = $(this).data('item'); 
-    if (!orderId) {
-        alert('Không tìm thấy ID đơn hàng.');
-        return;
-    }
-
-    if (!confirm('Bạn có chắc chắn muốn đặt lại đơn hàng này?')) {
-        return; 
-    }
-
-    $.ajax({
-        url: '<?php echo admin_url("admin-ajax.php"); ?>',
-        type: 'POST',
-        data: {
-            action: 'recreate_order',
-            order_id: orderId
-        },
-        success: function(response) {
-            if (response.success) {
-                alert('Đơn hàng mới đã được tạo thành công!');
-                window.location.reload();
-            } else {
-                alert(response.data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
-            }
-        },
-        error: function() {
-            alert('Lỗi kết nối đến máy chủ.');
+        const orderId = $(this).data('item');
+        if (!orderId) {
+            alert('Không tìm thấy ID đơn hàng.');
+            return;
         }
+
+        if (!confirm('Bạn có chắc chắn muốn đặt lại đơn hàng này?')) {
+            return;
+        }
+
+        $.ajax({
+            url: '<?php echo admin_url("admin-ajax.php"); ?>',
+            type: 'POST',
+            data: {
+                action: 'recreate_order',
+                order_id: orderId
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Đơn hàng mới đã được tạo thành công!');
+                    window.location.reload();
+                } else {
+                    alert(response.data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+                }
+            },
+            error: function() {
+                alert('Lỗi kết nối đến máy chủ.');
+            }
+        });
     });
-});
-    
 </script>
