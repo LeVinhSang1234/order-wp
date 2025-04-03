@@ -41,10 +41,53 @@ add_action('admin_menu', 'add_custom_admin_menu');
 function render_order_page()
 {
   global $wpdb;
-  $orders = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}orders ORDER BY created_at DESC");
-  $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC phát hàng", "Nhập kho TQ", "Nhập kho VN", "Khách nhận hàng", "Đơn hàng hủy", "Đơn khiếu nại"];
 
+  // Get the selected status and search query from the query string
+  $status_filter = isset($_GET['status_filter']) ? intval($_GET['status_filter']) : 0;
+  $search_order_id = isset($_GET['search_order_id']) ? intval($_GET['search_order_id']) : 0;
+
+  // Calculate totals for each status
+  $status_totals = $wpdb->get_results("SELECT status, COUNT(*) as total FROM {$wpdb->prefix}orders GROUP BY status", OBJECT_K);
+  $totals = [];
+  foreach ($status_totals as $status => $data) {
+    $totals[intval($status)] = intval($data->total);
+  }
+
+  $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC phát hàng", "Nhập kho TQ", "Nhập kho VN", "Khách nhận hàng", "Đơn hàng hủy", "Đơn khiếu nại"];
+  $status_colors = ["", "black", "orange", "green", "blue", "purple", "crimson", "teal", "red", "gray"];
+
+  // Render filter UI
   echo '<div class="wrap"><h2>Danh sách đơn hàng</h2>';
+  echo '<form method="get" style="margin-bottom: 20px;">';
+  echo '<input type="hidden" name="page" value="custom_orders">';
+  echo '<div style="display: flex; gap: 10px; align-items: center;">';
+  echo '<input style="height: 31px" type="number" name="search_order_id" placeholder="Tìm theo mã đơn hàng" value="' . ($search_order_id ?: '') . '" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">';
+  echo '<button type="submit" class="button button-primary">Tìm kiếm</button>';
+  echo '</div>';
+  echo '</form>';
+  echo '<div class="status-tabs" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; margin-top: 10px;">';
+  echo '<a class="status-tab ' . ($status_filter === 0 ? 'active' : '') . '" href="' . admin_url('admin.php?page=custom_orders') . '">Tất cả (' . array_sum($totals) . ')</a>';
+  foreach ($status_str as $key => $label) {
+    if ($key === 0) continue;
+    $active_class = $status_filter === $key ? 'active' : '';
+    $count = isset($totals[$key]) ? $totals[$key] : 0;
+    $color = $status_colors[$key];
+    echo '<a class="status-tab ' . $active_class . '" href="' . admin_url('admin.php?page=custom_orders&status_filter=' . $key) . '" style="color: ' . $color . ';">' . $label . ' (' . $count . ')</a>';
+  }
+  echo '</div>';
+
+  // Fetch orders based on the selected status and search query
+  $query = "SELECT * FROM {$wpdb->prefix}orders WHERE 1=1";
+  if ($status_filter > 0) {
+    $query .= $wpdb->prepare(" AND status = %d", $status_filter);
+  }
+  if ($search_order_id > 0) {
+    $query .= $wpdb->prepare(" AND id = %d", $search_order_id);
+  }
+  $query .= " ORDER BY created_at DESC";
+  $orders = $wpdb->get_results($query);
+
+  // Render orders table
   echo '<table class="wp-list-table widefat fixed striped">';
   echo '<thead>
           <tr>
@@ -82,10 +125,10 @@ function render_order_page()
             $status_color = 'color: purple;'; // Nhập kho TQ
             break;
         case 6:
-            $status_color = 'color: pink;';   // Nhập kho VN
+            $status_color = 'color: crimson;';   // Nhập kho VN
             break;
         case 7:
-            $status_color = 'color: lightgreen;'; // Khách nhận hàng
+            $status_color = 'color: teal;'; // Khách nhận hàng
             break;
         case 8:
             $status_color = 'color: red;';    // Đơn hàng hủy
@@ -139,6 +182,37 @@ function render_order_page()
       });
     });
   </script>
+  <style>
+    .status-tabs {
+        margin: 10px 0;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .status-tab {
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 5px;
+        padding: 4px 16px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .status-tab:hover {
+        background: #f5f5f5;
+    }
+
+    .status-tab.active {
+        background:rgba(0, 123, 255, 0.48);
+        color: white;
+        border-color: #007bff;
+    }
+  </style>
   <?php
 }
 
