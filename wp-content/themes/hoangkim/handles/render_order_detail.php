@@ -271,15 +271,15 @@ echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
 
 echo "<div class='order-item'>
     <strong>Trạng thái:</strong>
-    <select id='statusDropdown' data-id='{$order->id}'>
-        <option value='1' " . ($order->status == 1 ? " selected" : "" ) . ">Chờ báo giá</option>";
-        
+    <select id='statusDropdown' data-id='{$order->id}'>";
+
 if (!isset($order->type) || intval($order->type) !== 1) {
-    echo "<option value='2' " . ($order->status == 2 ? " selected" : "" ) . ">Đang mua hàng</option>
+    echo "<option value='1' " . ($order->status == 1 ? " selected" : "" ) . ">Chờ báo giá</option>
+          <option value='2' " . ($order->status == 2 ? " selected" : "" ) . ">Đang mua hàng</option>
           <option value='3' " . ($order->status == 3 ? "selected" : "") . ">Đã mua hàng</option>";
 }
 
-echo "<option value='4' " . ($order->status == 4 ? " selected" : "" ) . ">NCC phát hàng</option>
+echo "<option value='4' " . ($order->status == 4 || (isset($order->type) && intval($order->type) === 1 && $order->status == 1) ? " selected" : "" ) . ">NCC phát hàng</option>
       <option value='5' " . ($order->status == 5 ? "selected" : "") . ">Nhập kho TQ</option>
       <option value='6' " . ($order->status == 6 ? " selected" : "" ) . ">Nhập kho VN</option>
       <option value='7' " . ($order->status == 7 ? "selected" : "") . ">Khách nhận hàng</option>

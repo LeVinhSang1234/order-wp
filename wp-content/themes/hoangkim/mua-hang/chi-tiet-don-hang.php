@@ -243,6 +243,15 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
               <tbody>
                 <?php foreach ($carts as $cart) {
                   $totalPrice += ($cart->price * $cart->quantity);
+
+                  $percent = 0;
+                  if ($totalPrice < 5000000) {
+                    $percent = 3;
+                  } elseif ($totalPrice >= 5000000 && $totalPrice <= 50000000) {
+                    $percent = 2;
+                  } else {
+                    $percent = 1.5; // 1.5%
+                  }
                 ?>
                 <tr>
                   <td>
@@ -296,8 +305,8 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
               (<?php echo $totalPrice ?? 0 ?>¥)</strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (2) Phí dịch vụ:
-            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?></strong>
+            (2) Phí dịch vụ(<?php echo $percent ?>%):
+            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?> </strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
             (3) Phí ship nội địa TQ:

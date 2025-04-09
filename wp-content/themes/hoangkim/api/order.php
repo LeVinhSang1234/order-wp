@@ -601,6 +601,7 @@ function create_order_ki_gui()
         'van_don' => $van_don,
         'type' => 1,
         'so_kien_hang' => $so_kien_hang,
+        'is_gia_co' => 4, // Đơn hàng ký gửi
     ];
     $format = [
         '%d',
@@ -613,6 +614,7 @@ function create_order_ki_gui()
         '%s',
         '%s',
         '%s',
+        '%d',
         '%d',
         '%d',
     ];
