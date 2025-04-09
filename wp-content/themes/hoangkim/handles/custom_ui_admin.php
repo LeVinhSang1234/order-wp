@@ -137,8 +137,9 @@ function render_order_page()
             $status_color = 'color: gray;';   // Đơn khiếu nại
             break;
     }
+    $id_display = $order->type == 1 ?  $order->id."-(Đơn ký gửi)" : $order->id;
     echo "<tr data-id='{$order->id}'>
-          <td><a href='{$detail_url}'>{$order->id}</a></td>
+          <td><a href='{$detail_url}'>{$id_display}</a></td>
           <td contenteditable='false' class='editable' data-field='status' style='{$status_color} font-weight: bold'>{$status_display}</td>
           <td contenteditable='false' class='editable' data-field='email'>{$order->email}</td>
           <td contenteditable='false' class='editable' data-field='phone'>{$order->phone}</td>
@@ -155,118 +156,120 @@ function render_order_page()
 
   // Gắn script AJAX
   ?>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll(".editable").forEach(cell => {
-        cell.addEventListener("blur", function () {
-          let orderId = this.closest("tr").dataset.id;
-          let field = this.dataset.field;
-          let value = this.innerText;
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".editable").forEach(cell => {
+    cell.addEventListener("blur", function() {
+      let orderId = this.closest("tr").dataset.id;
+      let field = this.dataset.field;
+      let value = this.innerText;
 
-          fetch(ajaxurl, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              action: "update_order",
-              order_id: orderId,
-              field: field,
-              value: value
-            })
-          }).then(response => response.json())
-            .then(data => {
-              if (!data.success) {
-                alert("Cập nhật thất bại!");
-              }
-            });
+      fetch(ajaxurl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            action: "update_order",
+            order_id: orderId,
+            field: field,
+            value: value
+          })
+        }).then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert("Cập nhật thất bại!");
+          }
         });
-      });
     });
-  </script>
-  <style>
-    .status-tabs {
-        margin: 10px 0;
-        width: 100%;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 10px;
-    }
+  });
+});
+</script>
+<style>
+.status-tabs {
+  margin: 10px 0;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
 
-    .status-tab {
-        padding: 4px 8px;
-        border: 1px solid #ddd;
-        border-radius: 16px;
-        background: #fff;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 5px;
-        padding: 4px 16px;
-        font-size: 14px;
-        font-weight: 700;
-    }
+.status-tab {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 5px;
+  padding: 4px 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
 
-    .status-tab:hover {
-        background: #f5f5f5;
-    }
+.status-tab:hover {
+  background: #f5f5f5;
+}
 
-    .status-tab.active {
-        background:rgba(0, 123, 255, 0.48);
-        color: white;
-        border-color: #007bff;
-    }
-  </style>
-  <?php
+.status-tab.active {
+  background: rgba(0, 123, 255, 0.48);
+  color: white;
+  border-color: #007bff;
+}
+</style>
+<?php
 }
 
 // 🔹 Hàm hiển thị UI "Thêm đơn hàng"
 function render_add_order_page()
 {
   ?>
-  <div class="wrap">
-    <h2>Thêm Đơn Hàng Mới</h2>
-    <form method="post">
-      <table class="form-table">
-        <tr>
-          <th><label for="user_id">ID Người dùng</label></th>
-          <td><input type="number" name="user_id" required class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="status">Trạng thái</label></th>
-          <td>
-            <select name="status">
-              <option value="1">Đang xử lý</option>
-              <option value="2">Hoàn thành</option>
-              <option value="3">Đã hủy</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th><label for="ho_ten">Họ Tên</label></th>
-          <td><input type="text" name="ho_ten" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="email">Email</label></th>
-          <td><input type="email" name="email" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="phone">Số điện thoại</label></th>
-          <td><input type="text" name="phone" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="address">Địa chỉ</label></th>
-          <td><input type="text" name="address" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="so_kien_hang">Số kiện hàng</label></th>
-          <td><input type="number" name="so_kien_hang" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="da_thanh_toan">Thanh toán</label></th>
-          <td><input type="number" step="0.01" name="da_thanh_toan" class="regular-text"></td>
-        </tr>
-      </table>
-      <input type="submit" name="submit_order" class="button button-primary" value="Thêm đơn hàng">
-    </form>
-  </div>
-  <?php
+<div class="wrap">
+  <h2>Thêm Đơn Hàng Mới</h2>
+  <form method="post">
+    <table class="form-table">
+      <tr>
+        <th><label for="user_id">ID Người dùng</label></th>
+        <td><input type="number" name="user_id" required class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="status">Trạng thái</label></th>
+        <td>
+          <select name="status">
+            <option value="1">Đang xử lý</option>
+            <option value="2">Hoàn thành</option>
+            <option value="3">Đã hủy</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th><label for="ho_ten">Họ Tên</label></th>
+        <td><input type="text" name="ho_ten" class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="email">Email</label></th>
+        <td><input type="email" name="email" class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="phone">Số điện thoại</label></th>
+        <td><input type="text" name="phone" class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="address">Địa chỉ</label></th>
+        <td><input type="text" name="address" class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="so_kien_hang">Số kiện hàng</label></th>
+        <td><input type="number" name="so_kien_hang" class="regular-text"></td>
+      </tr>
+      <tr>
+        <th><label for="da_thanh_toan">Thanh toán</label></th>
+        <td><input type="number" step="0.01" name="da_thanh_toan" class="regular-text"></td>
+      </tr>
+    </table>
+    <input type="submit" name="submit_order" class="button button-primary" value="Thêm đơn hàng">
+  </form>
+</div>
+<?php
 
   // 🔹 Xử lý thêm đơn hàng khi submit
   if (isset($_POST['submit_order'])) {
