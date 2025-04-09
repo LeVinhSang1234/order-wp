@@ -42,8 +42,9 @@ function render_order_page()
 {
   global $wpdb;
 
-  // Get the selected status and search query from the query string
+  // Get the selected status, type, and search query from the query string
   $status_filter = isset($_GET['status_filter']) ? intval($_GET['status_filter']) : 0;
+  $type_filter = isset($_GET['type_filter']) ? intval($_GET['type_filter']) : -1;
   $search_order_id = isset($_GET['search_order_id']) ? intval($_GET['search_order_id']) : 0;
 
   // Calculate totals for each status
@@ -65,6 +66,14 @@ function render_order_page()
   echo '<button type="submit" class="button button-primary">Tìm kiếm</button>';
   echo '</div>';
   echo '</form>';
+
+  // Render type filter buttons
+  echo '<div class="type-tabs" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; margin-top: 10px;">';
+  echo '<a class="type-tab ' . ($type_filter === -1 ? 'active' : '') . '" href="' . admin_url('admin.php?page=custom_orders&status_filter=' . $status_filter) . '">Tất cả loại</a>';
+  echo '<a class="type-tab ' . ($type_filter === 0 ? 'active' : '') . '" href="' . admin_url('admin.php?page=custom_orders&status_filter=' . $status_filter . '&type_filter=0') . '">Đơn hàng thường</a>';
+  echo '<a class="type-tab ' . ($type_filter === 1 ? 'active' : '') . '" href="' . admin_url('admin.php?page=custom_orders&status_filter=' . $status_filter . '&type_filter=1') . '">Đơn ký gửi</a>';
+  echo '</div>';
+
   echo '<div class="status-tabs" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; margin-top: 10px;">';
   echo '<a class="status-tab ' . ($status_filter === 0 ? 'active' : '') . '" href="' . admin_url('admin.php?page=custom_orders') . '">Tất cả (' . array_sum($totals) . ')</a>';
   foreach ($status_str as $key => $label) {
@@ -76,10 +85,13 @@ function render_order_page()
   }
   echo '</div>';
 
-  // Fetch orders based on the selected status and search query
+  // Fetch orders based on the selected status, type, and search query
   $query = "SELECT * FROM {$wpdb->prefix}orders WHERE 1=1";
   if ($status_filter > 0) {
     $query .= $wpdb->prepare(" AND status = %d", $status_filter);
+  }
+  if ($type_filter >= 0) {
+    $query .= $wpdb->prepare(" AND type = %d", $type_filter);
   }
   if ($search_order_id > 0) {
     $query .= $wpdb->prepare(" AND id = %d", $search_order_id);
@@ -211,6 +223,37 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 .status-tab.active {
+  background: rgba(0, 123, 255, 0.48);
+  color: white;
+  border-color: #007bff;
+}
+
+/* Add styles for type filter buttons */
+.type-tabs {
+  margin: 10px 0;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.type-tab {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 5px;
+  padding: 4px 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.type-tab:hover {
+  background: #f5f5f5;
+}
+
+.type-tab.active {
   background: rgba(0, 123, 255, 0.48);
   color: white;
   border-color: #007bff;
