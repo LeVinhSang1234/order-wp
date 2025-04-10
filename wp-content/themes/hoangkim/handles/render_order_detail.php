@@ -22,13 +22,13 @@ function render_order_detail()
   if (!empty($cart_ids_array)) {
     $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
     $query = $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
-        ...$cart_ids_array
+      "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
+      ...$cart_ids_array
     );
     $carts = $wpdb->get_results($query);
-} else {
+  } else {
     $carts = [];
-}
+  }
 
   $packages = $wpdb->get_results(
     $wpdb->prepare(
@@ -78,7 +78,6 @@ function render_order_detail()
     "phi_ship_noi_dia",
     "phi_gia_co",
     "exchange_rate",
-    "chiet_khau_dich_vu",
     "tien_van_chuyen",
     "kg_tinh_phi",
     "da_coc",
@@ -95,6 +94,7 @@ function render_order_detail()
     "ngay_nhan_hang",
     "ngay_ncc_phat_hang",
     "tien_van_chuyen",
+    "chiet_khau_dich_vu",
     'kg_tinh_phi',
     "user_id",
     "cart_ids",
@@ -103,7 +103,7 @@ function render_order_detail()
 
   // Hide specific fields if type = 1
   if (isset($order->type) && intval($order->type) === 1) {
-      $hidden_fields = array_merge($hidden_fields, ['chiet_khau_dich_vu', 'da_hoan', 'exchange_rate']);
+    $hidden_fields = array_merge($hidden_fields, ['chiet_khau_dich_vu', 'da_hoan', 'exchange_rate']);
   }
 
   $checkbox_fields = ['is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc'];
@@ -116,37 +116,37 @@ function render_order_detail()
   $status_color = '';
   switch (intval($order->status)) {
     case 1:
-        $status_color = 'color: black;'; // Chờ báo giá
-        break;
+      $status_color = 'color: black;'; // Chờ báo giá
+      break;
     case 2:
-        $status_color = 'color: orange;'; // Đang mua hàng
-        break;
+      $status_color = 'color: orange;'; // Đang mua hàng
+      break;
     case 3:
-        $status_color = 'color: green;';  // Đã mua hàng
-        break;
+      $status_color = 'color: green;';  // Đã mua hàng
+      break;
     case 4:
-        $status_color = 'color: blue;';   // NCC phát hàng
-        break;
+      $status_color = 'color: blue;';   // NCC phát hàng
+      break;
     case 5:
-        $status_color = 'color: purple;'; // Nhập kho TQ
-        break;
+      $status_color = 'color: purple;'; // Nhập kho TQ
+      break;
     case 6:
-        $status_color = 'color: pink;';   // Nhập kho VN
-        break;
+      $status_color = 'color: pink;';   // Nhập kho VN
+      break;
     case 7:
-        $status_color = 'color: lightgreen;'; // Khách nhận hàng
-        break;
+      $status_color = 'color: lightgreen;'; // Khách nhận hàng
+      break;
     case 8:
-        $status_color = 'color: red;';    // Đơn hàng hủy
-        break;
+      $status_color = 'color: red;';    // Đơn hàng hủy
+      break;
     case 9:
-        $status_color = 'color: gray;';   // Đơn khiếu nại
-        break;
+      $status_color = 'color: gray;';   // Đơn khiếu nại
+      break;
   }
 
   echo "<div class='wrap'><h2>Chi tiết đơn hàng #{$order->id}";
   if (isset($order->type) && intval($order->type) === 1) {
-      echo " -(Đơn ký gửi)";
+    echo " -(Đơn ký gửi)";
   }
   echo "</h2>";
 
@@ -163,7 +163,7 @@ function render_order_detail()
     $class = in_array($field, $editable_fields) ? "class='editable'" : "";
 
     if ($field === 'status') {
-        $value = isset($status_str[$value]) ? $status_str[$value] : $value;
+      $value = isset($status_str[$value]) ? $status_str[$value] : $value;
     }
 
     if (in_array($field, $checkbox_fields)) {
@@ -178,8 +178,8 @@ function render_order_detail()
       $class = in_array($field, $editable_fields) ? "class='editable'" : "";
       echo "<div class='order-item'>
               <strong>{$label}:</strong>
-              <div {$editable} {$class} data-id='{$order->id}' data-field='{$field}'" . 
-                   ($field === 'status' ? " style='{$status_color}'" : "") . ">{$value}</div>
+              <div {$editable} {$class} data-id='{$order->id}' data-field='{$field}'" .
+        ($field === 'status' ? " style='{$status_color}'" : "") . ">{$value}</div>
             </div>";
     }
   }
@@ -198,18 +198,18 @@ function render_order_detail()
             </thead>
             <tbody>";
 
-            foreach ($carts as $cart) {
-              $totalPrice = 0;
-              $totalPrice += ($cart->price * $cart->quantity);
-              // todo
-              echo "<tr>
+  foreach ($carts as $cart) {
+    $totalPrice = 0;
+    $totalPrice += ($cart->price * $cart->quantity);
+    // todo
+    echo "<tr>
                       <td>
                           <div style='display: flex; align-items: center; gap: 8px;'>
                               <img width='40px' src='{$cart->product_image}' />
                               <div>
                                   <a href='{$cart->product_url}'>" .
-                                    str_replace("https://", "", parse_url($cart->product_url, PHP_URL_HOST)) .
-                                  "</a>
+      str_replace("https://", "", parse_url($cart->product_url, PHP_URL_HOST)) .
+      "</a>
                                   <div>{$cart->size} <br> {$cart->color}</div>
                               </div>
                           </div>
@@ -230,13 +230,13 @@ function render_order_detail()
                           " . format_price_vnd(($totalPrice * $exchange_rate) ?? 0) . "
                       </td>
                   </tr>";
-          }
+  }
 
-echo "</tbody>
+  echo "</tbody>
 </table>";
 
-// Add new table for additional fields
-echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%; margin-top: 20px;' id='packagesTable'>
+  // Add new table for additional fields
+  echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%; margin-top: 20px;' id='packagesTable'>
     <thead>
         <tr>
             <th>STT</th>
@@ -251,8 +251,8 @@ echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%; margin-t
     </thead>
     <tbody>";
 
-        foreach ($packages as $index => $package) {
-        echo "<tr data-id='{$package->id}'>
+  foreach ($packages as $index => $package) {
+    echo "<tr data-id='{$package->id}'>
             <td>" . ($index + 1) . "</td> <!-- Render serial number dynamically -->
             <td contenteditable='true' class='editable-package' data-field='ma_kien'>{$package->ma_kien}</td>
             <td contenteditable='true' class='editable-package' data-field='can_nang'>{$package->can_nang}</td>
@@ -263,215 +263,215 @@ echo "<table class='w-100 mt-4 table-list-chi-tiet' style='width: 100%; margin-t
             <td>{$package->created_at}</td>
             <td><button class='button-secondary delete-package' data-id='{$package->id}'>Xóa</button></td>
         </tr>";
-        }
+  }
 
-        echo "</tbody>
+  echo "</tbody>
 </table>";
-echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
+  echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
 
-echo "<div class='order-item'>
+  echo "<div class='order-item'>
     <strong>Trạng thái:</strong>
     <select id='statusDropdown' data-id='{$order->id}'>";
 
-if (!isset($order->type) || intval($order->type) !== 1) {
-    echo "<option value='1' " . ($order->status == 1 ? " selected" : "" ) . ">Chờ báo giá</option>
-          <option value='2' " . ($order->status == 2 ? " selected" : "" ) . ">Đang mua hàng</option>
+  if (!isset($order->type) || intval($order->type) !== 1) {
+    echo "<option value='1' " . ($order->status == 1 ? " selected" : "") . ">Chờ báo giá</option>
+          <option value='2' " . ($order->status == 2 ? " selected" : "") . ">Đang mua hàng</option>
           <option value='3' " . ($order->status == 3 ? "selected" : "") . ">Đã mua hàng</option>";
-}
+  }
 
-echo "<option value='4' " . ($order->status == 4 || (isset($order->type) && intval($order->type) === 1 && $order->status == 1) ? " selected" : "" ) . ">NCC phát hàng</option>
+  echo "<option value='4' " . ($order->status == 4 || (isset($order->type) && intval($order->type) === 1 && $order->status == 1) ? " selected" : "") . ">NCC phát hàng</option>
       <option value='5' " . ($order->status == 5 ? "selected" : "") . ">Nhập kho TQ</option>
-      <option value='6' " . ($order->status == 6 ? " selected" : "" ) . ">Nhập kho VN</option>
+      <option value='6' " . ($order->status == 6 ? " selected" : "") . ">Nhập kho VN</option>
       <option value='7' " . ($order->status == 7 ? "selected" : "") . ">Khách nhận hàng</option>
     </select>
 </div>";
-echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
-echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
-echo "</div>";
+  echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
+  echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
+  echo "</div>";
 
 ?>
-<style>
-.order-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  width: 100%;
-  display: flex;
-  overflow: auto;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.order-item {
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-  width: 200px;
-}
-
-.order-item:last-child {
-  border-bottom: none;
-}
-
-.editable {
-  display: block;
-  padding: 4px;
-  background: #f9f9f9;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 20px;
-  border: 1px solid
-}
-
-.editable:focus {
-  background: #e6f7ff;
-  outline: none;
-}
-</style>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
-<script>
-// Utility function to get the current timestamp in 'YYYY-MM-DD HH:MM:SS' format with UTC+7 offset
-function getCurrentTimestampUTC7() {
-  const now = new Date();
-  now.setHours(now.getHours() + 7); // Add 7 hours for UTC+7
-  return now.toISOString().slice(0, 19).replace('T', ' ');
-}
-
-jQuery(document).ready(function($) {
-  $("#updateOrder").click(function() {
-    let updates = [];
-
-    // Collect order updates
-    $(".editable[contenteditable='true']").each(function() {
-      updates.push({
-        order_id: $(this).data("id"),
-        field: $(this).data("field"),
-        value: $(this).text().trim() || null
-      });
-    });
-
-    $("input[data-type='quantity-cart']").each(function() {
-      updates.push({
-        cart_id: $(this).data("item"),
-        field: "quantity",
-        value: $(this).val().trim() || null
-      });
-    });
-
-    $("input[type='checkbox']").each(function() {
-      updates.push({
-        order_id: $(this).data("id"),
-        field: $(this).data("field"),
-        value: $(this).is(":checked") ? 1 : 0
-      });
-    });
-
-    const statusFieldMap = {
-      2: "ngay_dat_coc",
-      3: "da_mua_hang",
-      4: "ngay_nhap_kho_tq",
-      5: "ngay_nhap_kho_tq",
-      6: "ngay_nhap_kho_vn",
-      7: "ngay_nhan_hang"
-    };
-
-    const selectedStatus = $("#statusDropdown").val();
-    const orderId = $("#statusDropdown").data("id");
-    updates.push({
-      order_id: orderId,
-      field: "status",
-      value: selectedStatus
-    });
-
-    if (statusFieldMap[selectedStatus]) {
-      updates.push({
-        order_id: orderId,
-        field: statusFieldMap[selectedStatus],
-        value: getCurrentTimestampUTC7()
-      });
+  <style>
+    .order-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      width: 100%;
+      display: flex;
+      overflow: auto;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
-    // Collect package updates
-    let packageUpdates = [];
-    $("#packagesTable tbody tr").each(function() {
-      const packageId = $(this).data("id") || null;
-      const orderId = <?php echo $order_id; ?>; // Pass the current order_id
-      let packageData = {
-        order_id: orderId
-      };
+    .order-item {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+      width: 200px;
+    }
 
-      $(this).find(".editable-package").each(function() {
-        const field = $(this).data("field");
-        const value = $(this).is("select") ? $(this).val() : $(this).text()
-          .trim(); // Handle dropdowns
-        packageData[field] = value;
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .editable {
+      display: block;
+      padding: 4px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      cursor: pointer;
+      height: 20px;
+      border: 1px solid
+    }
+
+    .editable:focus {
+      background: #e6f7ff;
+      outline: none;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+  <script>
+    // Utility function to get the current timestamp in 'YYYY-MM-DD HH:MM:SS' format with UTC+7 offset
+    function getCurrentTimestampUTC7() {
+      const now = new Date();
+      now.setHours(now.getHours() + 7); // Add 7 hours for UTC+7
+      return now.toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    jQuery(document).ready(function($) {
+      $("#updateOrder").click(function() {
+        let updates = [];
+
+        // Collect order updates
+        $(".editable[contenteditable='true']").each(function() {
+          updates.push({
+            order_id: $(this).data("id"),
+            field: $(this).data("field"),
+            value: $(this).text().trim() || null
+          });
+        });
+
+        $("input[data-type='quantity-cart']").each(function() {
+          updates.push({
+            cart_id: $(this).data("item"),
+            field: "quantity",
+            value: $(this).val().trim() || null
+          });
+        });
+
+        $("input[type='checkbox']").each(function() {
+          updates.push({
+            order_id: $(this).data("id"),
+            field: $(this).data("field"),
+            value: $(this).is(":checked") ? 1 : 0
+          });
+        });
+
+        const statusFieldMap = {
+          2: "ngay_dat_coc",
+          3: "da_mua_hang",
+          4: "ngay_nhap_kho_tq",
+          5: "ngay_nhap_kho_tq",
+          6: "ngay_nhap_kho_vn",
+          7: "ngay_nhan_hang"
+        };
+
+        const selectedStatus = $("#statusDropdown").val();
+        const orderId = $("#statusDropdown").data("id");
+        updates.push({
+          order_id: orderId,
+          field: "status",
+          value: selectedStatus
+        });
+
+        if (statusFieldMap[selectedStatus]) {
+          updates.push({
+            order_id: orderId,
+            field: statusFieldMap[selectedStatus],
+            value: getCurrentTimestampUTC7()
+          });
+        }
+
+        // Collect package updates
+        let packageUpdates = [];
+        $("#packagesTable tbody tr").each(function() {
+          const packageId = $(this).data("id") || null;
+          const orderId = <?php echo $order_id; ?>; // Pass the current order_id
+          let packageData = {
+            order_id: orderId
+          };
+
+          $(this).find(".editable-package").each(function() {
+            const field = $(this).data("field");
+            const value = $(this).is("select") ? $(this).val() : $(this).text()
+              .trim(); // Handle dropdowns
+            packageData[field] = value;
+          });
+
+          if (packageId) {
+            packageData.package_id = packageId;
+          }
+
+          packageUpdates.push(packageData);
+        });
+
+        // Send AJAX request for order updates
+        $.ajax({
+          url: '<?php echo admin_url("admin-ajax.php"); ?>',
+          type: "POST",
+          data: {
+            action: "update_order_admin",
+            updates: JSON.stringify(updates)
+          },
+          beforeSend: function() {
+            console.log("Đang gửi yêu cầu cập nhật đơn hàng...");
+          },
+          success: function(response) {
+            console.log("Phản hồi từ server (đơn hàng):", response);
+            if (response.success && packageUpdates.length > 0) {
+              // If there are package updates, send them as well  
+              // Send AJAX request for package updates
+              $.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: "POST",
+                data: {
+                  action: "update_packages",
+                  packages: JSON.stringify(packageUpdates)
+                },
+                beforeSend: function() {
+                  console.log(
+                    "Đang gửi yêu cầu cập nhật kiện hàng...");
+                },
+                success: function(response) {
+                  console.log("Phản hồi từ server (kiện hàng):",
+                    response);
+                  if (response.success) {
+                    alert("Cập nhật thành công!");
+                  } else {
+                    alert("Cập nhật kiện hàng thất bại! Lỗi: " +
+                      response.data.message);
+                  }
+                },
+                error: function() {
+                  alert("Có lỗi xảy ra khi cập nhật kiện hàng.");
+                }
+              });
+            } else {
+              alert("Cập nhật đơn hàng thất bại! Lỗi: " + response.data.message);
+            }
+          },
+          error: function() {
+            alert("Có lỗi xảy ra khi cập nhật đơn hàng.");
+          }
+        });
       });
 
-      if (packageId) {
-        packageData.package_id = packageId;
-      }
-
-      packageUpdates.push(packageData);
-    });
-
-    // Send AJAX request for order updates
-    $.ajax({
-      url: '<?php echo admin_url("admin-ajax.php"); ?>',
-      type: "POST",
-      data: {
-        action: "update_order_admin",
-        updates: JSON.stringify(updates)
-      },
-      beforeSend: function() {
-        console.log("Đang gửi yêu cầu cập nhật đơn hàng...");
-      },
-      success: function(response) {
-        console.log("Phản hồi từ server (đơn hàng):", response);
-        if (response.success && packageUpdates.length > 0) {
-          // If there are package updates, send them as well  
-          // Send AJAX request for package updates
-          $.ajax({
-            url: '<?php echo admin_url("admin-ajax.php"); ?>',
-            type: "POST",
-            data: {
-              action: "update_packages",
-              packages: JSON.stringify(packageUpdates)
-            },
-            beforeSend: function() {
-              console.log(
-                "Đang gửi yêu cầu cập nhật kiện hàng...");
-            },
-            success: function(response) {
-              console.log("Phản hồi từ server (kiện hàng):",
-                response);
-              if (response.success) {
-                alert("Cập nhật thành công!");
-              } else {
-                alert("Cập nhật kiện hàng thất bại! Lỗi: " +
-                  response.data.message);
-              }
-            },
-            error: function() {
-              alert("Có lỗi xảy ra khi cập nhật kiện hàng.");
-            }
-          });
-        } else {
-          alert("Cập nhật đơn hàng thất bại! Lỗi: " + response.data.message);
-        }
-      },
-      error: function() {
-        alert("Có lỗi xảy ra khi cập nhật đơn hàng.");
-      }
-    });
-  });
-
-  // Add new row to the packages table
-  $("#addPackageRow").click(function() {
-    const newRow = `
+      // Add new row to the packages table
+      $("#addPackageRow").click(function() {
+        const newRow = `
           <tr>
             <td>#</td>
             <td contenteditable="true" class="editable-package" data-field="ma_kien"></td>
@@ -481,41 +481,41 @@ jQuery(document).ready(function($) {
             <td>--</td>
             <td><button class="button-secondary delete-package">Xóa</button></td>
           </tr>`;
-    $("#packagesTable tbody").append(newRow);
-  });
+        $("#packagesTable tbody").append(newRow);
+      });
 
-  // Handle deleting a package row
-  $(document).on("click", ".delete-package", function() {
-    const row = $(this).closest("tr");
-    const packageId = $(this).data("id");
+      // Handle deleting a package row
+      $(document).on("click", ".delete-package", function() {
+        const row = $(this).closest("tr");
+        const packageId = $(this).data("id");
 
-    if (packageId) {
-      // Send AJAX request to delete the package
-      $.ajax({
-        url: '<?php echo admin_url("admin-ajax.php"); ?>',
-        type: "POST",
-        data: {
-          action: "delete_package",
-          package_id: packageId
-        },
-        success: function(response) {
-          if (response.success) {
-            row.remove();
-            alert("Xóa thành công!");
-          } else {
-            alert("Xóa thất bại! Lỗi: " + response.data.message);
-          }
-        },
-        error: function() {
-          alert("Có lỗi xảy ra khi xóa.");
+        if (packageId) {
+          // Send AJAX request to delete the package
+          $.ajax({
+            url: '<?php echo admin_url("admin-ajax.php"); ?>',
+            type: "POST",
+            data: {
+              action: "delete_package",
+              package_id: packageId
+            },
+            success: function(response) {
+              if (response.success) {
+                row.remove();
+                alert("Xóa thành công!");
+              } else {
+                alert("Xóa thất bại! Lỗi: " + response.data.message);
+              }
+            },
+            error: function() {
+              alert("Có lỗi xảy ra khi xóa.");
+            }
+          });
+        } else {
+          row.remove(); // Remove unsaved row
         }
       });
-    } else {
-      row.remove(); // Remove unsaved row
-    }
-  });
-});
-</script>
+    });
+  </script>
 <?php
 }
 ?>
