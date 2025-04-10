@@ -181,7 +181,7 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                                 style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span>
                                         </div>
                                         <div class="d-flex justify-content-between">Tiền hàng còn thiếu:<span
-                                                style="color: #ff0000"><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></span>
+                                                style="color: #ff0000"><?php echo format_price_vnd(max(0, $total - $order->da_thanh_toan)) ?></span>
                                         </div>
                                         <div class="d-flex justify-content-between">Tổng
                                             hoàn:<span><?php echo format_price_vnd($order->da_hoan) ?></span></div>
