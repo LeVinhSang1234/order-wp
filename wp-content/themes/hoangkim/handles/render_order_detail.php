@@ -480,7 +480,9 @@ function render_order_detail()
             <td>#</td>
             <td contenteditable="true" class="editable-package" data-field="ma_kien"></td>
             <td contenteditable="true" class="editable-package" data-field="can_nang"></td>
+            <td >--</td>
             <td contenteditable="true" class="editable-package" data-field="the_tich"></td>
+            <td contenteditable="true" class="editable-package" data-field="tien_the_tich"></td>
             <td contenteditable="true" class="editable-package" data-field="trang_thai_kien"></td>
             <td>--</td>
             <td><button class="button-secondary delete-package">Xóa</button></td>
