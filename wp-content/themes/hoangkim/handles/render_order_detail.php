@@ -242,6 +242,7 @@ function render_order_detail()
             <th>STT</th>
             <th>Mã kiện</th>
             <th>Cân nặng</th>
+            <th>Giá tiền theo cân nặng riêng</th>
             <th>Tiền cân nặng</th>
             <th>Thể tích</th>
             <th>Tiền Thể tích</th>
@@ -254,11 +255,12 @@ function render_order_detail()
 
   foreach ($packages as $index => $package) {
     $price_per_kg = get_option('price_per_kg', 0.0);
-    $tien_can_nang = floatval($package->can_nang) * $price_per_kg;
+    $tien_can_nang = floatval($package->can_nang) * $package->rate_rieng ?? $price_per_kg;
     echo "<tr data-id='{$package->id}'>
             <td>" . ($index + 1) . "</td> <!-- Render serial number dynamically -->
             <td contenteditable='true' class='editable-package' data-field='ma_kien'>{$package->ma_kien}</td>
             <td contenteditable='true' class='editable-package' data-field='can_nang'>{$package->can_nang}</td>
+             <td contenteditable='true' class='editable-package' data-field='rate_rieng'>{$package->rate_rieng}</td>
             <td >" . format_price_vnd(($tien_can_nang) ?? 0) . "</td>
             <td contenteditable='true' class='editable-package' data-field='the_tich'>{$package->the_tich}</td>
             <td contenteditable='true' class='editable-package' data-field='tien_the_tich'>{$package->tien_the_tich}</td>
@@ -480,6 +482,7 @@ function render_order_detail()
             <td>#</td>
             <td contenteditable="true" class="editable-package" data-field="ma_kien"></td>
             <td contenteditable="true" class="editable-package" data-field="can_nang"></td>
+            <td contenteditable="true" class="editable-package" data-field="rate_rieng"></td>
             <td >--</td>
             <td contenteditable="true" class="editable-package" data-field="the_tich"></td>
             <td contenteditable="true" class="editable-package" data-field="tien_the_tich"></td>

@@ -22,12 +22,33 @@ function update_order_admin()
 
   // Define allowed fields for the orders table
   $allowed_fields = [
-    'user_id', 'cart_ids', 'status', 'ho_ten', 'email', 'phone', 'address', 
-    'van_don', 'thuong_hieu', 'so_kien_hang', 'da_thanh_toan', 'da_hoan', 
-    'exchange_rate', 'phi_mua_hang', 'phi_ship_noi_dia', 'phi_kiem_dem', 
-    'phi_gia_co', 'chiet_khau_dich_vu', 'ngay_dat_coc', 'da_mua_hang', 
-    'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang',
-    'is_gia_co', 'is_kiem_dem_hang', 'is_bao_hiem', 'da_coc',
+    'user_id',
+    'cart_ids',
+    'status',
+    'ho_ten',
+    'email',
+    'phone',
+    'address',
+    'van_don',
+    'thuong_hieu',
+    'so_kien_hang',
+    'da_thanh_toan',
+    'da_hoan',
+    'exchange_rate',
+    'phi_mua_hang',
+    'phi_ship_noi_dia',
+    'phi_kiem_dem',
+    'phi_gia_co',
+    'chiet_khau_dich_vu',
+    'ngay_dat_coc',
+    'da_mua_hang',
+    'ngay_nhap_kho_tq',
+    'ngay_nhap_kho_vn',
+    'ngay_nhan_hang',
+    'is_gia_co',
+    'is_kiem_dem_hang',
+    'is_bao_hiem',
+    'da_coc',
   ];
 
   $success_count = 0;
@@ -149,7 +170,7 @@ function update_packages()
     exit;
   }
 
-  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id'];
+  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id', 'rate_rieng'];
   $success_count = 0;
   $errors = [];
 
@@ -199,7 +220,7 @@ function update_packages()
       $total_weight = 0.5;
     }
     $price_per_kg = get_option('price_per_kg', 0.0);
-    $shipping_cost = $total_weight * $price_per_kg;
+    $shipping_cost = $total_weight *  $package->rate_rieng ?? $price_per_kg;
 
     $wpdb->update(
       "{$wpdb->prefix}orders",
