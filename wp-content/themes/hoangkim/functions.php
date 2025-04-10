@@ -95,7 +95,7 @@ function format_price_vnd($price)
 
 function format_weight($weight)
 {
-    return number_format($weight, 0, ',', '.') . ' kg';
+    return $weight . ' kg';
 }
 
 function format_khoi($khoi)
