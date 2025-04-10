@@ -170,7 +170,7 @@ function update_packages()
     exit;
   }
 
-  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id', 'rate_rieng'];
+  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id', 'rate_rieng', 'tien_van_chuyen'];
   $success_count = 0;
   $errors = [];
 
@@ -219,8 +219,19 @@ function update_packages()
     if ($total_weight < 0.5) {
       $total_weight = 0.5;
     }
+
     $price_per_kg = get_option('price_per_kg', 0.0);
-    $shipping_cost = $total_weight *  $package->rate_rieng ?? $price_per_kg;
+
+    if ($package_id) {
+      $rate_rieng = $wpdb->get_var($wpdb->prepare(
+        "SELECT rate_rieng FROM {$wpdb->prefix}packages WHERE id = %d",
+        $package_id
+      ));
+      $rate = $rate_rieng !== null ? floatval($rate_rieng) : floatval($price_per_kg);
+    } else {
+      $rate = floatval($price_per_kg);
+    }
+    $shipping_cost = $total_weight *  $rate;
 
     $wpdb->update(
       "{$wpdb->prefix}orders",

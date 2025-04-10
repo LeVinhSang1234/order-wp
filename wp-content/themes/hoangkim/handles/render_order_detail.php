@@ -456,6 +456,7 @@ function render_order_detail()
                     response);
                   if (response.success) {
                     alert("Cập nhật thành công!");
+                    window.location.reload()
                   } else {
                     alert("Cập nhật kiện hàng thất bại! Lỗi: " +
                       response.data.message);
