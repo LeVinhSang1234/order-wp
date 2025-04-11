@@ -2,7 +2,6 @@
 
 function register_order_menu()
 {
-  add_menu_page("Quản lý đơn hàng", "Đơn hàng", "manage_options", "order_list", "render_order_page");
   add_submenu_page(null, "Chi tiết đơn hàng", "Chi tiết đơn hàng", "manage_options", "order_detail", "render_order_detail");
 }
 add_action("admin_menu", "register_order_menu");
