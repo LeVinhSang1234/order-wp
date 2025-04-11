@@ -67,6 +67,7 @@ if (is_admin()) {
     require_once get_template_directory() . '/handles/render_order_detail.php';
     require_once get_template_directory() . '/handles/render_transaction.php';
     require_once get_template_directory() . '/handles/render_order_support.php';
+    require_once get_template_directory() . '/handles/nap_tien_ho.php';
 }
 
 if (!is_admin()) {

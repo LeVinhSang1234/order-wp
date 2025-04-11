@@ -26,6 +26,16 @@ function add_custom_admin_menu()
     26
   );
 
+  add_menu_page(
+    'Nạp tiền',
+    'Nạp tiền',
+    'manage_options',
+    'nap-tien-ho',
+    'render_nap_tien_ho_page',
+    'dashicons-money-alt',
+    27
+  );
+
   add_submenu_page(
     'custom_orders',
     'Thêm đơn hàng',
