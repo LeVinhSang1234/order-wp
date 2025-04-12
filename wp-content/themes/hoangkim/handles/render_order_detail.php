@@ -466,7 +466,7 @@ function render_order_detail()
                 }
               });
             } else {
-              alert("Cập nhật đơn hàng thất bại! Lỗi: " + response?.data?.message);
+              alert(response?.data?.message);
             }
           },
           error: function() {
