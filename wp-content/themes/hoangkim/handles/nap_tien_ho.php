@@ -8,7 +8,7 @@ function render_nap_tien_ho_page()
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['amount'])) {
         $user_id = intval($_POST['user_id']);
         $amount = floatval($_POST['amount']);
-        $note = sanitize_text_field($_POST['note']);
+        $note = 'Nạp tiền'; // Ghi chú mặc định
 
         // Lấy số dư hiện tại của người dùng
         $current_wallet = get_user_meta($user_id, 'user_wallet', true);
@@ -45,12 +45,12 @@ function render_nap_tien_ho_page()
     echo '<form method="post" action="">';
     echo '<table class="form-table">';
     echo '<tr>';
-    echo '<th><label for="user_id">ID Người Dùng</label></th>';
+    echo '<th><label for="user_id">Select người dùng</label></th>';
     echo '<td>';
     echo '<select name="user_id" id="user_id" required>';
     echo '<option value="">-- Chọn người dùng --</option>';
     foreach ($users as $user) {
-        echo '<option value="' . esc_attr($user->ID) . '">' . esc_html($user->ID . ' - ' . $user->user_email) . '</option>';
+        echo '<option value="' . esc_attr($user->ID) . '">' . esc_html('MS' . $user->ID) . '</option>';
     }
     echo '</select>';
     echo '</td>';
@@ -58,10 +58,6 @@ function render_nap_tien_ho_page()
     echo '<tr>';
     echo '<th><label for="amount">Số Tiền</label></th>';
     echo '<td><input type="number" name="amount" id="amount" required></td>';
-    echo '</tr>';
-    echo '<tr>';
-    echo '<th><label for="note">Ghi Chú</label></th>';
-    echo '<td><textarea name="note" id="note" rows="4"></textarea></td>';
     echo '</tr>';
     echo '</table>';
     echo '<p class="submit"><button type="submit" class="button button-primary">Nạp Tiền</button></p>';
