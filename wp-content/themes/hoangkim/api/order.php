@@ -688,7 +688,7 @@ function update_order_status()
             [
                 'order_id' => $order_id,
                 'loai' => 'Đặt cọc',
-                'hinh_thuc' => 'Chuyển khoản',
+                'hinh_thuc' => 'Thanh toán trước 80% đơn hàng',
                 'so_tien' => $deposit,
                 'user_id' => $user_id,
                 'nguoi_thuc_hien' => $user_id, // Add current user as the executor

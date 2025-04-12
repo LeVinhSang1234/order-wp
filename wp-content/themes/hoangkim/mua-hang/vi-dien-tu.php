@@ -212,7 +212,7 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
             <?php foreach ($transactions as $key => $transaction) { ?>
               <tr>
                 <td><?php echo $key + 1; ?></td>
-                <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Cọc đơn hàng'; ?></td>
+                <td><?php echo $transaction->source === 'wallet' ? 'Nạp tiền' : 'Thanh toán đơn hàng'; ?></td>
                 <td>
                   <?php if ($transaction->source === 'order') { ?>
                     MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($transaction->order_id, 2, '0', STR_PAD_LEFT); ?>
@@ -225,15 +225,15 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                 <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
                 <td>
                   <?php 
-                  if (!empty($transaction->nguoi_thuc_hien)) {
+                  if (!empty($transaction->nguoi_thuc_hien) ) {
                     $user_info = get_userdata($transaction->nguoi_thuc_hien);
                     if ($user_info) {
-                      echo in_array('administrator', $user_info->roles) ? 'Administrator' : $user_info->user_email;
+                      echo in_array('administrator', $user_info->roles) ? 'Administrator' : "MS" . str_pad($user_id, 2, '0', STR_PAD_LEFT);
                     } else {
-                      echo 'N/A';
+                      echo '';
                     }
                   } else {
-                    echo 'N/A';
+                    echo  "MS" . str_pad($user_id, 2, '0', STR_PAD_LEFT);
                   }
                   ?>
                 </td>
@@ -326,4 +326,4 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
     });
   })
 </script>
-``` 
+```

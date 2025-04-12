@@ -162,7 +162,7 @@ function update_order_admin()
               [
                   'order_id' => $order_id,
                   'loai' => 'Đặt cọc',
-                  'hinh_thuc' => 'Chuyển khoản',
+                  'hinh_thuc' => 'Giao dịch tự xác minh thành công khi thanh toán thêm',
                   'so_tien' => $remaining_amount,
                   "user_id" => $order->user_id,
               ],
