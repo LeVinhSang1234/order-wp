@@ -204,6 +204,7 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
               <th>Mã đơn hàng</th>
               <th>Số tiền</th>
               <th>Ngày giao dịch</th>
+              <th>Người tạo</th>
               <th>Ghi chú</th>
             </tr>
           </thead>
@@ -222,6 +223,16 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                   <?php echo format_price_vnd($transaction->so_tien); ?>
                 </td>
                 <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
+                <td>
+                  <?php 
+                  if (!empty($transaction->nguoi_thuc_hien)) {
+                    $user_info = get_userdata($transaction->nguoi_thuc_hien);
+                    echo $user_info ? $user_info->user_email : 'N/A';
+                  } else {
+                    echo 'N/A';
+                  }
+                  ?>
+                </td>
                 <td>
                   <?php echo $transaction->source === 'wallet' ? $transaction->ghi_chu : $transaction->hinh_thuc; ?>
                 </td>

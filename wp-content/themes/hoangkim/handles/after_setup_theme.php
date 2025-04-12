@@ -230,7 +230,6 @@ function update_orders_table()
     }
 }
 
-update_orders_table();
 
 function update_cart_table()
 {
@@ -250,7 +249,6 @@ function update_cart_table()
     }
 }
 
-update_cart_table();
 
 function create_orders_support()
 {
@@ -294,6 +292,7 @@ function update_history_orders_transaction()
 
     $columns_to_add = [
         'user_id' => " BIGINT(20) UNSIGNED NOT NULL",
+        "nguoi_thuc_hien" => "VARCHAR(255) NULL",
     ];
 
     foreach ($columns_to_add as $column => $definition) {
@@ -303,8 +302,6 @@ function update_history_orders_transaction()
         }
     }
 }
-
-update_history_orders_transaction();
 
 function create_cart_table()
 {
@@ -364,6 +361,23 @@ function create_wallet_transaction()
     $wpdb->query($sql);
 }
 
+function update_wallet_transaction()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'wallet_transaction';
+
+    $columns_to_add = [
+        "nguoi_thuc_hien" => "VARCHAR(255) NULL",
+    ];
+
+    foreach ($columns_to_add as $column => $definition) {
+        $exists = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column'");
+        if (empty($exists)) {
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column $definition");
+        }
+    }
+}
+
 function create_notification()
 {
     global $wpdb;
@@ -418,8 +432,6 @@ function update_package_table()
     }
 }
 
-update_package_table();
-
 
 function after_setup_theme()
 {
@@ -432,6 +444,11 @@ function after_setup_theme()
     create_notification();
     create_history_orders_transaction();
     create_package_table();
+    update_orders_table();
+    update_cart_table();
+    update_history_orders_transaction();
+    update_wallet_transaction();
+    update_package_table();
 }
 
 add_action('after_setup_theme', 'after_setup_theme');

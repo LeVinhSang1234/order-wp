@@ -690,9 +690,10 @@ function update_order_status()
                 'loai' => 'Đặt cọc',
                 'hinh_thuc' => 'Chuyển khoản',
                 'so_tien' => $deposit,
-                "user_id" => $user_id,
+                'user_id' => $user_id,
+                'nguoi_thuc_hien' => $user_id, // Add current user as the executor
             ],
-            ['%d', '%s', '%s', '%f', '%d']
+            ['%d', '%s', '%s', '%f', '%d', '%d']
         );
     }
 

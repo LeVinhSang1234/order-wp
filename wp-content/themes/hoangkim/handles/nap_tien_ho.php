@@ -22,6 +22,7 @@ function render_nap_tien_ho_page()
 
         // Thêm giao dịch vào bảng `wallet_transaction`
         $table_name = $wpdb->prefix . 'wallet_transaction';
+        $current_user_id = get_current_user_id(); // Lấy ID người thực hiện
         $wpdb->insert($table_name, [
             'user_id' => $user_id,
             'so_tien' => $amount,
@@ -29,6 +30,7 @@ function render_nap_tien_ho_page()
             'ghi_chu' => $note,
             'hinh_anh' => null, // Có thể cập nhật sau nếu cần
             'da_xu_ly' => 1, // Đã xử lý
+            'nguoi_thuc_hien' => $current_user_id, // Thêm người thực hiện
         ]);
 
         // Hiển thị thông báo thành công
