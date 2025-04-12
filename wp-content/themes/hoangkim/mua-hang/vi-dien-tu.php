@@ -227,7 +227,11 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                   <?php 
                   if (!empty($transaction->nguoi_thuc_hien)) {
                     $user_info = get_userdata($transaction->nguoi_thuc_hien);
-                    echo $user_info ? $user_info->user_email : 'N/A';
+                    if ($user_info) {
+                      echo in_array('administrator', $user_info->roles) ? 'Administrator' : $user_info->user_email;
+                    } else {
+                      echo 'N/A';
+                    }
                   } else {
                     echo 'N/A';
                   }
@@ -322,3 +326,4 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
     });
   })
 </script>
+``` 

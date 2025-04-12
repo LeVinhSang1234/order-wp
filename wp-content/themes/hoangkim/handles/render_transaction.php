@@ -23,7 +23,12 @@ function cap_nhat_trang_thai()
 
         $table = $wpdb->prefix . 'wallet_transaction';
 
-        $result = $wpdb->update($table, ['da_xu_ly' => 1], ['id' => $id]);
+        $current_user_id = get_current_user_id(); // Lấy ID người thực hiện
+        $result = $wpdb->update(
+            $table,
+            ['da_xu_ly' => 1, 'nguoi_thuc_hien' => $current_user_id], // Thêm người thực hiện
+            ['id' => $id]
+        );
 
         if ($result !== false) {
             update_user_meta($user_id, 'user_wallet', $new_wallet);
