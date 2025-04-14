@@ -20,6 +20,7 @@
 .areoi-background__image {
   background-size: cover;
   background-position: center;
+  background-image: url('/wp-content/uploads/2025/02/bg_login.jpg') !important;
 }
 .areoi-background .col {
   overflow: hidden;

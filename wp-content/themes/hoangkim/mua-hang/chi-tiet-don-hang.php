@@ -245,9 +245,9 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                   $totalPrice += ($cart->price * $cart->quantity);
 
                   $percent = 0;
-                  if ($totalPrice < 5000000) {
+                  if ($totalPrice * $exchange_rate < 5000000) {
                     $percent = 3;
-                  } elseif ($totalPrice >= 5000000 && $totalPrice <= 50000000) {
+                  } elseif ($totalPrice * $exchange_rate >= 5000000 && $totalPrice * $exchange_rate <= 50000000) {
                     $percent = 2;
                   } else {
                     $percent = 1.5; // 1.5%
