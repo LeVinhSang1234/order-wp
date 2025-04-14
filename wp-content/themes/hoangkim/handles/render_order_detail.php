@@ -68,6 +68,7 @@ function render_order_detail()
     "brand" => "Tên hàng hóa",
     'created_at' => 'Ngày tạo',
     "da_coc" => "Đã đặt cọc",
+    "percent_coc_truoc" => "Phần trăm đặt cọc trước",
   ];
 
   $editable_fields = [
@@ -80,6 +81,7 @@ function render_order_detail()
     "tien_van_chuyen",
     "kg_tinh_phi",
     "da_coc",
+    "percent_coc_truoc",
   ];
 
   $hidden_fields = [

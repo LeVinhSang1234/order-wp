@@ -220,6 +220,7 @@ function update_orders_table()
         'tien_van_chuyen' => "FLOAT(10,2) DEFAULT NULL",
         'kg_tinh_phi' => "FLOAT(10,2) DEFAULT NULL",
         "da_coc" => "TINYINT DEFAULT 0",
+        "percent_coc_truoc" => "FLOAT(10,2) DEFAULT 80",
     ];
 
     foreach ($columns_to_add as $column => $definition) {

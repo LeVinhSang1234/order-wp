@@ -323,8 +323,8 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
               (<?php echo $order->phi_gia_co ?? 0 ?>¥)</strong>
           </div>
           <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
-            Số tiền phải đặt cọc (80%):
-            <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * 0.8) ?></strong>
+            Số tiền phải đặt cọc (<?php echo floatval($order->percent_coc_truoc ?? 80) . '%'; ?>):
+            <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * ($order->percent_coc_truoc / 100)) ?></strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
             <strong>Tổng tạm tính (1+2+3+4+5):</strong>

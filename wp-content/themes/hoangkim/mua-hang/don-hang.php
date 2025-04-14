@@ -173,9 +173,9 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                                     <td style="font-size: 12px; width: 340px;">
                                         <div class="d-flex justify-content-between">Tổng tiền
                                             hàng:<strong><?php echo format_price_vnd($total) ?></strong></div>
-                                        <div class="d-flex justify-content-between" data-coc="<?php echo $total * 0.8; ?>">
+                                        <div class="d-flex justify-content-between" data-coc="<?php echo $total * ($order->percent_coc_truoc / 100); ?>">
                                             Tiền phải cọc:<span
-                                                style="color: orange"><?php echo format_price_vnd($total * 0.8) ?></span>
+                                                style="color: orange"><?php echo format_price_vnd($total * ($order->percent_coc_truoc / 100)) ?></span>
                                         </div>
                                         <div class="d-flex justify-content-between">Tiền thanh toán:<span
                                                 style="color: green"><?php echo format_price_vnd($order->da_thanh_toan) ?></span>

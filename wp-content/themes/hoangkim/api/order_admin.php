@@ -49,6 +49,7 @@ function update_order_admin()
     'is_kiem_dem_hang',
     'is_bao_hiem',
     'da_coc',
+    'percent_coc_truoc', // Add the new field
   ];
 
   $success_count = 0;
