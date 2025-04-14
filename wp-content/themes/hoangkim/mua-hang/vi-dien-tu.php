@@ -218,8 +218,8 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                     MS<?php echo str_pad($user_id, 2, '0', STR_PAD_LEFT); ?>-<?php echo str_pad($transaction->order_id, 2, '0', STR_PAD_LEFT); ?>
                   <?php } ?>
                 </td>
-                <td style="color: <?php echo $transaction->source === 'wallet' ? 'green' : 'red'; ?>;">
-                  <?php echo $transaction->source === 'wallet' ? '+' : '-'; ?>
+                <td style="color: <?php echo ($transaction->source === 'wallet' || $transaction->loai === 'Hoàn tiền') ? 'green' : 'red'; ?>;">
+                  <?php echo ($transaction->source === 'wallet' || $transaction->loai === 'Hoàn tiền') ? '+' : '-'; ?>
                   <?php echo format_price_vnd($transaction->so_tien); ?>
                 </td>
                 <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>

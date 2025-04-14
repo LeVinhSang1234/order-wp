@@ -290,6 +290,7 @@ function render_order_detail()
       <option value='5' " . ($order->status == 5 ? "selected" : "") . ">Nhập kho TQ</option>
       <option value='6' " . ($order->status == 6 ? " selected" : "") . ">Nhập kho VN</option>
       <option value='7' " . ($order->status == 7 ? "selected" : "") . ">Khách nhận hàng</option>
+       <option value='8' " . ($order->status == 8 ? "selected" : "") . ">Hủy đơn</option>
     </select>
 </div>";
   echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
