@@ -278,7 +278,7 @@ function render_order_detail()
 
   echo "</tbody>
 </table>";
-  echo "<button id='addPackageRow' class='button'>Thêm hàng</button>";
+  echo "<button style='margin-bottom: 16px' id='addPackageRow' class='button'>Thêm hàng</button>";
 
   echo "<div class='order-item'>
     <strong>Trạng thái:</strong>
@@ -297,7 +297,7 @@ function render_order_detail()
        <option value='8' " . ($order->status == 8 ? "selected" : "") . ">Hủy đơn</option>
     </select>
 </div>";
-  echo "<button id='updateOrder' class='button-primary'>Cập nhật</button>";
+  echo "<button id='updateOrder' class='button-primary' style='margin-right: 16px;'>Cập nhật</button>";
   echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
   echo "</div>";
 
