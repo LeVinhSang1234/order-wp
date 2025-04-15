@@ -50,7 +50,7 @@ function render_nap_tien_ho_page()
     echo '<select name="user_id" id="user_id" required>';
     echo '<option value="">-- Chọn người dùng --</option>';
     foreach ($users as $user) {
-        echo '<option value="' . esc_attr($user->ID) . '">' . esc_html('MS' . $user->ID) . '</option>';
+        echo '<option value="' . esc_attr($user->ID) . '">' . esc_html('MS' . ($user->ID < 10 ? '0' . $user->ID : $user->ID)) . '</option>';
     }
     echo '</select>';
     echo '</td>';
