@@ -82,6 +82,7 @@ function render_order_detail()
     "kg_tinh_phi",
     "da_coc",
     "percent_coc_truoc",
+    "created_at",
   ];
 
   $hidden_fields = [
@@ -225,7 +226,10 @@ function render_order_detail()
                               value='{$cart->quantity}' />
                       </td>
                       <td>
-                          {$cart->price}¥
+                          <input " . ($order->status > 1 ? "disabled" : "") . " 
+                              data-type='price-cart' 
+                              data-item='{$cart->id}' 
+                              value='{$cart->price}' />
                       </td>
                       <td>
                           " . format_price_vnd(($totalPrice * $exchange_rate) ?? 0) . "
@@ -370,6 +374,14 @@ function render_order_detail()
           });
         });
 
+        $("input[data-type='price-cart']").each(function() {
+          updates.push({
+            cart_id: $(this).data("item"),
+            field: "price",
+            value: $(this).val().trim() || null
+          });
+        });
+
         $("input[type='checkbox']").each(function() {
           updates.push({
             order_id: $(this).data("id"),
@@ -470,6 +482,7 @@ function render_order_detail()
               });
             } else {
               alert(response?.data?.message);
+              window.location.reload();
             }
           },
           error: function() {
