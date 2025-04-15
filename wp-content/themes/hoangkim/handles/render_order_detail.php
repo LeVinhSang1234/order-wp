@@ -100,7 +100,10 @@ function render_order_detail()
     'kg_tinh_phi',
     "user_id",
     "cart_ids",
-    "type"
+    "type",
+    "link_san_pham",
+    "link_hinh_anh",
+    "mau_sac_kich_thuoc"
   ];
 
   // Hide specific fields if type = 1
