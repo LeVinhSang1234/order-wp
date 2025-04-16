@@ -442,6 +442,9 @@ function render_order_detail()
         });
 
         // Send AJAX request for order updates
+
+        console.log("updates", updates);
+
         $.ajax({
           url: '<?php echo admin_url("admin-ajax.php"); ?>',
           type: "POST",

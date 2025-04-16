@@ -69,11 +69,15 @@ function update_order_admin()
     // Check if the update is for the cart table
     if (in_array($field, $allowed_cart_fields)) {
       $cart_id = intval($update['cart_id']); // Ensure `cart_id` is provided in the update
+
+      // Use '%f' for price to avoid rounding
+      $format = $field === 'price' ? ['%f'] : ['%d'];
+
       $updated = $wpdb->update(
         "{$wpdb->prefix}cart",
         [$field => $value],
         ['id' => $cart_id],
-        ['%d'],
+        $format,
         ['%d']
       );
 
