@@ -43,6 +43,7 @@ function update_order_admin()
     'ngay_dat_coc',
     'da_mua_hang',
     'ngay_nhap_kho_tq',
+    "ngay_ncc_phat_hang",
     'ngay_nhap_kho_vn',
     'ngay_nhan_hang',
     'is_gia_co',
@@ -96,7 +97,7 @@ function update_order_admin()
     }
 
     // Skip updating specific fields if they already have a value
-    if (in_array($field, ['ngay_dat_coc', 'da_mua_hang', 'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang'])) {
+    if (in_array($field, ['ngay_dat_coc', 'da_mua_hang', 'ngay_nhap_kho_tq', 'ngay_nhap_kho_vn', 'ngay_nhan_hang', "ngay_ncc_phat_hang"])) {
       $existing_value = $wpdb->get_var($wpdb->prepare(
         "SELECT $field FROM {$wpdb->prefix}orders WHERE id = %d",
         $order_id

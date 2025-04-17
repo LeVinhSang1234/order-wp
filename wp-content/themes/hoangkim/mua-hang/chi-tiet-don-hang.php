@@ -35,6 +35,7 @@ $query = "SELECT text,is_system FROM {$wpdb->prefix}chat WHERE order_id = $order
 $chats = $wpdb->get_results($query);
 $create_at = DateTime::createFromFormat('Y-m-d H:i:s', $order->created_at)->format('d/m/Y H:i');
 $ngay_dat_coc = trim($order->ngay_dat_coc) ? DateTime::createFromFormat('Y-m-d H:i:s', $order->ngay_dat_coc)->format('d/m/Y H:i') : "...";
+$ngay_ncc_phat_hang = trim($order->ngay_ncc_phat_hang) ? DateTime::createFromFormat('Y-m-d H:i:s', $order->ngay_ncc_phat_hang)->format('d/m/Y H:i') : "...";
 $da_mua_hang =  $order->da_mua_hang ? DateTime::createFromFormat('Y-m-d H:i:s', $order->da_mua_hang)->format('d/m/Y H:i') : "...";
 $ngay_nhap_kho_tq = $order->ngay_nhap_kho_tq ? DateTime::createFromFormat('Y-m-d H:i:s', $order->ngay_nhap_kho_tq)->format('d/m/Y H:i') : "...";
 $ngay_nhap_kho_vn =  $order->ngay_nhap_kho_vn ? DateTime::createFromFormat('Y-m-d H:i:s', $order->ngay_nhap_kho_vn)->format('d/m/Y H:i') : "...";
@@ -160,7 +161,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                           <li class="ng-scope d-flex gap-3">
                             <span class="text-transform ng-binding fw-bold">NCC phát
                               hàng:</span>
-                            <p><?php echo $ngay_dat_coc ?></p>
+                            <p><?php echo $ngay_ncc_phat_hang ?></p>
                           </li>
                         </ul>
                       </div>
