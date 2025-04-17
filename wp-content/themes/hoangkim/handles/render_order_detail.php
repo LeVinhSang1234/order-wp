@@ -394,9 +394,8 @@ function render_order_detail()
         });
 
         const statusFieldMap = {
-          2: "ngay_dat_coc",
           3: "da_mua_hang",
-          4: "ngay_nhap_kho_tq",
+          4: "ngay_dat_coc",
           5: "ngay_nhap_kho_tq",
           6: "ngay_nhap_kho_vn",
           7: "ngay_nhan_hang"
