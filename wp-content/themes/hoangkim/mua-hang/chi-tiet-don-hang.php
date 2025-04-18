@@ -121,14 +121,6 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                             </tr>
                           <?php } ?>
                         <?php } ?>
-                        <tr>
-                          <td colspan="3">Tổng kg tính phí:
-                            <?php echo format_weight($total_kg_tinh_phi) ?>
-                          </td>
-                          <td colspan="3">Tổng tiền vận chuyển (tính riêng khi xuất hàng):
-                            <?php echo format_price_vnd($order->tien_van_chuyen ?? 0) ?>
-                          </td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -257,6 +249,7 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                   } else {
                     $percent = 1.5; // 1.5%
                   }
+                  $phi_dich_vu = ($totalPrice * $exchange_rate) * ($percent / 100);
                 ?>
                   <tr>
                     <td>
@@ -311,8 +304,8 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
               (<?php echo $totalPrice ?? 0 ?>¥)</strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (2) Phí dịch vụ(<?php echo $percent ?>%):
-            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?>
+            (2) Phí dịch vụ (<?php echo $percent ?>%):
+            <strong><?php echo format_price_vnd($phi_dich_vu ?? 0) ?>
             </strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
@@ -320,35 +313,47 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
             <strong><?php echo format_price_vnd($order->phi_ship_noi_dia * $exchange_rate ?? 0) ?>
               (<?php echo $order->phi_ship_noi_dia ?? 0 ?>¥)</strong>
           </div>
+          <?php if ($total_kg_tinh_phi > 0) { ?>
+            <div class="divider d-flex justify-content-between align-items-center">
+              (4) Phí ship Trung - Việt (<?php echo $total_kg_tinh_phi; ?>kg):
+              <strong><?php echo format_price_vnd($order->tien_van_chuyen ?? 0) ?></strong>
+            </div>
+          <?php } ?>
           <div class="divider d-flex justify-content-between align-items-center">
-            (4) Phí kiểm đếm:
+            (5) Phí kiểm đếm:
             <strong><?php echo format_price_vnd($order->phi_kiem_dem ?? 0) ?></strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            (5) Phí gia cố:
+            (6) Phí gia cố:
             <strong><?php echo format_price_vnd($order->phi_gia_co * $exchange_rate ?? 0) ?>
               (<?php echo $order->phi_gia_co ?? 0 ?>¥)</strong>
           </div>
+          <div class="divider d-flex justify-content-between align-items-center">
+            (7) Chiết khấu dịch vụ:
+            <strong><?php echo format_price_vnd($order->chiet_khau_dich_vu * $exchange_rate ?? 0) ?>
+              (<?php echo $order->chiet_khau_dich_vu ?? 0 ?>¥)
+            </strong>
+          </div>
           <div style="color: orange" class="divider d-flex justify-content-between align-items-center">
-            Số tiền phải đặt cọc (<?php echo floatval($order->percent_coc_truoc ?? 80) . '%'; ?>):
+            (8) Số tiền phải đặt cọc (<?php echo floatval($order->percent_coc_truoc ?? 80) . '%'; ?>):
             <strong><?php echo format_price_vnd(($totalPrice * $exchange_rate) * ($order->percent_coc_truoc / 100)) ?></strong>
           </div>
           <div class="divider d-flex justify-content-between align-items-center">
-            <strong>Tổng tạm tính (1+2+3+4+5):</strong>
+            <strong>(9) Tổng (1+2+3+4+5+6-7):</strong>
             <strong>
               <?php
               $total = $totalPrice * $exchange_rate;
               $total += $order->phi_ship_noi_dia * $exchange_rate;
               $total += $order->phi_kiem_dem;
               $total += $order->phi_gia_co * $exchange_rate;
-              $total += $order->chiet_khau_dich_vu * $exchange_rate;
+              $total += $phi_dich_vu;
+              if ($total_kg_tinh_phi > 0) {
+                $total += $order->tien_van_chuyen ?? 0;
+              }
+              $total -= $order->chiet_khau_dich_vu * $exchange_rate;
               echo format_price_vnd($total);
               ?>
             </strong>
-          </div>
-          <div style="color: green" class="divider d-flex justify-content-between align-items-center">
-            Đã thanh toán:
-            <strong><?php echo format_price_vnd($order->da_thanh_toan) ?></strong>
           </div>
           <div style="color: red" class="divider d-flex justify-content-between align-items-center">
             Còn thiếu:

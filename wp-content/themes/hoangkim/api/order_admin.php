@@ -135,11 +135,23 @@ function update_order_admin()
             $exchange_rate = floatval(get_option('exchange_rate', 1.0));
           }
           $total = $totalPrice * $exchange_rate;
+
+          $percent = 0;
+          if ($total < 5000000) {
+            $percent = 3;
+          } elseif ($total >= 5000000 && $total <= 50000000) {
+            $percent = 2;
+          } else {
+            $percent = 1.5; // 1.5%
+          }
+          $phi_dich_vu = $total * ($percent / 100);
+
           $total += $order->phi_ship_noi_dia * $exchange_rate;
           $total += $order->phi_kiem_dem;
           $total += $order->phi_gia_co * $exchange_rate;
-          $total += $order->chiet_khau_dich_vu * $exchange_rate;
-
+          $total += $order->tien_van_chuyen ?? 0;
+          $total +=  $phi_dich_vu ?? 0;
+          $total -= $order->chiet_khau_dich_vu * $exchange_rate;
           $remaining_amount = $total - intval($order->da_thanh_toan);
 
           // Get user's current wallet balance

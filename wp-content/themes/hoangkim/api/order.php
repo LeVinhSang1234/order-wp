@@ -176,7 +176,6 @@ function update_cart_quantity()
 
     global $wpdb;
     $cart_table = $wpdb->prefix . 'cart';
-    $order_table = $wpdb->prefix . 'orders';
     $user_id = get_current_user_id();
 
     if (isset($_POST['cart_id'], $_POST['quantity'])) {
@@ -184,8 +183,6 @@ function update_cart_quantity()
         $quantity = intval($_POST['quantity']);
     }
 
-    $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-    
     $cart_item = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $cart_table WHERE id = %d AND user_id = %d",
         $cart_id,
@@ -197,19 +194,6 @@ function update_cart_quantity()
         exit;
     }
 
-    $total_price = 0;
-
-    $total_price = $cart_item->price * $quantity;
-
-
-    // Tính phí dịch vụ dựa trên tổng giá trị đơn hàng
-    if ($total_price < 5000000) {
-        $service_fee = $total_price * 0.03; // 3%
-    } elseif ($total_price >= 5000000 && $total_price <= 50000000) {
-        $service_fee = $total_price * 0.02; // 2%
-    } else {
-        $service_fee = $total_price * 0.015; // 1.5%
-    }
     $result = $wpdb->update(
         $cart_table,
         [
@@ -223,26 +207,6 @@ function update_cart_quantity()
         wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
         exit;
     }
-
-    // Cập nhật phí dịch vụ vào đơn hàng
-    if ($order_id > 0) {
-        $order_item = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $order_table WHERE id = %d AND user_id = %d",
-            $order_id,
-            $user_id
-        ));
-
-        if ($order_item) {
-            $wpdb->update(
-                $order_table,
-                ['chiet_khau_dich_vu' => $service_fee],
-                ['id' => $order_id, 'user_id' => $user_id],
-                ['%f'],
-                ['%d', '%d']
-            );
-        }
-    }
-
     if ($result === false) {
         wp_send_json_error(['message' => '❌ Cập nhật giỏ hàng không thành công!'], 500);
         exit;
@@ -444,7 +408,6 @@ function create_order_via_ajax()
     $data = [
         'user_id' => $user_id,
         'cart_ids' => $cart_ids_str,
-        'chiet_khau_dich_vu' => $service_fee,
         'note' => $note,
         'is_gia_co' => $is_gia_co,
         'is_kiem_dem_hang' => $is_kiem_dem_hang,
@@ -455,7 +418,16 @@ function create_order_via_ajax()
         'phone' => $phone,
     ];
     $format = [
-        '%d', '%s', '%f', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s'
+        '%d',
+        '%s',
+        '%s',
+        '%d',
+        '%d',
+        '%d',
+        '%s',
+        '%s',
+        '%s',
+        '%s'
     ];
     $result = $wpdb->insert($table, $data, $format);
 
@@ -771,7 +743,6 @@ function submit_all_cart_handler()
         'address'    => sanitize_text_field($address),
         'email'      => sanitize_email($email),
         'phone'      => sanitize_text_field($phone),
-        'chiet_khau_dich_vu' => $service_fee,
     ];
 
     $wpdb->insert($table_orders, $order_data);
@@ -794,7 +765,8 @@ function submit_all_cart_handler()
 add_action('wp_ajax_recreate_order', 'handle_recreate_order');
 add_action('wp_ajax_nopriv_recreate_order', 'handle_recreate_order');
 
-function handle_recreate_order() {
+function handle_recreate_order()
+{
     global $wpdb;
 
     // Kiểm tra quyền truy cập
@@ -834,4 +806,3 @@ function handle_recreate_order() {
 
     wp_send_json_success(['message' => 'Đơn hàng mới đã được tạo thành công!']);
 }
-

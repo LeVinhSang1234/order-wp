@@ -106,11 +106,22 @@ foreach ($orders as $order) {
   $exchange_rate = $order->exchange_rate ?: floatval(get_option('exchange_rate', 1.0));
   $total_price = array_reduce($carts, fn($sum, $cart) => $sum + $cart->price * $cart->quantity, 0);
 
-  $total_order_amount += ($total_price * $exchange_rate) +
-    ($order->phi_ship_noi_dia * $exchange_rate) +
-    $order->phi_kiem_dem +
-    ($order->phi_gia_co * $exchange_rate) +
-    ($order->chiet_khau_dich_vu * $exchange_rate);
+  $percent = 0;
+  if ($total_price * $exchange_rate < 5000000) {
+    $percent = 3;
+  } elseif ($total_price * $exchange_rate >= 5000000 && $total_price * $exchange_rate <= 50000000) {
+    $percent = 2;
+  } else {
+    $percent = 1.5; // 1.5%
+  }
+  $phi_dich_vu = ($total_price * $exchange_rate) * ($percent / 100);
+
+  $total_order_amount += ($total_price * $exchange_rate);
+  $total_order_amount += ($order->phi_ship_noi_dia * $exchange_rate);
+  $total_order_amount += $order->phi_kiem_dem;
+  $total_order_amount += ($order->phi_gia_co * $exchange_rate);
+  $total_order_amount -= ($order->chiet_khau_dich_vu * $exchange_rate);
+  $total_order_amount += ($order->tien_van_chuyen ?? 0) + $phi_dich_vu;
 }
 
 $can_thanh_toan = $total_order_amount -  $tong_chi_tieu;
@@ -224,8 +235,8 @@ nk" href="<?php echo site_url() . '/nap-tien' ?>" class="btn btn-primary">Nạp
                 </td>
                 <td><?php echo date('d/m/Y H:i:s', strtotime($transaction->created_at)); ?></td>
                 <td>
-                  <?php 
-                  if (!empty($transaction->nguoi_thuc_hien) ) {
+                  <?php
+                  if (!empty($transaction->nguoi_thuc_hien)) {
                     $user_info = get_userdata($transaction->nguoi_thuc_hien);
                     if ($user_info) {
                       echo in_array('administrator', $user_info->roles) ? 'Administrator' : "MS" . str_pad($user_id, 2, '0', STR_PAD_LEFT);

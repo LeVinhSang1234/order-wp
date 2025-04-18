@@ -83,6 +83,7 @@ function render_order_detail()
     "da_coc",
     "percent_coc_truoc",
     "created_at",
+    "chiet_khau_dich_vu",
   ];
 
   $hidden_fields = [
@@ -96,7 +97,6 @@ function render_order_detail()
     "ngay_nhan_hang",
     "ngay_ncc_phat_hang",
     "tien_van_chuyen",
-    "chiet_khau_dich_vu",
     'kg_tinh_phi',
     "user_id",
     "cart_ids",
@@ -357,7 +357,7 @@ function render_order_detail()
     }
 
     jQuery(document).ready(function($) {
-      $("#updateOrder").click(function() {
+      $("#updateOrder").click(async function() {
         let updates = [];
 
         // Collect order updates
@@ -442,9 +442,26 @@ function render_order_detail()
         });
 
         // Send AJAX request for order updates
-
-        console.log("updates", updates);
-
+        await new Promise(resolve => {
+          if (packageUpdates.length) {
+            $.ajax({
+              url: '<?php echo admin_url("admin-ajax.php"); ?>',
+              type: "POST",
+              data: {
+                action: "update_packages",
+                packages: JSON.stringify(packageUpdates)
+              },
+              beforeSend: function() {
+                console.log(
+                  "Đang gửi yêu cầu cập nhật kiện hàng...");
+              },
+              success: resolve,
+              error: function() {
+                alert("Có lỗi xảy ra khi cập nhật kiện hàng.");
+              }
+            });
+          } else resolve(null)
+        })
         $.ajax({
           url: '<?php echo admin_url("admin-ajax.php"); ?>',
           type: "POST",
@@ -457,35 +474,9 @@ function render_order_detail()
           },
           success: function(response) {
             console.log("Phản hồi từ server (đơn hàng):", response);
-            if (response.success && packageUpdates.length > 0) {
-              // If there are package updates, send them as well  
-              // Send AJAX request for package updates
-              $.ajax({
-                url: '<?php echo admin_url("admin-ajax.php"); ?>',
-                type: "POST",
-                data: {
-                  action: "update_packages",
-                  packages: JSON.stringify(packageUpdates)
-                },
-                beforeSend: function() {
-                  console.log(
-                    "Đang gửi yêu cầu cập nhật kiện hàng...");
-                },
-                success: function(response) {
-                  console.log("Phản hồi từ server (kiện hàng):",
-                    response);
-                  if (response.success) {
-                    alert("Cập nhật thành công!");
-                    window.location.reload()
-                  } else {
-                    alert("Cập nhật kiện hàng thất bại! Lỗi: " +
-                      response.data.message);
-                  }
-                },
-                error: function() {
-                  alert("Có lỗi xảy ra khi cập nhật kiện hàng.");
-                }
-              });
+            if (response.success) {
+              alert("Cập nhật thành công!");
+              window.location.reload()
             } else {
               alert(response?.data?.message);
               window.location.reload();
