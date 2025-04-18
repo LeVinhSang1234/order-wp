@@ -73,7 +73,6 @@ function render_order_detail()
 
   $editable_fields = [
     'da_thanh_toan',
-    'da_hoan',
     'phi_kiem_dem',
     "phi_ship_noi_dia",
     "phi_gia_co",
@@ -302,6 +301,8 @@ function render_order_detail()
 </div>";
   echo "<button id='updateOrder' class='button-primary' style='margin-right: 16px;'>Cập nhật</button>";
   echo "<a href='" . admin_url("admin.php?page=order_list") . "' class='button'>Quay lại danh sách</a>";
+  echo "<input type='number' id='refundAmount' placeholder='Nhập số tiền hoàn (¥)' style='width:200px; height: 30px;margin-left:8px;' min='0' />";
+  echo "<button id='refundBtn' class='button-secondary' style='margin-left:4px;'>Hoàn tiền</button>";
   echo "</div>";
 
 ?>
@@ -536,6 +537,42 @@ function render_order_detail()
           row.remove(); // Remove unsaved row
         }
       });
+
+      $("#refundBtn").click(function() {
+        const amount = $("#refundAmount").val();
+        const orderId = $("#statusDropdown").data("id");
+        if (!amount || amount <= 0) {
+          alert("Vui lòng nhập số tiền hoàn hợp lệ!");
+          return;
+        }
+        if (!confirm("Xác nhận hoàn tiền " + amount + "(¥) cho đơn #" + orderId + "?")) return;
+        $.ajax({
+          url: '<?php echo admin_url("admin-ajax.php"); ?>',
+          type: "POST",
+          data: {
+            action: "refund_order",
+            order_id: orderId,
+            amount: amount
+          },
+          beforeSend: function() {
+            $("#refundBtn").prop("disabled", true).text("Đang hoàn...");
+          },
+          success: function(response) {
+            $("#refundBtn").prop("disabled", false).text("Hoàn tiền");
+            if (response.success) {
+              alert("Hoàn tiền thành công!");
+              window.location.reload();
+            } else {
+              alert("Hoàn tiền thất bại! " + (response.data?.message || ""));
+            }
+          },
+          error: function() {
+            $("#refundBtn").prop("disabled", false).text("Hoàn tiền");
+            alert("Có lỗi xảy ra khi hoàn tiền.");
+          }
+        });
+      });
+
     });
   </script>
 <?php

@@ -3,7 +3,10 @@
 function update_order_admin()
 {
   global $wpdb;
-
+  if (!current_user_can('manage_options')) {
+    wp_send_json_error(['message' => 'Bạn không có quyền thực hiện thao tác này.']);
+    exit;
+  }
   // Validate if `updates` data is sent
   if (empty($_POST['updates'])) {
     wp_send_json_error(["error" => "Dữ liệu không hợp lệ"]);
@@ -263,6 +266,10 @@ add_action('wp_ajax_update_order_admin', 'update_order_admin');
 function delete_package()
 {
   global $wpdb;
+  if (!current_user_can('manage_options')) {
+    wp_send_json_error(['message' => 'Bạn không có quyền thực hiện thao tác này.']);
+    exit;
+  }
 
   $package_id = intval($_POST['package_id']);
 
@@ -284,6 +291,10 @@ add_action('wp_ajax_delete_package', 'delete_package');
 function update_packages()
 {
   global $wpdb;
+  if (!current_user_can('manage_options')) {
+    wp_send_json_error(['message' => 'Bạn không có quyền thực hiện thao tác này.']);
+    exit;
+  }
 
   if (empty($_POST['packages'])) {
     wp_send_json_error(["message" => "Dữ liệu không hợp lệ."]);
@@ -376,3 +387,60 @@ function update_packages()
   exit;
 }
 add_action('wp_ajax_update_packages', 'update_packages');
+
+function refund_order()
+{
+  global $wpdb;
+  if (!current_user_can('manage_options')) {
+    wp_send_json_error(['message' => 'Bạn không có quyền thực hiện thao tác này.']);
+    exit;
+  }
+
+  $order_id = intval($_POST['order_id']);
+  $amount = floatval($_POST['amount']);
+
+  $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
+  if (!$exchange_rate) {
+    $exchange_rate = floatval(get_option('exchange_rate', 1.0));
+  }
+  if ($order_id <= 0 || $amount <= 0) {
+    wp_send_json_error(['message' => 'Dữ liệu không hợp lệ']);
+    exit;
+  }
+  $amount = $amount * $exchange_rate;
+  $order = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}orders WHERE id = %d", $order_id));
+  if (!$order) {
+    wp_send_json_error(['message' => 'Không tìm thấy đơn hàng']);
+    exit;
+  }
+  $user_id = $order->user_id;
+  $current_wallet = floatval(get_user_meta($user_id, 'user_wallet', true));
+  $updated_wallet = $current_wallet + $amount;
+
+  update_user_meta($user_id, 'user_wallet', $updated_wallet);
+  $old_da_hoan = floatval($order->da_hoan);
+  $new_da_hoan = $old_da_hoan + $amount;
+  $wpdb->update(
+    "{$wpdb->prefix}orders",
+    ['da_hoan' => $new_da_hoan],
+    ['id' => $order_id],
+    ['%f'],
+    ['%d']
+  );
+
+  $wpdb->insert(
+    "{$wpdb->prefix}history_orders_transaction",
+    [
+      'order_id' => $order_id,
+      'loai' => 'Hoàn tiền',
+      'hinh_thuc' => 'Hoàn tiền đơn hàng shop phát thiếu',
+      'so_tien' => $amount,
+      'user_id' => $user_id,
+    ],
+    ['%d', '%s', '%s', '%f', '%d']
+  );
+
+  wp_send_json_success(['message' => 'Hoàn tiền thành công']);
+  exit;
+}
+add_action('wp_ajax_refund_order', 'refund_order');
