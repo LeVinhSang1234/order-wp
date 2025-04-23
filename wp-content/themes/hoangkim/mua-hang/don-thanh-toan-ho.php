@@ -1,5 +1,4 @@
 <?php
-// Kết nối với database
 global $wpdb;
 $table_order = $wpdb->prefix . 'orders';
 $user_id = get_current_user_id();

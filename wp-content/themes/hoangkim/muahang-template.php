@@ -59,12 +59,6 @@ if (!is_user_logged_in()) {
                         </a>
                     </li>
                     <li>
-                        <a class="<?php echo (is_page('don-thanh-toan-ho') ? 'active' : '') ?>" href="<?php echo site_url() . '/don-thanh-toan-ho' ?>">
-                            <i class="fa-regular fa-clipboard"></i>
-                            Đơn thanh toán hộ
-                        </a>
-                    </li>
-                    <li>
                         <a class="<?php echo (is_page('wallet') ? 'active' : '') ?>" href="<?php echo site_url() . '/wallet' ?>">
                             <i class="fa-solid fa-wallet"></i>
                             Ví điện tử
