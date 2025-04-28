@@ -37,7 +37,7 @@ $query .= " AND type = 1 ORDER BY created_at ASC, created_at DESC ";
 
 $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 
-$status_str = ["", "NCC phát hàng", 'Nhập kho TQ', 'TQ gửi hàng', 'Nhập kho VN', 'Khách nhận hàng', 'Không rõ nguồn gốc'];
+$status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 
 ?>
 
