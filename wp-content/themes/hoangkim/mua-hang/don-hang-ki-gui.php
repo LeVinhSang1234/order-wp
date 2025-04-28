@@ -225,10 +225,13 @@ $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC 
                     brand: $(tr.querySelector('.txt_brand')).val(),
                     so_kien_hang: $(tr.querySelector('.txt_quantity')).val(),
                     note: $(tr.querySelector('.txt_note')).val(),
-                })
-            })
+                });
+            });
             const error = data.some(e => !e.van_don || !e.thuong_hieu || !e.brand || !e.so_kien_hang);
-            if (error) return alert("Vui lòng nhập đầy đủ thông tin")
+            if (error) return alert("Vui lòng nhập đầy đủ thông tin");
+
+            if (!confirm("Hãy kiểm tra thông tin xem đã đúng chưa trước khi tiếp tục.")) return;
+
             data.forEach(d => {
                 $.ajax({
                     url: '<?php echo admin_url("admin-ajax.php"); ?>',
@@ -240,13 +243,13 @@ $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC 
                     },
                     success: function (response) {
                         alert(response.data.message);
-                        window.location.reload()
+                        window.location.reload();
                     },
                     error: function () {
                         alert('Lỗi kết nối đến máy chủ.');
                     }
                 });
-            })
+            });
         })
 
         const params = new URLSearchParams(window.location.search);
