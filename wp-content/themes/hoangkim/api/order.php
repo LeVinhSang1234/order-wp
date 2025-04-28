@@ -574,6 +574,7 @@ function create_order_ki_gui()
         'type' => 1,
         'so_kien_hang' => $so_kien_hang,
         'is_gia_co' => 4, // Đơn hàng ký gửi
+        "status" => 4, // Trạng thái đơn hàng ký gửi
     ];
     $format = [
         '%d',
@@ -586,6 +587,7 @@ function create_order_ki_gui()
         '%s',
         '%s',
         '%s',
+        '%d',
         '%d',
         '%d',
         '%d',

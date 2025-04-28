@@ -37,7 +37,7 @@ $query .= " AND type = 1 ORDER BY created_at ASC, created_at DESC ";
 
 $orders = $wpdb->get_results($wpdb->prepare($query, ...$params));
 
-$status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
+$status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC phát hàng", "Nhập kho TQ", "Nhập kho VN", "Khách nhận hàng", "Đơn hàng hủy", "Đơn khiếu nại"];
 
 ?>
 
@@ -105,12 +105,12 @@ $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC 
                     ?>
                     <select name="status" class="w-filter-full" id="type">
                         <option value="">--Chọn trạng thái--</option>
-                        <option value="1">NCC phát hàng</option>
-                        <option value="2">Nhập kho TQ</option>
-                        <option value="3">TQ gửi hàng</option>
-                        <option value="4">Nhập kho VN</option>
-                        <option value="6">Khách nhận hàng</option>
-                        <option value="7">Không rõ nguồn gốc</option>
+                        <option value="4">NCC phát hàng</option>
+                        <option value="5">Nhập kho TQ</option>
+                        <option value="6">Nhập kho VN</option>
+                        <option value="7">Khách nhận hàng</option>
+                        <option value="8">Đơn hàng hủy</option>
+                        <option value="9">Đơn khiếu nại</option>
                     </select>
                     <button class="btn-find"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
