@@ -230,7 +230,7 @@ $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC 
             const error = data.some(e => !e.van_don || !e.thuong_hieu || !e.brand || !e.so_kien_hang);
             if (error) return alert("Vui lòng nhập đầy đủ thông tin");
 
-            if (!confirm("Hãy kiểm tra thông tin xem đã đúng chưa trước khi tiếp tục.")) return;
+            if (!confirm("Bạn xác nhận thông tin đã chính xác trước khi tạo?")) return;
 
             data.forEach(d => {
                 $.ajax({
