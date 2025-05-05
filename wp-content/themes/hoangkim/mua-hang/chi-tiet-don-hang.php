@@ -15,12 +15,16 @@ if ($order) {
 }
 $status_str = ["", "Chờ báo giá", 'Đang mua hàng', 'Đã mua hàng', 'NCC phát hàng', 'Nhập kho TQ', 'Nhập kho VN', 'Khách nhận hàng', 'Đơn hàng hủy', 'Đơn khiếu nại'];
 $cart_ids_array = json_decode($order->cart_ids, true);
-$placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
-$query = $wpdb->prepare(
-  "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
-  ...$cart_ids_array
-);
-$carts = $wpdb->get_results($query);
+if (!empty($cart_ids_array)) {
+  $placeholders = implode(',', array_fill(0, count($cart_ids_array), '%d'));
+  $query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}cart WHERE id IN ($placeholders)",
+    ...$cart_ids_array
+  );
+  $carts = $wpdb->get_results($query);
+} else {
+  $carts = [];
+}
 $exchange_rate = isset($order->exchange_rate) ? $order->exchange_rate : null;
 if (!$exchange_rate) {
   $exchange_rate = floatval(get_option('exchange_rate', 1.0));
@@ -238,10 +242,12 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($carts as $cart) {
+                <?php 
+                $percent = 0; // Initialize $percent to avoid undefined variable notice
+                $phi_dich_vu = 0; // Initialize $phi_dich_vu to avoid undefined variable notice
+                foreach ($carts as $cart) {
                   $totalPrice += ($cart->price * $cart->quantity);
 
-                  $percent = 0;
                   if ($totalPrice * $exchange_rate < 5000000) {
                     $percent = 3;
                   } elseif ($totalPrice * $exchange_rate >= 5000000 && $totalPrice * $exchange_rate <= 50000000) {
