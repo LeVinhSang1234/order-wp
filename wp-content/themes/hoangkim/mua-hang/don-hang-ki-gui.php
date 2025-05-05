@@ -125,9 +125,6 @@ $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC 
                                     <th>Tên hàng hóa</th>
                                     <th>Thương hiệu</th>
                                     <th>Số kiện</th>
-                                    <th>Kg tính phí</th>
-                                    <th>Giá phí</th>
-                                    <th>Thành tiền</th>
                                     <th>Tình trạng</th>
                                     <th>Lưu ý</th>
                                 </tr>
@@ -142,15 +139,12 @@ $status_str = ["", "Chờ báo giá", "Đang mua hàng", "Đã mua hàng", "NCC 
                                         </td>
                                         <td>
                                             <a
-                                                href="chi-tiet-don-hang/?id=<?php echo $order->id ?>"><?php echo "HK_" . $order->id ?></a>
+                                                href="chi-tiet-don-hang/?id=<?php echo $order->id ?>"><?php echo "HK_" . $order->id ?> (Xem chi tiết)</a>
                                         </td>
                                         <td><?php echo $order->van_don ?></td>
                                         <td><?php echo $order->brand ?></td>
                                         <td><?php echo $order->thuong_hieu ?></td>
                                         <td><?php echo $order->so_kien_hang ?></td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>--</td>
                                         <td><?php echo $status_str[$order->status] ?></td>
                                         <td><?php echo $order->note ?></td>
                                     </tr>
