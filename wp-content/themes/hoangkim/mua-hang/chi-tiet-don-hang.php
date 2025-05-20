@@ -363,7 +363,12 @@ $total_kg_tinh_phi = array_reduce($packages, function ($carry, $package) {
           </div>
           <div style="color: red" class="divider d-flex justify-content-between align-items-center">
             Còn thiếu:
-            <strong><?php echo format_price_vnd($total - $order->da_thanh_toan) ?></strong>
+            <strong>
+              <?php
+              // Nếu đã nhập kho VN thì luôn trả về 0
+              echo format_price_vnd($order->status == 6 ? 0 : ($total - $order->da_thanh_toan));
+              ?>
+            </strong>
           </div>
           <div class="mt-3">
             <div class="chat-box-message">

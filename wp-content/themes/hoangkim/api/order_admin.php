@@ -155,7 +155,7 @@ function update_order_admin()
           $total += $order->tien_van_chuyen ?? 0;
           $total +=  $phi_dich_vu ?? 0;
           $total -= $order->chiet_khau_dich_vu * $exchange_rate;
-          $remaining_amount = $total - intval($order->da_thanh_toan);
+          $remaining_amount = $total - floatval($order->da_thanh_toan);
 
           // Get user's current wallet balance
           $current_wallet_balance = floatval(trim(get_user_meta($order->user_id, 'user_wallet', true)));
@@ -353,22 +353,23 @@ function update_packages()
       "SELECT SUM(can_nang) FROM {$wpdb->prefix}packages WHERE order_id = %d",
       $order_id
     ));
-    if ($total_weight < 0.5) {
-      $total_weight = 0.5;
+    if (bccomp($total_weight, '0.5', 2) < 0) { // Compare with precision
+      $total_weight = '0.5';
     }
 
-    $price_per_kg = get_option('price_per_kg', 0.0);
+    $price_per_kg = get_option('price_per_kg', '0.0');
 
     if ($package_id) {
       $rate_rieng = $wpdb->get_var($wpdb->prepare(
         "SELECT rate_rieng FROM {$wpdb->prefix}packages WHERE id = %d",
         $package_id
       ));
-      $rate = $rate_rieng !== null ? floatval($rate_rieng) : floatval($price_per_kg);
+      $rate = $rate_rieng !== null ? $rate_rieng : $price_per_kg;
     } else {
-      $rate = floatval($price_per_kg);
+      $rate = $price_per_kg;
     }
-    $shipping_cost = $total_weight *  $rate;
+
+    $shipping_cost = bcmul($total_weight, $rate, 2); // Multiply with precision
 
     $wpdb->update(
       "{$wpdb->prefix}orders",
