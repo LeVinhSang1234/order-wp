@@ -307,7 +307,7 @@ function update_packages()
     exit;
   }
 
-  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id', 'rate_rieng', 'tien_van_chuyen'];
+  $allowed_fields = ['ma_kien', 'can_nang', 'the_tich', 'trang_thai_kien', 'order_id', 'rate_rieng', 'tien_van_chuyen', 'tien_the_tich'];
   $success_count = 0;
   $errors = [];
 
@@ -353,6 +353,15 @@ function update_packages()
       "SELECT SUM(can_nang) FROM {$wpdb->prefix}packages WHERE order_id = %d",
       $order_id
     ));
+
+    $total_tien_the_tich = $wpdb->get_var($wpdb->prepare(
+      "SELECT SUM(tien_the_tich) FROM {$wpdb->prefix}packages WHERE order_id = %d",
+      $order_id
+    ));
+    if ($total_tien_the_tich === null) {
+      $total_tien_the_tich = '0';
+    }
+
     if (bccomp($total_weight, '0.5', 2) < 0) { // Compare with precision
       $total_weight = '0.5';
     }
@@ -369,7 +378,7 @@ function update_packages()
       $rate = $price_per_kg;
     }
 
-    $shipping_cost = bcmul($total_weight, $rate, 2); // Multiply with precision
+    $shipping_cost = bcadd(bcmul($total_weight, $rate, 2), $total_tien_the_tich, 2); // Add with precision
 
     $wpdb->update(
       "{$wpdb->prefix}orders",
