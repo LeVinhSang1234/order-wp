@@ -368,12 +368,8 @@ function update_packages()
 
     $price_per_kg = get_option('price_per_kg', '0.0');
 
-    if ($package_id) {
-      $rate_rieng = $wpdb->get_var($wpdb->prepare(
-        "SELECT rate_rieng FROM {$wpdb->prefix}packages WHERE id = %d",
-        $package_id
-      ));
-      $rate = $rate_rieng !== null ? $rate_rieng : $price_per_kg;
+    if (!empty($data['rate_rieng'])) {
+      $rate = $data['rate_rieng'];
     } else {
       $rate = $price_per_kg;
     }

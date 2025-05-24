@@ -263,18 +263,19 @@ function render_order_detail()
   foreach ($packages as $index => $package) {
     $price_per_kg = get_option('price_per_kg', 0.0);
     $tien_can_nang = floatval($package->can_nang) * $package->rate_rieng ?? $price_per_kg;
+    $editable = ($order->status < 6) ? "contenteditable='true' class='editable-package'" : "";
     echo "<tr data-id='{$package->id}'>
             <td>" . ($index + 1) . "</td> <!-- Render serial number dynamically -->
             <td contenteditable='true' class='editable-package' data-field='ma_kien'>{$package->ma_kien}</td>
-            <td contenteditable='true' class='editable-package' data-field='can_nang'>{$package->can_nang}</td>
-             <td contenteditable='true' class='editable-package' data-field='rate_rieng'>{$package->rate_rieng}</td>
+            <td {$editable} data-field='can_nang'>{$package->can_nang}</td>
+            <td {$editable} data-field='rate_rieng'>{$package->rate_rieng}</td>
             <td >" . format_price_vnd(($tien_can_nang) ?? 0) . "</td>
-            <td contenteditable='true' class='editable-package' data-field='the_tich'>{$package->the_tich}</td>
-            <td contenteditable='true' class='editable-package' data-field='tien_the_tich'>{$package->tien_the_tich}</td>
-            <td contenteditable='true' class='editable-package' data-field='trang_thai_kien'>{$package->trang_thai_kien}
+            <td {$editable} data-field='the_tich'>{$package->the_tich}</td>
+            <td {$editable} data-field='tien_the_tich'>{$package->tien_the_tich}</td>
+            <td {$editable} data-field='trang_thai_kien'>{$package->trang_thai_kien}
             </td>
             <td>{$package->created_at}</td>
-            <td><button class='button-secondary delete-package' data-id='{$package->id}'>Xóa</button></td>
+            <td><button class='button-secondary delete-package' data-id='{$package->id}'" . ($order->status >= 6 ? " disabled" : "") . ">Xóa</button></td>
         </tr>";
   }
 
