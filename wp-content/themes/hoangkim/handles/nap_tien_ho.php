@@ -45,14 +45,18 @@ function render_nap_tien_ho_page()
     echo '<form method="post" action="">';
     echo '<table class="form-table">';
     echo '<tr>';
-    echo '<th><label for="user_id">Select người dùng</label></th>';
+    echo '<th><label for="user_search">Tìm kiếm & chọn người dùng</label></th>';
     echo '<td>';
-    echo '<select name="user_id" id="user_id" required>';
-    echo '<option value="">-- Chọn người dùng --</option>';
+    echo '<div style="position: relative; width: 300px;">';
+    echo '<input type="text" id="user_search" placeholder="Nhập mã số người dùng (VD: MS01, MS15)" style="width: 100%; padding: 8px; box-sizing: border-box;" autocomplete="off">';
+    echo '<input type="hidden" name="user_id" id="user_id" required>';
+    echo '<div id="user_dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-top: none; max-height: 200px; overflow-y: auto; display: none; z-index: 1000;">';
     foreach ($users as $user) {
-        echo '<option value="' . esc_attr($user->ID) . '">' . esc_html('MS' . ($user->ID < 10 ? '0' . $user->ID : $user->ID)) . '</option>';
+        $user_code = 'MS' . ($user->ID < 10 ? '0' . $user->ID : $user->ID);
+        echo '<div class="user-option" data-user-id="' . esc_attr($user->ID) . '" data-user-code="' . esc_attr($user_code) . '" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">' . esc_html($user_code) . ' - ' . esc_html($user->display_name) . '</div>';
     }
-    echo '</select>';
+    echo '</div>';
+    echo '</div>';
     echo '</td>';
     echo '</tr>';
     echo '<tr>';
@@ -62,5 +66,76 @@ function render_nap_tien_ho_page()
     echo '</table>';
     echo '<p class="submit"><button type="submit" class="button button-primary">Nạp Tiền</button></p>';
     echo '</form>';
+
+    // Thêm JavaScript để tìm kiếm người dùng
+    echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var searchInput = document.getElementById("user_search");
+        var hiddenInput = document.getElementById("user_id");
+        var dropdown = document.getElementById("user_dropdown");
+        var options = dropdown.getElementsByClassName("user-option");
+        
+        // Hiển thị dropdown khi focus vào input
+        searchInput.addEventListener("focus", function() {
+            dropdown.style.display = "block";
+            filterOptions();
+        });
+        
+        // Ẩn dropdown khi click ra ngoài
+        document.addEventListener("click", function(e) {
+            if (!e.target.closest("#user_search") && !e.target.closest("#user_dropdown")) {
+                dropdown.style.display = "none";
+            }
+        });
+        
+        // Tìm kiếm và lọc options
+        searchInput.addEventListener("input", function() {
+            filterOptions();
+        });
+        
+        function filterOptions() {
+            var searchValue = searchInput.value.toLowerCase();
+            var hasVisible = false;
+            
+            for (var i = 0; i < options.length; i++) {
+                var option = options[i];
+                var userCode = option.getAttribute("data-user-code").toLowerCase();
+                var displayText = option.textContent.toLowerCase();
+                
+                if (userCode.includes(searchValue) || displayText.includes(searchValue)) {
+                    option.style.display = "block";
+                    hasVisible = true;
+                } else {
+                    option.style.display = "none";
+                }
+            }
+            
+            dropdown.style.display = hasVisible ? "block" : "none";
+        }
+        
+        // Xử lý click vào option
+        for (var i = 0; i < options.length; i++) {
+            options[i].addEventListener("click", function() {
+                var userId = this.getAttribute("data-user-id");
+                var userCode = this.getAttribute("data-user-code");
+                var displayName = this.textContent;
+                
+                searchInput.value = displayName;
+                hiddenInput.value = userId;
+                dropdown.style.display = "none";
+            });
+            
+            // Hover effect
+            options[i].addEventListener("mouseenter", function() {
+                this.style.backgroundColor = "#f0f0f0";
+            });
+            
+            options[i].addEventListener("mouseleave", function() {
+                this.style.backgroundColor = "white";
+            });
+        }
+    });
+    </script>';
+
     echo '</div>';
 }
